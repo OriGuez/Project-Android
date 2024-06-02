@@ -10,24 +10,44 @@ import androidx.core.view.WindowInsetsCompat;
 
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    private List<UserData> userDataList;
+    public static List<UserData> userDataList=null;
+    private Button registerButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //EdgeToEdge.enable(this);
-        //setContentView(R.layout.activity_registration);
+        setContentView(R.layout.activity_main);
         //userDataList = new ArrayList<>();
         // Start RegistrationActivity
-        Intent intent = new Intent(MainActivity.this, RegistrationActivity.class);
-        startActivity(intent);
+        registerButton = findViewById(R.id.registerMe);
+        // Set OnClickListener for registerButton
+        registerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // This code will execute when registerButton is clicked
+                // Start RegistrationActivity
+                Intent intent = new Intent(MainActivity.this, RegistrationActivity.class);
+                startActivity(intent);
+            }
+
+
+        });
+        if(userDataList!=null)
+            Log.d("tochen",userDataList.get(0).getChannelName());
         //intent.putExtra("userDataArray", userDataArray);
         // Optional: Finish MainActivity if you don't want to keep it in the back stack
-        finish();
+        //finish();
     }
+
+
     @Override
     protected void onDestroy() {
         super.onDestroy();

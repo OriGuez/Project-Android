@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,11 +16,12 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
+import java.util.List;
 
 public class RegistrationActivity extends AppCompatActivity {
 
     private static final int PICK_IMAGE_REQUEST = 1;
-
+private List<UserData> userDataList=MainActivity.userDataList;
     private EditText usernameEditText;
     private EditText passwordEditText;
     private EditText confirmPasswordEditText;
@@ -119,12 +121,14 @@ public class RegistrationActivity extends AppCompatActivity {
 
         UserData user = new UserData(username, password, channelName);
         user.getImages().add(selectedProfilePicture);
-
+        userDataList.add(user);
         // Proceed with registration logic, e.g., saving user data or starting a new activity
 
         // Pass userData to MainActivity
         //Intent intent = new Intent(RegistrationActivity.this, MainActivity.class);
         //intent.putExtra("userData", user);
         //startActivity(intent);
+        Log.d("tochen",userDataList.get(0).getChannelName());
+        finish();
     }
 }
