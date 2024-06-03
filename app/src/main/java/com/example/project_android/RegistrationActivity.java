@@ -21,7 +21,6 @@ import java.util.List;
 public class RegistrationActivity extends AppCompatActivity {
 
     private static final int PICK_IMAGE_REQUEST = 1;
-private List<UserData> userDataList=MainActivity.userDataList;
     private EditText usernameEditText;
     private EditText passwordEditText;
     private EditText confirmPasswordEditText;
@@ -37,6 +36,7 @@ private List<UserData> userDataList=MainActivity.userDataList;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
+        MainActivity.userDataList.add(new UserData("Matan","123123123a","chnnl"));
 
         // Bind views
         usernameEditText = findViewById(R.id.username);
@@ -121,14 +121,14 @@ private List<UserData> userDataList=MainActivity.userDataList;
 
         UserData user = new UserData(username, password, channelName);
         user.getImages().add(selectedProfilePicture);
-        userDataList.add(user);
+        //userDataList.add(user);
         // Proceed with registration logic, e.g., saving user data or starting a new activity
 
         // Pass userData to MainActivity
         //Intent intent = new Intent(RegistrationActivity.this, MainActivity.class);
         //intent.putExtra("userData", user);
         //startActivity(intent);
-        Log.d("tochen",userDataList.get(0).getChannelName());
+        //Log.d("tochen",userDataList.get(0).getChannelName());
         finish();
     }
 }

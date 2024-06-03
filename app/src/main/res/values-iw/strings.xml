@@ -8,4 +8,8 @@
     <string name="upload_profile_picture">העלה תמונת פרופיל</string>
     <string name="profile_picture_description">Profile Picture</string>
     <string name="register_button">Register</string>
+    <string name="loginButton">Button</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
 </resources>

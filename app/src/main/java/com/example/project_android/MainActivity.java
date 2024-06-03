@@ -13,35 +13,53 @@ import android.net.Uri;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    public static List<UserData> userDataList=null;
+    public static List<UserData> userDataList;
+
+    public static boolean isLoggedUser = false;
     private Button registerButton;
+    private Button loginButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         //EdgeToEdge.enable(this);
+        userDataList = new ArrayList<>();
         setContentView(R.layout.activity_main);
         //userDataList = new ArrayList<>();
         // Start RegistrationActivity
         registerButton = findViewById(R.id.registerMe);
-        // Set OnClickListener for registerButton
-        registerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // This code will execute when registerButton is clicked
-                // Start RegistrationActivity
-                Intent intent = new Intent(MainActivity.this, RegistrationActivity.class);
-                startActivity(intent);
-            }
+        loginButton = findViewById(R.id.LoginMe);
 
+        // Set OnClickListener for registerButton
+        registerButton.setOnClickListener(v -> {
+            // This code will execute when registerButton is clicked
+            // Start RegistrationActivity
+            Intent intent = new Intent(MainActivity.this, RegistrationActivity.class);
+            //intent.putParcelableArrayListExtra("userDataList", new ArrayList<>(userDataList));
+            startActivity(intent);
+        });
+        loginButton.setOnClickListener(v -> {
+            // This code will execute when registerButton is clicked
+            // Start RegistrationActivity
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            //intent.putParcelableArrayListExtra("userDataList", new ArrayList<>(userDataList));
+            startActivity(intent);
 
         });
-        if(userDataList!=null)
-            Log.d("tochen",userDataList.get(0).getChannelName());
+// Find the TextView by its ID
+        //TextView myTextView = findViewById(R.id.myTextView);
+        //Log.d("aaa",userDataList.get(0).getChannelName());
+        // Modify the text
+        //myTextView.setText(userDataList.get(0).getChannelName());
+        //setContentView(R.layout.activity_main);
+
         //intent.putExtra("userDataArray", userDataArray);
         // Optional: Finish MainActivity if you don't want to keep it in the back stack
         //finish();
