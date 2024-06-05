@@ -38,30 +38,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//         setContentView(R.layout.activity_main);
 
-//         final EditText passwordEditText = findViewById(R.id.editTextPassword);
-//         final TextInputLayout passwordLayout = findViewById(R.id.textInputLayoutPassword);
-
-//         passwordEditText.addTextChangedListener(new TextWatcher() {
-//             @Override
-//             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-//             @Override
-//             public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                 String password = s.toString();
-//                 if (password.length() < 8) {
-//                     passwordLayout.setError("Password must be at least 8 characters long");
-//                 } else if (password.matches("\\d+")) {
-//                     passwordLayout.setError("Password must contain at least one non-numeric character");
-//                 } else {
-//                     passwordLayout.setError(null);
-//                 }
-//             }
-
-//             @Override
-//             public void afterTextChanged(Editable s) {}
-        //EdgeToEdge.enable(this);
         userDataList = new ArrayList<>();
         currentUser = null;
         setContentView(R.layout.activity_main);
@@ -81,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         loginButton.setOnClickListener(v -> {
             // This code will execute when registerButton is clicked
             // Start RegistrationActivity
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            Intent intent = new Intent(MainActivity.this, LoginActivityOri.class);
             //intent.putParcelableArrayListExtra("userDataList", new ArrayList<>(userDataList));
             startActivity(intent);
 
