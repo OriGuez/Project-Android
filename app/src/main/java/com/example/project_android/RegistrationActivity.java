@@ -36,7 +36,6 @@ public class RegistrationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
-        MainActivity.userDataList.add(new UserData("Matan","123123123a","chnnl"));
 
         // Bind views
         usernameEditText = findViewById(R.id.username);
@@ -120,15 +119,10 @@ public class RegistrationActivity extends AppCompatActivity {
         }
 
         UserData user = new UserData(username, password, channelName);
+        MainActivity.userDataList.add(user);
         user.getImages().add(selectedProfilePicture);
-        //userDataList.add(user);
-        // Proceed with registration logic, e.g., saving user data or starting a new activity
-
-        // Pass userData to MainActivity
-        //Intent intent = new Intent(RegistrationActivity.this, MainActivity.class);
-        //intent.putExtra("userData", user);
-        //startActivity(intent);
-        //Log.d("tochen",userDataList.get(0).getChannelName());
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
         finish();
     }
 }

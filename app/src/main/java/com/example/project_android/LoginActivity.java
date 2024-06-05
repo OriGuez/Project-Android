@@ -2,6 +2,7 @@ package com.example.project_android;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -16,6 +17,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button loginButton;
     private EditText usernameEditText;
     private EditText passwordEditText;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,14 +45,15 @@ public class LoginActivity extends AppCompatActivity {
         });
 
 
-
-
     }
 
     private boolean validateLogin(String username, String password) {
         if (MainActivity.userDataList != null) {
             for (UserData user : MainActivity.userDataList) {
                 if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
+                    MainActivity.isLoggedUser = true;
+                    MainActivity.currentUser = user;
+                    Log.d("flag t", "flag trueloggedUser");
                     return true;
                 }
             }

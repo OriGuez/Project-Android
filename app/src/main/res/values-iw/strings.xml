@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Project-Android</string>
-    <string name="username_hint">Username</string>
-    <string name="password_hint">Password</string>
-    <string name="confirm_password_hint">Password</string>
-    <string name="channel_name_hint">Channel Name</string>
+    <string name="username_hint">שם משתמש</string>
+    <string name="password_hint">סיסמה</string>
+    <string name="confirm_password_hint">אימות סיסמה</string>
+    <string name="channel_name_hint">שם הערוץ</string>
     <string name="upload_profile_picture">העלה תמונת פרופיל</string>
-    <string name="profile_picture_description">Profile Picture</string>
-    <string name="register_button">Register</string>
-    <string name="loginButton">Button</string>
-    <string name="username">Username</string>
-    <string name="password">Password</string>
-    <string name="login">Login</string>
+    <string name="profile_picture_description">תמונת פרופיל</string>
+    <string name="register_button">הרשמה</string>
+    <string name="loginButton">התחבר</string>
+    <string name="username">שם משתמש</string>
+    <string name="password">סיסמה</string>
+    <string name="login">התחבר</string>
+    <string name="logOut">Log Out</string>
 </resources>
