@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">Project-Android</string>
+    <string name="username_hint">Username</string>
+    <string name="password_hint">Password</string>
+    <string name="confirm_password_hint">Confirm Password</string>
+    <string name="channel_name_hint">Channel Name</string>
+    <string name="upload_profile_picture">Upload Profile Picture</string>
+    <string name="profile_picture_description">Profile Picture</string>
+    <string name="register_button">Register</string>
+    <string name="loginButton">Button</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="logOut">Log Out</string>
 </resources>

@@ -6,86 +6,58 @@
     android:orientation="vertical"
     android:padding="16dp"
     android:background="@android:color/white">
-
-  <TextView
-      android:id="@+id/companyNameTextView"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:text="ViewTube"
-      android:textSize="32sp"
-      android:textStyle="bold"
-      android:textColor="@color/viewtube_red"
-      android:gravity="center"
-      android:layout_marginBottom="24dp"/>
-
-  <com.google.android.material.textfield.TextInputLayout
-      android:id="@+id/textInputLayoutUserName"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:hint="Username">
-
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/editTextUserName"
-        android:layout_width="match_parent"
+    <Button
+        android:id="@+id/LogOutButton"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="text"
-        android:textColor="@android:color/black"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        android:layout_centerHorizontal="true"
+        android:layout_margin="16dp"
+        android:text="@string/logOut"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.95"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.018" />
 
-  </com.google.android.material.textfield.TextInputLayout>
+    <TextView
+        android:id="@+id/usernameTextView"
+        android:layout_width="297dp"
+        android:layout_height="83dp"
+        android:layout_margin="16dp"
+        android:text=""
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.099" />
 
-  <com.google.android.material.textfield.TextInputLayout
-      android:id="@+id/textInputLayoutPassword"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:hint="Password"
-      android:layout_marginTop="16dp">
-
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/editTextPassword"
-        android:layout_width="match_parent"
+    <Button
+        android:id="@+id/registerMe"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="textPassword"
-        android:textColor="@android:color/black"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        android:layout_centerHorizontal="true"
+        android:layout_margin="16dp"
+        android:text="@string/register_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5" />
 
-  </com.google.android.material.textfield.TextInputLayout>
-
-  <Button
-      android:id="@+id/signInButton"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_marginTop="24dp"
-      android:text="Sign In"
-      android:textColor="@android:color/white"
-      android:textSize="18sp"
-      android:textStyle="bold"
-      android:background="@color/viewtube_red" />
-
-  <TextView
-      android:id="@+id/createAccountTextView"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_gravity="center"
-      android:text="New to ViewTube? "
-      android:textColor="@android:color/black"
-      android:textSize="16sp"
-      android:textStyle="bold"
-      android:layout_marginTop="24dp"/>
-
-  <TextView
-      android:id="@+id/createAccountClickableText"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_gravity="center"
-      android:text="Create an account"
-      android:textColor="@android:color/holo_blue_dark"
-      android:textSize="16sp"
-      android:textStyle="bold"
-      android:layout_marginTop="9dp"
-      android:clickable="true"
-      android:onClick="onCreateAccountClicked" />
-
+    <Button
+        android:id="@+id/LoginMe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="16dp"
+        android:text="@string/login"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.263" />
 </LinearLayout>
