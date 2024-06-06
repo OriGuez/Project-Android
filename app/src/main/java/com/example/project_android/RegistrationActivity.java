@@ -1,5 +1,4 @@
 package com.example.project_android;
-
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
