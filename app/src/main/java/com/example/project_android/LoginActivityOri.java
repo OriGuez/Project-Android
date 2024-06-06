@@ -1,5 +1,4 @@
 
-
 package com.example.project_android;
 import android.app.Activity;
 import android.content.Intent;
@@ -8,17 +7,15 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.EditText;
 import android.view.View;
-
-
 import com.google.android.material.textfield.TextInputLayout;
+import android.os.Bundle;
+import androidx.appcompat.app.AppCompatActivity;
 
-public class LoginActivityOri extends Activity {
+public class LoginActivityOri extends AppCompatActivity {
     public void onCreateAccountClicked(View view) {
-        // Start RegistrationActivity
         Intent intent = new Intent(this, RegistrationActivity.class);
         startActivity(intent);
     }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<!-- res/values/colors.xml -->
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="viewtube_red">#F60202</color>
+    <color name="viewtube_red">#FF0000</color> <!-- Replace with your desired color code -->
 </resources>
