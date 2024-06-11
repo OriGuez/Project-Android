@@ -24,42 +24,60 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import org.json.JSONObject;
+
 import java.io.Console;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 public class MainActivity extends AppCompatActivity {
     public static List<UserData> userDataList;
+    public static List<Video> videoList;
     public static UserData currentUser;
     public static boolean isLoggedUser = false;
     private Button registerButton;
     private Button loginButton;
     private Button logoutButton;
+    private Button videoButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        videoList = new ArrayList<>();
 
-        userDataList = new ArrayList<>();
+        // Load the JSON from assets
+        String jsonString = JsonUtils.loadJSONFromAsset(this, "vidDB.json");
+
+        // Parse the JSON using Gson
+        Gson gson = new Gson();
+        Type videoListType = new TypeToken<List<Video>>() {}.getType();
+        videoList = gson.fromJson(jsonString, videoListType);
+        for (Video video : videoList) {
+            System.out.println(video.getDescription());
+        }
         currentUser = null;
         setContentView(R.layout.activity_main);
         // Start RegistrationActivity
         registerButton = findViewById(R.id.registerMe);
         loginButton = findViewById(R.id.LoginMe);
         logoutButton = findViewById(R.id.LogOutButton);
+        videoButton = findViewById(R.id.playVideoButton);
         loggedVisibilityLogic();
         // Set OnClickListener for registerButton
         registerButton.setOnClickListener(v -> {
             // This code will execute when registerButton is clicked
             // Start RegistrationActivity
             Intent intent = new Intent(MainActivity.this, RegistrationActivity.class);
-            //intent.putParcelableArrayListExtra("userDataList", new ArrayList<>(userDataList));
             startActivity(intent);
         });
+
         loginButton.setOnClickListener(v -> {
             // This code will execute when registerButton is clicked
             // Start RegistrationActivity
             Intent intent = new Intent(MainActivity.this, LoginActivityOri.class);
-            //intent.putParcelableArrayListExtra("userDataList", new ArrayList<>(userDataList));
             startActivity(intent);
 
         });
@@ -67,16 +85,16 @@ public class MainActivity extends AppCompatActivity {
             isLoggedUser = false;
             loggedVisibilityLogic();
         });
-// Find the TextView by its ID
-        //TextView myTextView = findViewById(R.id.myTextView);
-        //Log.d("aaa",userDataList.get(0).getChannelName());
-        // Modify the text
-        //myTextView.setText(userDataList.get(0).getChannelName());
-        //setContentView(R.layout.activity_main);
 
-        //intent.putExtra("userDataArray", userDataArray);
-        // Optional: Finish MainActivity if you don't want to keep it in the back stack
-        //finish();
+        videoButton.setOnClickListener(v -> {
+            // This code will execute when registerButton is clicked
+            // Start RegistrationActivity
+            Intent intent = new Intent(MainActivity.this, VideoActivity.class);
+            intent.putExtra("videoID",videoList.get(0).getVidID());
+            startActivity(intent);
+        });
+
+
     }
 
     @Override
@@ -102,7 +120,6 @@ public class MainActivity extends AppCompatActivity {
             logoutButton.setVisibility(View.GONE);
         }
     }
-
 
     @Override
     protected void onDestroy() {
