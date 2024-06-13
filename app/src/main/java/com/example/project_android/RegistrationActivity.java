@@ -30,6 +30,7 @@ public class RegistrationActivity extends AppCompatActivity {
     private Button registerButton;
 
     private Bitmap selectedProfilePicture;
+    private Uri imgURI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,10 +73,11 @@ public class RegistrationActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            Uri imageUri = data.getData();
+            imgURI = data.getData();
             try {
-                selectedProfilePicture = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                selectedProfilePicture = MediaStore.Images.Media.getBitmap(getContentResolver(), imgURI);
                 profilePictureImageView.setImageBitmap(selectedProfilePicture);
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -86,7 +88,7 @@ public class RegistrationActivity extends AppCompatActivity {
         return password.length() >= 8 && password.matches(".*\\D.*");
     }
     private void registerUser() {
-        Toast.makeText(this, "0000000", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "0000000", Toast.LENGTH_SHORT).show();
 
         String username = usernameEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
@@ -117,10 +119,10 @@ public class RegistrationActivity extends AppCompatActivity {
             return;
         }
 
-        UserData user = new UserData(username, password, channelName);
+        UserData user = new UserData(username, password, channelName,selectedProfilePicture);
+        user.setImageURI(imgURI);
         MainActivity.userDataList.add(user);
-        user.getImages().add(selectedProfilePicture);
-        Intent intent = new Intent(this, LoginActivity.class);
+        Intent intent = new Intent(this, LoginActivityOri.class);
         startActivity(intent);
         finish();
     }

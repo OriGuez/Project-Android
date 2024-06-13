@@ -1,7 +1,7 @@
 <!-- res/values/styles.xml -->
 <resources>
     <!-- Base application theme -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here -->
         <item name="colorPrimary">@color/viewtube_red</item>
         <item name="colorPrimaryDark">@color/viewtube_red</item>
@@ -13,5 +13,10 @@
     <style name="ViewtubeButton" parent="Widget.AppCompat.Button">
         <item name="android:background">@color/viewtube_red</item>
         <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="roundedImageView">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
     </style>
 </resources>
