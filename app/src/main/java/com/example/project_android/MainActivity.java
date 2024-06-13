@@ -1,14 +1,11 @@
 package com.example.project_android;
-import android.app.Activity;
-import android.os.Bundle;
+
 import android.content.Intent;
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import android.os.Bundle;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.EditText;
@@ -25,14 +22,13 @@ import android.widget.TextView;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 public class MainActivity extends AppCompatActivity {
+    public static UserData currentUser;
+    public static boolean isLoggedUser=false;
     public static List<UserData> userDataList;
     public static List<Video> videoList;
-    public static UserData currentUser;
-    public static boolean isLoggedUser = false;
+    private RecyclerView recyclerView;
     private Button registerButton;
     private Button loginButton;
     private Button logoutButton;
@@ -43,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         videoList = new ArrayList<>();
         userDataList = new ArrayList<>();
         // Load the JSON from assets
@@ -58,50 +55,60 @@ public class MainActivity extends AppCompatActivity {
         }
         currentUser = null;
         setContentView(R.layout.activity_main);
-        // Start RegistrationActivity
+
+        // Initialize views
         registerButton = findViewById(R.id.registerMe);
         loginButton = findViewById(R.id.LoginMe);
         logoutButton = findViewById(R.id.LogOutButton);
         videoButton = findViewById(R.id.playVideoButton);
+        // Load video data
+        videoList = loadVideoData();
+        // Set up RecyclerView
+        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 2)); // 2 columns in grid
+        VideoAdapter adapter = new VideoAdapter(this, videoList);
+        recyclerView.setAdapter(adapter);
         profilePic=findViewById(R.id.profilePic);
         loggedVisibilityLogic();
         // Set OnClickListener for registerButton
         registerButton.setOnClickListener(v -> {
-            // This code will execute when registerButton is clicked
-            // Start RegistrationActivity
             Intent intent = new Intent(MainActivity.this, RegistrationActivity.class);
             startActivity(intent);
         });
 
         loginButton.setOnClickListener(v -> {
-            // This code will execute when registerButton is clicked
-            // Start RegistrationActivity
             Intent intent = new Intent(MainActivity.this, LoginActivityOri.class);
             startActivity(intent);
-            //finish();
         });
+
         logoutButton.setOnClickListener(v -> {
+            // Handle logout logic
             isLoggedUser = false;
-            loggedVisibilityLogic();
+            currentUser = null;
         });
 
         videoButton.setOnClickListener(v -> {
-            // This code will execute when registerButton is clicked
-            // Start RegistrationActivity
             Intent intent = new Intent(MainActivity.this, VideoActivity.class);
-            intent.putExtra("videoID",videoList.get(0).getVidID());
-            startActivity(intent);
+            if (!videoList.isEmpty()) {
+                intent.putExtra("videoID", videoList.get(0).getVidID());
+                startActivity(intent);
+            }
         });
-
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        loggedVisibilityLogic();
-    }
+    // Method to load video data
+    private List<Video> loadVideoData() {
+        List<Video> videos = new ArrayList<>();
 
+        // Load the JSON from assets
+        String jsonString = JsonUtils.loadJSONFromAsset(this, "vidDB.json");
 
+        // Parse the JSON using Gson
+        Gson gson = new Gson();
+        Type videoListType = new TypeToken<List<Video>>() {}.getType();
+        videos = gson.fromJson(jsonString, videoListType);
+
+        return videos;
     private void loggedVisibilityLogic(){
         // Check if the user is logged in and adjust visibility of buttons
         if (isLoggedUser) {

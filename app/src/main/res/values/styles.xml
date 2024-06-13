@@ -1,17 +1,17 @@
-<!-- res/values/styles.xml -->
 <resources>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
     <!-- Base application theme -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+<!--     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar"> -->
         <!-- Customize your theme here -->
         <item name="colorPrimary">@color/viewtube_red</item>
-        <item name="colorPrimaryDark">@color/viewtube_red</item>
-        <item name="colorAccent">@color/viewtube_red</item>
+
+<!--<item name="colorPrimaryDark">#0099FF</item>-->
+        <item name="colorAccent">#0099FF</item>
         <item name="buttonStyle">@style/ViewtubeButton</item>
     </style>
 
-    <!-- Custom button style -->
     <style name="ViewtubeButton" parent="Widget.AppCompat.Button">
-        <item name="android:background">@color/viewtube_red</item>
+        <item name="android:background">#0099FF</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
 

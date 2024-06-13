@@ -5,7 +5,7 @@
     "publisher": "NatGeo",
     "vidID": "1",
     "url": "/videos/vid1.mp4",
-    "thumbnailUrl": "/thumbnails/thumbnail1.jpg",
+    "thumbnailUrl": "1",
     "upload_date":"2024-01-11",
     "whoLikedList":[],
     "comments": [
@@ -32,7 +32,7 @@
     "publisher": "CookingChannel",
     "vidID": "2",
     "url": "/videos/vid2.mp4",
-    "thumbnailUrl": "/thumbnails/thumbnail2.png",
+    "thumbnailUrl": "2",
     "upload_date":"2024-01-11",
     "whoLikedList":[],
     "comments": [
@@ -59,7 +59,7 @@
     "publisher": "EnergyTalk",
     "vidID": "3",
     "url": "/videos/vid3.mp4",
-    "thumbnailUrl": "/thumbnails/thumbnail3.jpg",
+    "thumbnailUrl": "3",
     "upload_date":"2024-01-11",
     "whoLikedList":[],
     "comments": [
@@ -86,7 +86,7 @@
     "publisher": "HistoryChannel",
     "vidID": "4",
     "url": "/videos/vid4.mp4",
-    "thumbnailUrl": "/thumbnails/thumbnail4.jpg",
+    "thumbnailUrl": "4",
     "upload_date":"2024-01-11",
     "whoLikedList":[],
     "comments": [
@@ -113,7 +113,7 @@
     "publisher": "NASAHub",
     "vidID": "5",
     "url": "/videos/vid5.mp4",
-    "thumbnailUrl": "/thumbnails/thumbnail5.png",
+    "thumbnailUrl": "5",
     "upload_date":"2024-04-04",
     "whoLikedList":[],
     "comments": [
@@ -140,7 +140,7 @@
     "publisher": "PsychologyInsights",
     "vidID": "6",
     "url": "/videos/vid6.mp4",
-    "thumbnailUrl": "/thumbnails/thumbnail6.png",
+    "thumbnailUrl": "6",
     "upload_date":"2024-01-11",
     "whoLikedList":[],
     "comments": [
@@ -167,7 +167,7 @@
     "publisher": "PhotoGuru",
     "vidID": "7",
     "url": "/videos/vid7.mp4",
-    "thumbnailUrl": "/thumbnails/thumbnail7.jpg",
+    "thumbnailUrl": "7",
     "upload_date":"2024-01-11",
     "whoLikedList":[],
     "comments": [
@@ -194,7 +194,7 @@
     "publisher": "CommunicationSkills",
     "vidID": "8",
     "url": "/videos/vid8.mp4",
-    "thumbnailUrl": "/thumbnails/thumbnail8.jpg",
+    "thumbnailUrl": "8",
     "upload_date":"2024-01-11",
     "whoLikedList":[],
     "comments": [
@@ -221,7 +221,7 @@
     "publisher": "Euroleague",
     "vidID": "9",
     "url": "/videos/vid9.mp4",
-    "thumbnailUrl": "/thumbnails/thumbnail9.jpg",
+    "thumbnailUrl": "9",
     "upload_date":"2024-01-11",
     "whoLikedList":[],
     "comments": [
@@ -243,7 +243,7 @@
     "publisher": "UEFA",
     "vidID": "10",
     "url": "/videos/vid10.mp4",
-    "thumbnailUrl": "/thumbnails/thumbnail10.png",
+    "thumbnailUrl": "10",
     "upload_date":"2024-01-11",
     "whoLikedList":[],
     "comments": [
