@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Project-Android</string>
+    <string name="app_name">ViewTube</string>
     <string name="username_hint">Username</string>
     <string name="password_hint">Password</string>
     <string name="confirm_password_hint">Confirm Password</string>

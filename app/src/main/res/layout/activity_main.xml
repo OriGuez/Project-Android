@@ -1,39 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/LogOutButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="16dp"
-        android:text="@string/logOut"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.95"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.018" />
-
-    <TextView
-        android:id="@+id/usernameTextView"
-        android:layout_width="297dp"
-        android:layout_height="83dp"
-        android:layout_margin="16dp"
-        android:text=""
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.099" />
-
+    <!-- Register Button -->
     <Button
         android:id="@+id/registerMe"
         android:layout_width="wrap_content"
@@ -41,13 +14,9 @@
         android:layout_centerHorizontal="true"
         android:layout_margin="16dp"
         android:text="@string/register_button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5" />
+        android:layout_above="@id/LoginMe" />
 
+    <!-- Login Button -->
     <Button
         android:id="@+id/LoginMe"
         android:layout_width="wrap_content"
@@ -55,20 +24,48 @@
         android:layout_centerHorizontal="true"
         android:layout_margin="16dp"
         android:text="@string/login"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.263" />
+        android:layout_above="@id/playVideoButton" />
 
+    <!-- Logout Button -->
+    <Button
+        android:id="@+id/LogOutButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="16dp"
+        android:text="@string/logOut"
+        android:layout_alignParentBottom="true" />
+
+    <!-- Username TextView -->
+    <TextView
+        android:id="@+id/usernameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text=""
+        android:textSize="18sp"
+        android:layout_above="@id/registerMe"
+        android:layout_centerHorizontal="true" />
+
+    <!-- Play Video Button -->
     <Button
         android:id="@+id/playVideoButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="vid"
-        tools:layout_editor_absoluteX="160dp"
-        tools:layout_editor_absoluteY="584dp"
-        tools:ignore="MissingConstraints" />
+        android:text="Play Video"
+        android:layout_above="@id/LogOutButton"
+        android:layout_centerHorizontal="true" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- RecyclerView for Video Grid -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:clipToPadding="false"
+        android:layout_below="@id/usernameTextView" />
+
+</RelativeLayout>
