@@ -92,6 +92,12 @@ public class Video {
         private String publisher;
         private String text;
 
+        public Comment(String id, String publisher, String text) {
+            this.id = id;
+            this.publisher = publisher;
+            this.text = text;
+        }
+
         // Add getters and setters
         public String getId() {
             return id;

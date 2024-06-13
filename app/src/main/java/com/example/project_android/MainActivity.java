@@ -14,19 +14,14 @@ import android.text.TextWatcher;
 import android.widget.EditText;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.textfield.TextInputLayout;
-
-// public class MainActivity extends Activity {
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Debug;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
-
-import org.json.JSONObject;
-
-import java.io.Console;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,12 +37,14 @@ public class MainActivity extends AppCompatActivity {
     private Button loginButton;
     private Button logoutButton;
     private Button videoButton;
+    private ImageView profilePic; // Added ImageView
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         videoList = new ArrayList<>();
-
+        userDataList = new ArrayList<>();
         // Load the JSON from assets
         String jsonString = JsonUtils.loadJSONFromAsset(this, "vidDB.json");
 
@@ -55,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         Gson gson = new Gson();
         Type videoListType = new TypeToken<List<Video>>() {}.getType();
         videoList = gson.fromJson(jsonString, videoListType);
+        assert videoList != null;
         for (Video video : videoList) {
             System.out.println(video.getDescription());
         }
@@ -65,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.LoginMe);
         logoutButton = findViewById(R.id.LogOutButton);
         videoButton = findViewById(R.id.playVideoButton);
+        profilePic=findViewById(R.id.profilePic);
         loggedVisibilityLogic();
         // Set OnClickListener for registerButton
         registerButton.setOnClickListener(v -> {
@@ -79,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
             // Start RegistrationActivity
             Intent intent = new Intent(MainActivity.this, LoginActivityOri.class);
             startActivity(intent);
-
+            //finish();
         });
         logoutButton.setOnClickListener(v -> {
             isLoggedUser = false;
@@ -93,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("videoID",videoList.get(0).getVidID());
             startActivity(intent);
         });
-
 
     }
 
@@ -113,6 +111,8 @@ public class MainActivity extends AppCompatActivity {
             if (currentUser != null) {
                 TextView userTextView = findViewById(R.id.usernameTextView);
                 userTextView.setText("welcome, " + currentUser.getUsername());
+
+                profilePic.setImageBitmap(currentUser.getImage());
             }
         } else {
             registerButton.setVisibility(View.VISIBLE);
@@ -130,11 +130,8 @@ public class MainActivity extends AppCompatActivity {
                 sessionData.setUsername(null);
                 sessionData.setPassword(null);
                 sessionData.setChannelName(null);
-                if (sessionData.getImages() != null) {
-                    sessionData.getImages().clear();
-                }
-                if (sessionData.getVideos() != null) {
-                    sessionData.getVideos().clear();
+                if (sessionData.getImage() != null) {
+                    sessionData.setImage(null);
                 }
             }
             userDataList.clear();

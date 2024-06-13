@@ -7,8 +7,7 @@
     <VideoView
         android:id="@+id/videoView"
         android:layout_width="match_parent"
-        android:layout_height="240dp"
-        android:layout_gravity="center"
+        android:layout_height="105dp"
         android:adjustViewBounds="true"
         android:padding="8dp" />
 
@@ -19,7 +18,7 @@
         android:textSize="18sp"
         android:textStyle="bold"
         android:padding="16dp"
-        android:text="Title" />
+        android:text="@string/title" />
 
     <TextView
         android:id="@+id/descriptionTextView"
@@ -27,7 +26,15 @@
         android:layout_height="wrap_content"
         android:textSize="16sp"
         android:padding="16dp"
-        android:text="Description" />
+        android:text="@string/description" />
+
+    <TextView
+        android:id="@+id/dateTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:padding="16dp"
+        android:text="@string/date" />
 
     <TextView
         android:id="@+id/publisherTextView"
@@ -35,7 +42,7 @@
         android:layout_height="wrap_content"
         android:textSize="16sp"
         android:padding="16dp"
-        android:text="Publisher" />
+        android:text="@string/publisher" />
 
     <!-- Comments Section -->
     <TextView
@@ -45,11 +52,25 @@
         android:textSize="18sp"
         android:textStyle="bold"
         android:padding="16dp"
-        android:text="Comments" />
+        android:text="@string/comments" />
 
     <ListView
         android:id="@+id/commentsListView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="229dp" />
+    <EditText
+        android:id="@+id/commentAddText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/add_a_comment"
+        android:inputType="textMultiLine"
+        android:padding="16dp" />
+
+    <Button
+        android:id="@+id/addCommentButton"
+        android:layout_width="347dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="@string/add_comment" />
 
 </LinearLayout>
