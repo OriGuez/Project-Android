@@ -17,6 +17,7 @@
             android:exported="false" />
         <activity
             android:name=".VideoActivity"
+            android:configChanges="orientation|screenSize"
             android:exported="false" />
         <activity
             android:name=".LoginActivityOri"
