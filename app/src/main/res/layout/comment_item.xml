@@ -7,12 +7,13 @@
     android:padding="8dp">
 
     <com.google.android.material.imageview.ShapeableImageView
-        android:layout_width="50sp"
-        android:layout_height="50sp"
         android:id="@+id/commentProfilePic"
-        app:shapeAppearanceOverlay="@style/roundedImageView"
+        android:layout_width="40sp"
+        android:layout_height="40sp"
         android:layout_centerInParent="true"
         android:scaleType="centerCrop"
+        android:src="@drawable/ic_def_user"
+        app:shapeAppearanceOverlay="@style/roundedImageView"
         tools:ignore="MissingConstraints" />
 
     <LinearLayout
@@ -33,6 +34,38 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Comment content" />
+
+        <EditText
+            android:id="@+id/editCommentEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:padding="4dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/EditCommentButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/edit" />
+
+            <Button
+                android:id="@+id/SaveCommentButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/save"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/DeleteCommentButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/delete" />
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

@@ -1,76 +1,142 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <VideoView
-        android:id="@+id/videoView"
+    <!-- Video Player Section -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="105dp"
-        android:adjustViewBounds="true"
-        android:padding="8dp" />
+        android:layout_height="218dp"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/titleTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:padding="16dp"
-        android:text="@string/title" />
+        <VideoView
+            android:id="@+id/videoView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true" />
+    </LinearLayout>
 
-    <TextView
-        android:id="@+id/descriptionTextView"
+    <!-- Scrollable Content Section -->
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:padding="16dp"
-        android:text="@string/description" />
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
-    <TextView
-        android:id="@+id/dateTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:padding="16dp"
-        android:text="@string/date" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/publisherTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:padding="16dp"
-        android:text="@string/publisher" />
+            <!-- Title TextView -->
+            <TextView
+                android:id="@+id/titleTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="@string/title"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
-    <!-- Comments Section -->
-    <TextView
-        android:id="@+id/commentsTitleTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:padding="16dp"
-        android:text="@string/comments" />
+            <!-- Description TextView -->
+            <TextView
+                android:id="@+id/descriptionTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="@string/description"
+                android:textSize="16sp" />
 
-    <ListView
-        android:id="@+id/commentsListView"
-        android:layout_width="match_parent"
-        android:layout_height="229dp" />
-    <EditText
-        android:id="@+id/commentAddText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/add_a_comment"
-        android:inputType="textMultiLine"
-        android:padding="16dp" />
+            <!-- Date TextView -->
+            <TextView
+                android:id="@+id/dateTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="@string/date"
+                android:textSize="16sp" />
 
-    <Button
-        android:id="@+id/addCommentButton"
-        android:layout_width="347dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="@string/add_comment" />
+            <!-- Share and Like Buttons -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/shareButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:srcCompat="?attr/actionModeShareDrawable" />
+
+                <ImageButton
+                    android:id="@+id/deleteVideoButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    app:srcCompat="@drawable/removevid" />
+
+                <ImageButton
+                    android:id="@+id/likeButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    app:srcCompat="@drawable/like" />
+
+                <TextView
+                    android:id="@+id/likeText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="@string/like" />
+            </LinearLayout>
+
+            <!-- Publisher TextView -->
+            <TextView
+                android:id="@+id/publisherTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="@string/publisher"
+                android:textSize="16sp" />
+
+            <!-- Comments Title TextView -->
+            <TextView
+                android:id="@+id/commentsTitleTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="@string/comments"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <!-- Comments ListView -->
+            <ListView
+                android:id="@+id/commentsListView"
+                android:layout_width="match_parent"
+                android:layout_height="229dp" />
+
+            <!-- Add Comment EditText -->
+            <EditText
+                android:id="@+id/commentAddText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/add_a_comment"
+                android:inputType="textMultiLine"
+                android:padding="16dp" />
+
+            <!-- Add Comment Button -->
+            <Button
+                android:id="@+id/addCommentButton"
+                android:layout_width="347dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="@string/add_comment" />
+
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

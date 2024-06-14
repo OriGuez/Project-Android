@@ -1,95 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <!-- Register Button -->
-    <Button
-        android:id="@+id/registerMe"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <!-- Profile Picture -->
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/profilePic"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_centerHorizontal="true"
-        android:layout_margin="16dp"
-        android:text="@string/register_button"
-        android:layout_above="@id/LoginMe" />
-
-    <!-- Login Button -->
-    <Button
-        android:id="@+id/LoginMe"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="16dp"
-        android:text="@string/login"
-        android:layout_above="@id/playVideoButton" />
-
-    <!-- Logout Button -->
-    <Button
-        android:id="@+id/LogOutButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="16dp"
-        android:text="@string/logOut"
-        android:layout_alignParentBottom="true" />
+        android:layout_marginTop="32dp"
+        android:scaleType="centerCrop"
+        app:shapeAppearanceOverlay="@style/roundedImageView"
+        tools:srcCompat="@tools:sample/avatars" />
 
     <!-- Username TextView -->
     <TextView
         android:id="@+id/usernameTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_below="@id/profilePic"
+        android:layout_marginTop="8dp"
+        android:layout_centerHorizontal="true"
         android:text=""
-        android:textSize="18sp"
-        android:layout_above="@id/registerMe"
-        android:layout_centerHorizontal="true" />
+        android:textSize="18sp" />
+
+    <!-- Register Button -->
+    <Button
+        android:id="@+id/registerMe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/usernameTextView"
+        android:layout_marginTop="16dp"
+        android:layout_centerHorizontal="true"
+        android:text="@string/register_button" />
+
+    <!-- Login Button -->
+    <Button
+        android:id="@+id/LoginMe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/registerMe"
+        android:layout_marginTop="16dp"
+        android:layout_centerHorizontal="true"
+        android:text="@string/login" />
 
     <!-- Play Video Button -->
     <Button
         android:id="@+id/playVideoButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Play Video"
-        android:layout_above="@id/LogOutButton"
-        android:layout_centerHorizontal="true" />
+        android:layout_below="@id/LoginMe"
+        android:layout_marginTop="16dp"
+        android:layout_centerHorizontal="true"
+        android:text="Play Video" />
+
+    <!-- Logout Button -->
+    <Button
+        android:id="@+id/LogOutButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
+        android:text="@string/logOut" />
 
     <!-- RecyclerView for Video Grid -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_margin="16dp"
+        android:layout_above="@id/LogOutButton"
+        android:layout_below="@id/playVideoButton"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:clipToPadding="false"
-        android:layout_below="@id/usernameTextView" />
+        android:clipToPadding="false" />
 
 </RelativeLayout>
-    <ImageView
-        android:id="@+id/profilePic000"
-        android:layout_width="wrap_content"
-        android:layout_height="128dp"
-        android:layout_marginStart="141dp"
-        android:layout_marginTop="67dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.301"
-        tools:srcCompat="@tools:sample/avatars" />
-
-    <com.google.android.material.imageview.ShapeableImageView
-        android:layout_width="100sp"
-        android:layout_height="100sp"
-        android:id="@+id/profilePic"
-        app:shapeAppearanceOverlay="@style/roundedImageView"
-        android:layout_centerInParent="true"
-        android:scaleType="centerCrop"
-        tools:ignore="MissingConstraints" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
