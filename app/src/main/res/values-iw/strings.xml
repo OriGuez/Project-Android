@@ -30,7 +30,14 @@
     <string name="like">אהבתי</string>
     <string name="liked">נאהב</string>
     <string name="share_via">שתף דרך</string>
-    <string name="yes">Yes</string>
-    <string name="no">No</string>
-
+    <string name="yes">כן</string>
+    <string name="no">לא</string>
+    <string name="delete_video">מחק סרטון</string>
+    <string name="sure_delete_video">האם אתה בטוח שברצונך למחוק את הסרטון?</string>
+    <string name="publisher_name">Publisher Name</string>
+    <string name="comment_content">Comment content</string>
+    <string name="edit_title">Edit Title</string>
+    <string name="edit_description">Edit Description</string>
+    <string name="save_changes">Save</string>
+    <string name="cancel_edit">Cancel</string>
 </resources>

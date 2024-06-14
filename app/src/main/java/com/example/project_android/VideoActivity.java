@@ -1,9 +1,13 @@
 package com.example.project_android;
 
+import static java.lang.Integer.MAX_VALUE;
+
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.media.Image;
+
+import java.util.Random;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -24,12 +28,8 @@ import java.util.List;
 
 import android.widget.MediaController;
 
-import androidx.activity.EdgeToEdge;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-
 public class VideoActivity extends AppCompatActivity {
+
     private CommentAdapter adapter;
 
     private VideoView videoView;
@@ -44,7 +44,11 @@ public class VideoActivity extends AppCompatActivity {
     private TextView likeText;
     private ImageButton shareButton;
     private ImageButton deleteVideoButton;
-
+    private ImageButton editVideoButton;
+    private EditText editTitleEditText;
+    private EditText editDescriptionEditText;
+    private Button saveButton;
+    private boolean isEditMode = false;
 
     private Video currentVideo;
     AssetManager assetManager;
@@ -80,25 +84,35 @@ public class VideoActivity extends AppCompatActivity {
         likeText = findViewById(R.id.likeText);
         shareButton = findViewById(R.id.shareButton);
         deleteVideoButton = findViewById(R.id.deleteVideoButton);
+        editVideoButton = findViewById(R.id.editVideoButton);
+        editTitleEditText = findViewById(R.id.editTitleEditText);
+        editDescriptionEditText = findViewById(R.id.editDescriptionEditText);
+        saveButton = findViewById(R.id.saveEditVidButton);
+        editTitleEditText.setVisibility(View.GONE);
+        editDescriptionEditText.setVisibility(View.GONE);
+        saveButton.setVisibility(View.GONE);
+        //
         if (MainActivity.currentUser == null) {
             addComment.setVisibility(View.GONE);
             commentAddText.setVisibility(View.GONE);
             likeButton.setVisibility(View.GONE);
             likeText.setVisibility(View.GONE);
+            deleteVideoButton.setVisibility(View.GONE);
+            editVideoButton.setVisibility(View.GONE);
         } else {
+            //if user is logged update the Like button
             UpdateLikeButton(likeButton, likeText);
         }
         addComment.setOnClickListener(v -> {
             String commentText = commentAddText.getText().toString().trim();
             if (!commentText.isEmpty()) {
-                // Create a new comment object (assuming Video.Comment has appropriate constructor)
-                Video.Comment newComment = new Video.Comment(commentText, "User", "Now");
                 if (MainActivity.currentUser != null) {
+                    Random random = new Random();
+                    String newCommentID = Integer.toString(random.nextInt(MAX_VALUE));
                     // Create a new comment object (assuming Video.Comment has appropriate constructor)
-                    currentVideo.getComments().add(new Video.Comment("User", MainActivity.currentUser.getUsername(), commentText));
+                    currentVideo.getComments().add(new Video.Comment(newCommentID, MainActivity.currentUser.getUsername(), commentText));
                 } else {
-                    currentVideo.getComments().add(new Video.Comment("User", "Anon", commentText));
-
+                    currentVideo.getComments().add(new Video.Comment("Anon", "Anon", commentText));
                 }
                 // Notify the adapter that the data set has changed
                 adapter.notifyDataSetChanged();
@@ -136,10 +150,22 @@ public class VideoActivity extends AppCompatActivity {
         });
         deleteVideoButton.setOnClickListener(v -> {
             showDeleteConfirmationDialog();
-
         });
+        editVideoButton.setOnClickListener(v -> {
+            if (!isEditMode) {
+                // Enter edit mode
+                enterEditMode();
+            }
+        });
+        saveButton.setOnClickListener(v -> {
+            // Save changes and exit edit mode
+            saveChanges();
+            exitEditMode();
+        });
+        int resID = getResources().getIdentifier("vid" + videoID, "raw", getPackageName());
+
         // Set up video playback
-        Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.vid6);
+        Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + resID);
         videoView.setVideoURI(videoUri);
         // Add media controller for video controls
         MediaController mediaController = new MediaController(this);
@@ -157,10 +183,11 @@ public class VideoActivity extends AppCompatActivity {
         adapter = new CommentAdapter(this, comments);
         commentsListView.setAdapter(adapter);
     }
+
     private void showDeleteConfirmationDialog() {
-        new AlertDialog.Builder(this,R.style.MyDialogTheme)
-                .setTitle("Delete Video")
-                .setMessage("Are you sure you want to delete this video?")
+        new AlertDialog.Builder(this, R.style.MyDialogTheme)
+                .setTitle(R.string.delete_video)
+                .setMessage(R.string.sure_delete_video)
                 .setPositiveButton(R.string.yes, (dialog, which) -> {
                     // Perform delete operation here
                     deleteCurrentVideo();
@@ -188,4 +215,45 @@ public class VideoActivity extends AppCompatActivity {
         likeButton.setImageDrawable(getResources().getDrawable(R.drawable.like));
         isLiked.setText(R.string.like);
     }
+
+    private void enterEditMode() {
+        // Show edit fields and save button
+        editTitleEditText.setVisibility(View.VISIBLE);
+        editDescriptionEditText.setVisibility(View.VISIBLE);
+        saveButton.setVisibility(View.VISIBLE);
+        // Hide non-editable fields
+        titleTextView.setVisibility(View.GONE);
+        descriptionTextView.setVisibility(View.GONE);
+        // Populate edit fields with current video details
+        editTitleEditText.setText(currentVideo.getTitle());
+        editDescriptionEditText.setText(currentVideo.getDescription());
+        // Change edit button text to "Cancel"
+        editVideoButton.setVisibility(View.GONE);
+        // Set edit mode flag
+        isEditMode = true;
+    }
+
+    private void exitEditMode() {
+        // Hide edit fields and save button
+        editTitleEditText.setVisibility(View.GONE);
+        editDescriptionEditText.setVisibility(View.GONE);
+        saveButton.setVisibility(View.GONE);
+        // Show non-editable fields
+        titleTextView.setVisibility(View.VISIBLE);
+        descriptionTextView.setVisibility(View.VISIBLE);
+        // Change edit button text back to "Edit"
+        editVideoButton.setVisibility(View.VISIBLE);
+        // Reset edit mode flag
+        isEditMode = false;
+    }
+
+    private void saveChanges() {
+        // Save changes to currentVideo object
+        currentVideo.setTitle(editTitleEditText.getText().toString());
+        currentVideo.setDescription(editDescriptionEditText.getText().toString());
+        // Update UI with new details
+        titleTextView.setText(currentVideo.getTitle());
+        descriptionTextView.setText(currentVideo.getDescription());
+    }
+
 }

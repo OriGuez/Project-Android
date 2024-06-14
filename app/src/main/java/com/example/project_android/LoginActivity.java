@@ -49,7 +49,6 @@ public class LoginActivity extends AppCompatActivity {
         if (MainActivity.userDataList != null) {
             for (UserData user : MainActivity.userDataList) {
                 if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
-                    MainActivity.isLoggedUser = true;
                     MainActivity.currentUser = user;
                     Log.d("flag t", "flag trueloggedUser");
                     return true;
