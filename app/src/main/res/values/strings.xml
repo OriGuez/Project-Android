@@ -23,4 +23,14 @@
     <string name="date">Date</string>
     <string name="description">Description</string>
     <string name="title">Title</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="save">Save</string>
+    <string name="like">Like</string>
+    <string name="liked">Liked</string>
+    <string name="share_via">Share Via</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+
 </resources>

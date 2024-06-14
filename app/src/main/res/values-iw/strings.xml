@@ -17,11 +17,20 @@
     <string name="upload_thumbnail">העלה תמונת נושא לסרטון</string>
     <string name="video_description">תיאור הסרטון</string>
     <string name="videotitle">כותרת הסרטון</string>
-    <string name="add_comment">Add Comment</string>
-    <string name="add_a_comment">Add a comment...</string>
-    <string name="comments">Comments</string>
-    <string name="publisher">Publisher</string>
-    <string name="date">Date</string>
-    <string name="description">Description</string>
-    <string name="title">Title</string>
+    <string name="add_comment">הוסף תגובה</string>
+    <string name="add_a_comment">הוסף תגובה...</string>
+    <string name="comments">תגובות</string>
+    <string name="publisher">הועלה על ידי</string>
+    <string name="date">תאריך</string>
+    <string name="description">תיאור</string>
+    <string name="title">כותרת</string>
+    <string name="delete">מחק</string>
+    <string name="edit">ערוך</string>
+    <string name="save">שמור</string>
+    <string name="like">אהבתי</string>
+    <string name="liked">נאהב</string>
+    <string name="share_via">שתף דרך</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
 </resources>

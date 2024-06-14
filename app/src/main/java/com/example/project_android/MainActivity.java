@@ -25,6 +25,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     public static UserData currentUser;
+    VideoAdapter adapter;
     public static boolean isLoggedUser=false;
     public static List<UserData> userDataList;
     public static List<Video> videoList;
@@ -66,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         // Set up RecyclerView
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2)); // 2 columns in grid
-        VideoAdapter adapter = new VideoAdapter(this, videoList);
+        adapter = new VideoAdapter(this, videoList);
         recyclerView.setAdapter(adapter);
         profilePic=findViewById(R.id.profilePic);
         loggedVisibilityLogic();
@@ -95,6 +96,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (adapter !=null)
+            adapter.notifyDataSetChanged();
+    }
 
     // Method to load video data
     private List<Video> loadVideoData() {
@@ -105,11 +112,12 @@ public class MainActivity extends AppCompatActivity {
 
         // Parse the JSON using Gson
         Gson gson = new Gson();
-        Type videoListType = new TypeToken<List<Video>>() {}.getType();
+        Type videoListType = new TypeToken<List<Video>>() {
+        }.getType();
         videos = gson.fromJson(jsonString, videoListType);
-
         return videos;
-    private void loggedVisibilityLogic(){
+    }
+    private void loggedVisibilityLogic() {
         // Check if the user is logged in and adjust visibility of buttons
         if (isLoggedUser) {
             registerButton.setVisibility(View.GONE);
@@ -127,7 +135,6 @@ public class MainActivity extends AppCompatActivity {
             logoutButton.setVisibility(View.GONE);
         }
     }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();

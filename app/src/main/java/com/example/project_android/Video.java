@@ -126,5 +126,18 @@ public class Video {
         public String toString() {
             return publisher + ": " + text;
         }
+
+    }
+    public int RemoveComment(String commentID)
+    {
+        if (commentID==null || this.comments == null)
+            return 0;
+        for (Comment comment :this.comments)
+        {
+            if (comment.getId().equals(commentID))
+                this.comments.remove(comment);
+            return 1;
+        }
+        return 0;
     }
 }
