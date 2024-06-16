@@ -1,19 +1,17 @@
 package com.example.project_android;
-
 import static java.lang.Integer.MAX_VALUE;
-
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.media.Image;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Random;
-
 import androidx.appcompat.app.AlertDialog;
-
+import android.app.AlertDialog;
+import android.content.Intent;
+import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,22 +22,20 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.VideoView;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.List;
-
+import android.widget.MediaController;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.widget.MediaController;
 
 public class VideoActivity extends AppCompatActivity {
 
     //private CommentAdapter adapter;
     private CommentRecyclerViewAdapter adapter;
-
     private RecyclerView commentsRecyclerView;
-
+    private VideoAdapter videoAdapter;
     private VideoView videoView;
     private TextView titleTextView;
     private TextView dateTextView;
@@ -57,28 +53,31 @@ public class VideoActivity extends AppCompatActivity {
     private EditText editDescriptionEditText;
     private Button saveButton;
     private boolean isEditMode = false;
-
+    private RecyclerView videoRecyclerView;
     private Video currentVideo;
     AssetManager assetManager;
+
+
+    private static final String TAG = "VideoActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         assetManager = getAssets();
+
         // Retrieve the ID from the intent's extras
         String videoID = getIntent().getStringExtra("videoID");
-        //EdgeToEdge.enable(this);
+        Log.d(TAG, "Received videoID: " + videoID);
+
         for (Video video : MainActivity.videoList) {
-            // Check if the video's ID matches the target ID
             if (video.getVidID().equals(videoID)) {
-                // Found the video, you can now work with it
-                // For example, you can store it in a variable or perform any action you need
                 currentVideo = video;
-                // If you want to stop searching after finding the first match, you can break out of the loop
                 break;
             }
         }
+
         setContentView(R.layout.activity_video);
+
         // Initialize views
         videoView = findViewById(R.id.videoView);
         titleTextView = findViewById(R.id.titleTextView);
@@ -105,7 +104,8 @@ public class VideoActivity extends AppCompatActivity {
         editTitleEditText.setVisibility(View.GONE);
         editDescriptionEditText.setVisibility(View.GONE);
         saveButton.setVisibility(View.GONE);
-        //
+       
+        videoRecyclerView = findViewById(R.id.recyclerView);
         if (MainActivity.currentUser == null) {
             addComment.setVisibility(View.GONE);
             commentAddText.setVisibility(View.GONE);
@@ -117,6 +117,7 @@ public class VideoActivity extends AppCompatActivity {
             //if user is logged update the Like button
             UpdateLikeButton(likeButton, likeText);
         }
+
         addComment.setOnClickListener(v -> {
             String commentText = commentAddText.getText().toString().trim();
             if (!commentText.isEmpty()) {
@@ -125,15 +126,12 @@ public class VideoActivity extends AppCompatActivity {
                     String newCommentID = Integer.toString(random.nextInt(MAX_VALUE));
                     // Create a new comment object (assuming Video.Comment has appropriate constructor)
                     currentVideo.getComments().add(new Video.Comment(newCommentID, MainActivity.currentUser.getUsername(), commentText));
-                } else {
-                    //currentVideo.getComments().add(new Video.Comment("Anon", "Anon", commentText));
                 }
-                // Notify the adapter that the data set has changed
                 adapter.notifyDataSetChanged();
-                // Clear the EditText
                 commentAddText.getText().clear();
             }
         });
+
         likeButton.setOnClickListener(v -> {
             boolean isFound = false;
             for (String user : currentVideo.getWhoLikedList()) {
@@ -151,6 +149,7 @@ public class VideoActivity extends AppCompatActivity {
                 likeText.setText(R.string.liked);
             }
         });
+
         shareButton.setOnClickListener(v -> {
             String textToShare = currentVideo.getUrl();
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
@@ -162,6 +161,7 @@ public class VideoActivity extends AppCompatActivity {
                 startActivity(chooser);
             }
         });
+
         deleteVideoButton.setOnClickListener(v -> {
             showDeleteConfirmationDialog();
         });
@@ -182,34 +182,34 @@ public class VideoActivity extends AppCompatActivity {
         Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + resID);
         videoView.setVideoURI(videoUri);
         Log.d("AddVideoActivity", "Received URI: " + videoUri.toString());
-
-//         ContentResolver contentResolver = getContentResolver();
-//        try (InputStream inputStream = contentResolver.openInputStream(MainActivity.publicURI)) {
-//            if (inputStream != null) {
-//                Log.d("NewActivity", "Video URI is accessible");
-//            } else {
-//                Log.e("NewActivity", "Failed to access video URI");
-//            }
-//        } catch (IOException e) {
-//            Log.e("NewActivity", "Error accessing video URI", e);
-//        }
-        // Add media controller for video controls
         MediaController mediaController = new MediaController(this);
         mediaController.setAnchorView(videoView);
         videoView.setMediaController(mediaController);
         // Start the video
 
+
+        // Set up video playback
+//         Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + getRawResourceIdByName(currentVideo.getUrl()));
+//         videoView.setVideoURI(videoUri);
+//         MediaController mediaController = new MediaController(this);
+//         mediaController.setAnchorView(videoView);
+//         videoView.setMediaController(mediaController);
         videoView.start();
+
         // Set video details
         titleTextView.setText(currentVideo.getTitle());
         descriptionTextView.setText(currentVideo.getDescription());
         dateTextView.setText(currentVideo.getUpload_date());
         publisherTextView.setText(currentVideo.getPublisher());
+
         // Set up comments list
         //List<Video.Comment> comments = currentVideo.getComments();
         adapter = new CommentRecyclerViewAdapter(this, currentVideo.getComments());
         commentsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         commentsRecyclerView.setAdapter(adapter);
+          videoRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
+        videoAdapter = new VideoAdapter(this, MainActivity.videoList, "Video");
+        videoRecyclerView.setAdapter(videoAdapter);
     }
 
     private void showDeleteConfirmationDialog() {
@@ -217,7 +217,6 @@ public class VideoActivity extends AppCompatActivity {
                 .setTitle(R.string.delete_video)
                 .setMessage(R.string.sure_delete_video)
                 .setPositiveButton(R.string.yes, (dialog, which) -> {
-                    // Perform delete operation here
                     deleteCurrentVideo();
                 })
                 .setNegativeButton(R.string.no, null)
@@ -226,13 +225,11 @@ public class VideoActivity extends AppCompatActivity {
     }
 
     private void deleteCurrentVideo() {
-        // Implement your delete logic here
-        // For example, remove the video from the list and finish the activity
         MainActivity.videoList.remove(currentVideo);
-        finish(); // Close the activity after deletion
+        finish();
     }
 
-    void UpdateLikeButton(ImageButton likeButton, TextView isLiked) {
+    private void updateLikeButton(ImageButton likeButton, TextView isLiked) {
         for (String user : currentVideo.getWhoLikedList()) {
             if (user.equals(MainActivity.currentUser.getUsername())) {
                 likeButton.setImageDrawable(getResources().getDrawable(R.drawable.likebuttonpressed));
@@ -284,4 +281,9 @@ public class VideoActivity extends AppCompatActivity {
         descriptionTextView.setText(currentVideo.getDescription());
     }
 
+    private int getRawResourceIdByName(String resourceName) {
+        // Ensure the resource name is correctly formatted
+        String formattedResourceName = resourceName.replace("/videos/", "").replace(".mp4", "");
+        return getResources().getIdentifier(formattedResourceName, "raw", getPackageName());
+    }
 }

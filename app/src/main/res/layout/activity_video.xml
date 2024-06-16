@@ -182,6 +182,14 @@
                 android:hint="@string/add_a_comment"
                 android:inputType="textMultiLine"
                 android:padding="16dp" />
+            <!-- RecyclerView for Video Grid -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:clipToPadding="false" />
+
 
             <!-- Add Comment Button -->
             <Button

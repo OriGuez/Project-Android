@@ -1,113 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="0dp"
     tools:context=".MainActivity">
 
-    <!-- Profile Picture -->
-
-    <!-- Username TextView -->
-    <TextView
-        android:id="@+id/usernameTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/profilePic"
-        android:layout_marginTop="8dp"
-        android:layout_centerHorizontal="true"
-        android:text=""
-        android:textSize="18sp" />
-
-    <!-- Register Button -->
-    <Button
-        android:id="@+id/registerMe"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/usernameTextView"
-        android:layout_marginTop="16dp"
-        android:layout_centerHorizontal="true"
-        android:text="@string/register_button" />
-
-    <!-- Login Button -->
-    <Button
-        android:id="@+id/LoginMe"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/registerMe"
-        android:layout_marginTop="16dp"
-        android:layout_centerHorizontal="true"
-        android:text="@string/login" />
-
-    <!-- Play Video Button -->
-    <Button
-        android:id="@+id/playVideoButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/LoginMe"
-        android:layout_marginTop="16dp"
-        android:layout_centerHorizontal="true"
-        android:text="Play Video" />
-
-    <!-- Logout Button -->
-
-    <!-- RecyclerView for Video Grid -->
-    <Button
-        android:id="@+id/LogOutButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="568dp"
-        android:text="@string/logOut" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+    <!-- Top Menu -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/topMenu"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="16dp"
-        android:layout_above="@id/LogOutButton"
-        android:layout_below="@id/playVideoButton"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:clipToPadding="false" />
+        android:layout_height="57dp"
+        android:background="@color/colorLightGrey"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-    <LinearLayout
+        <!-- Horizontal LinearLayout for side-by-side items -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <!-- YouTube Logo -->
+            <ImageView
+                android:id="@+id/youtubeLogo"
+                android:layout_width="51dp"
+                android:layout_height="36dp"
+                android:contentDescription="YouTube Logo"
+                android:src="@drawable/logo" />
+
+            <!-- Spacer to push buttons to the right -->
+            <View
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <!-- Add Video Button -->
+            <Button
+                android:id="@+id/buttonAddVideo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:background="?attr/colorAccent"
+                android:drawablePadding="8dp"
+                android:padding="8dp"
+                android:text="@string/add_video_button" />
+
+            <!-- Login Button -->
+            <Button
+                android:id="@+id/LoginMe"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:drawablePadding="8dp"
+                android:padding="8dp"
+                android:text="@string/login" />
+
+
+            <!-- Register Button -->
+            <Button
+                android:id="@+id/registerMe"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:drawablePadding="8dp"
+                android:padding="8dp"
+                android:text="@string/register_button" />
+        </LinearLayout>
+    </androidx.appcompat.widget.Toolbar>
+
+    <!-- Scrollable Content -->
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="91dp"
-        android:layout_alignParentBottom="true"
-        android:background="#00FFFFFF"
-        android:orientation="horizontal">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
-
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/profilePic"
-            android:layout_width="wrap_content"
+        <!-- Container for Scrollable Content -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#00FFFFFF"
-            android:scaleType="fitCenter"
-            app:shapeAppearanceOverlay="@style/roundedImageView"
-            tools:srcCompat="@tools:sample/avatars" />
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
 
-        <ImageButton
-            android:id="@+id/imageButton3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="#00FFFFFF"
+            <!-- Profile Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp">
 
-            android:scaleType="fitCenter"
-            app:srcCompat="@drawable/addvid" />
+                <!-- Username TextView -->
+                <TextView
+                    android:id="@+id/usernameTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="Welcome"
+                    android:textSize="18sp" />
+            </LinearLayout>
 
-        <ImageButton
-            android:id="@+id/imageButton2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="#00FFFFFF"
-            android:scaleType="fitCenter"
-            app:srcCompat="@drawable/home" />
+            <!-- RecyclerView for Video Grid -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:clipToPadding="false" />
 
-    </LinearLayout>
+            <!-- Logout Button -->
+            <Button
+                android:id="@+id/LogOutButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:text="@string/logOut" />
 
-</RelativeLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

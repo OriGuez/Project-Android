@@ -8,16 +8,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.EditText;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.material.textfield.TextInputLayout;
-
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Debug;
@@ -26,7 +22,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,59 +32,68 @@ public class MainActivity extends AppCompatActivity {
     public static Uri publicURI;
 
     public static UserData currentUser;
+    public static boolean isLoggedUser = false;
     public static List<UserData> userDataList;
     public static List<Video> videoList;
-    VideoAdapter adapter;
+
     private RecyclerView recyclerView;
     private Button registerButton;
     private Button loginButton;
     private Button logoutButton;
-    private Button videoButton;
-    private ImageView profilePic; // Added ImageView
-
-
+    private Button addVideoButton; 
+    private ImageView profilePic;
+    private VideoAdapter adapter; 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        videoList = loadVideoData();
+        setContentView(R.layout.activity_main);
+        videoList = new ArrayList<>();
         userDataList = new ArrayList<>();
         currentUser = null;
-        videoList = loadVideoData();
-        assert videoList != null;
-        setContentView(R.layout.activity_main);
-        // Initialize views
-        registerButton = findViewById(R.id.registerMe);
-        loginButton = findViewById(R.id.LoginMe);
-        logoutButton = findViewById(R.id.LogOutButton);
-        videoButton = findViewById(R.id.playVideoButton);
+
+//         registerButton = findViewById(R.id.registerMe);
+//         loginButton = findViewById(R.id.LoginMe);
+//         logoutButton = findViewById(R.id.LogOutButton);
+//         videoButton = findViewById(R.id.playVideoButton);
+
+        addVideoButton = findViewById(R.id.buttonAddVideo);
+        addVideoButton.setContentDescription("Add Video");
+// Initialize new button
+
         // Set up RecyclerView
         recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 2)); // 2 columns in grid
-        adapter = new VideoAdapter(this, videoList);
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 1));
+        adapter = new VideoAdapter(this, videoList, "Main");
         recyclerView.setAdapter(adapter);
-        profilePic = findViewById(R.id.profilePic);
+
+
+        // Set up profile picture
+        // profilePic = findViewById(R.id.profilePic);
+
         loggedVisibilityLogic();
-        // Set OnClickListener for registerButton
+
+        // Set OnClickListener for register button
         registerButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, RegistrationActivity.class);
             startActivity(intent);
         });
 
+        // Set OnClickListener for login button
         loginButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, LoginActivityOri.class);
             startActivity(intent);
         });
 
+        // Set OnClickListener for logout button
         logoutButton.setOnClickListener(v -> {
-            // Handle logout logic
+
+//             isLoggedUser = false;
             currentUser = null;
+            loggedVisibilityLogic();
         });
 
-        videoButton.setOnClickListener(v -> {
-            Intent intent = new Intent(this,AddVideo.class);
-            startActivity(intent);
-//            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
-//            intent.setType("video/*");
-//            startActivityForResult(intent, 2);
+
 
 
 
@@ -96,26 +102,43 @@ public class MainActivity extends AppCompatActivity {
 //                intent.putExtra("videoID", videoList.get(0).getVidID());
 //                startActivity(intent);
 //            }
+
+        // Set OnClickListener for add video button
+        addVideoButton.setOnClickListener(v -> {
+            if (isLoggedUser) {
+                Intent intent = new Intent(MainActivity.this, AddVideo.class);
+                startActivity(intent);
+            } else {
+                Toast.makeText(MainActivity.this, "You must be logged in to add a video.", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (adapter != null)
+        if (adapter != null) {
             adapter.notifyDataSetChanged();
+        }
     }
 
     // Method to load video data
     private List<Video> loadVideoData() {
         List<Video> videos = new ArrayList<>();
         // Load the JSON from assets
-        String jsonString = JsonUtils.loadJSONFromAsset(this, "vidDB.json");
+//         String jsonString = JsonUtils.loadJSONFromAsset(this, "vidDB.json");
         // Parse the JSON using Gson
-        Gson gson = new Gson();
-        Type videoListType = new TypeToken<List<Video>>() {
-        }.getType();
-        videos = gson.fromJson(jsonString, videoListType);
+//         Gson gson = new Gson();
+//         Type videoListType = new TypeToken<List<Video>>() {
+//         }.getType();
+//         videos = gson.fromJson(jsonString, videoListType);
+
+        String jsonString = JsonUtils.loadJSONFromAsset(this, "vidDB.json");
+        if (jsonString != null) {
+            Gson gson = new Gson();
+            Type videoListType = new TypeToken<List<Video>>() {}.getType();
+            videos = gson.fromJson(jsonString, videoListType);
+        }
         return videos;
     }
 
@@ -127,7 +150,12 @@ public class MainActivity extends AppCompatActivity {
             logoutButton.setVisibility(View.VISIBLE);
             TextView userTextView = findViewById(R.id.usernameTextView);
             userTextView.setText("welcome, " + currentUser.getUsername());
-            profilePic.setImageBitmap(currentUser.getImage());
+              if (profilePic != null) {
+                    profilePic.setImageBitmap(currentUser.getImage());
+                }
+            }
+
+      
         } else {
             registerButton.setVisibility(View.VISIBLE);
             loginButton.setVisibility(View.VISIBLE);
@@ -138,16 +166,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Clear the user session data list
         if (userDataList != null) {
-            for (UserData sessionData : userDataList) {
-                sessionData.setUsername(null);
-                sessionData.setPassword(null);
-                sessionData.setChannelName(null);
-                if (sessionData.getImage() != null) {
-                    sessionData.setImage(null);
-                }
-            }
             userDataList.clear();
         }
     }

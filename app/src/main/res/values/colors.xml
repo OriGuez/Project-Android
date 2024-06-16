@@ -3,4 +3,6 @@
     <color name="viewtube_red">#FF0000</color> <!-- Replace with your desired color code -->
     <color name="backgroundColor">#212121</color>
     <color name="textColor">#000000</color>
+    <color name="colorLightGrey">#DDDDDD</color>
+
 </resources>
