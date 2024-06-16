@@ -2,17 +2,21 @@ package com.example.project_android;
 
 import static java.lang.Integer.MAX_VALUE;
 
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.media.Image;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Random;
 
 import androidx.appcompat.app.AlertDialog;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,9 +24,10 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.VideoView;
-import android.widget.ArrayAdapter;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
@@ -30,7 +35,10 @@ import android.widget.MediaController;
 
 public class VideoActivity extends AppCompatActivity {
 
-    private CommentAdapter adapter;
+    //private CommentAdapter adapter;
+    private CommentRecyclerViewAdapter adapter;
+
+    private RecyclerView commentsRecyclerView;
 
     private VideoView videoView;
     private TextView titleTextView;
@@ -77,7 +85,13 @@ public class VideoActivity extends AppCompatActivity {
         descriptionTextView = findViewById(R.id.descriptionTextView);
         dateTextView = findViewById(R.id.dateTextView);
         publisherTextView = findViewById(R.id.publisherTextView);
-        commentsListView = findViewById(R.id.commentsListView);
+
+
+        //commentsListView = findViewById(R.id.commentsListView);
+
+        commentsRecyclerView = findViewById(R.id.commentsRecyclerView);
+
+
         commentAddText = findViewById(R.id.commentAddText);
         addComment = findViewById(R.id.addCommentButton);
         likeButton = findViewById(R.id.likeButton);
@@ -112,7 +126,7 @@ public class VideoActivity extends AppCompatActivity {
                     // Create a new comment object (assuming Video.Comment has appropriate constructor)
                     currentVideo.getComments().add(new Video.Comment(newCommentID, MainActivity.currentUser.getUsername(), commentText));
                 } else {
-                    currentVideo.getComments().add(new Video.Comment("Anon", "Anon", commentText));
+                    //currentVideo.getComments().add(new Video.Comment("Anon", "Anon", commentText));
                 }
                 // Notify the adapter that the data set has changed
                 adapter.notifyDataSetChanged();
@@ -167,11 +181,24 @@ public class VideoActivity extends AppCompatActivity {
         // Set up video playback
         Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + resID);
         videoView.setVideoURI(videoUri);
+        Log.d("AddVideoActivity", "Received URI: " + videoUri.toString());
+
+//         ContentResolver contentResolver = getContentResolver();
+//        try (InputStream inputStream = contentResolver.openInputStream(MainActivity.publicURI)) {
+//            if (inputStream != null) {
+//                Log.d("NewActivity", "Video URI is accessible");
+//            } else {
+//                Log.e("NewActivity", "Failed to access video URI");
+//            }
+//        } catch (IOException e) {
+//            Log.e("NewActivity", "Error accessing video URI", e);
+//        }
         // Add media controller for video controls
         MediaController mediaController = new MediaController(this);
         mediaController.setAnchorView(videoView);
         videoView.setMediaController(mediaController);
         // Start the video
+
         videoView.start();
         // Set video details
         titleTextView.setText(currentVideo.getTitle());
@@ -179,9 +206,10 @@ public class VideoActivity extends AppCompatActivity {
         dateTextView.setText(currentVideo.getUpload_date());
         publisherTextView.setText(currentVideo.getPublisher());
         // Set up comments list
-        List<Video.Comment> comments = currentVideo.getComments();
-        adapter = new CommentAdapter(this, comments);
-        commentsListView.setAdapter(adapter);
+        //List<Video.Comment> comments = currentVideo.getComments();
+        adapter = new CommentRecyclerViewAdapter(this, currentVideo.getComments());
+        commentsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        commentsRecyclerView.setAdapter(adapter);
     }
 
     private void showDeleteConfirmationDialog() {

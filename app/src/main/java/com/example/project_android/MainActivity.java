@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.EditText;
@@ -31,6 +32,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+    public static Uri publicURI;
+
     public static UserData currentUser;
     public static List<UserData> userDataList;
     public static List<Video> videoList;
@@ -80,11 +83,19 @@ public class MainActivity extends AppCompatActivity {
         });
 
         videoButton.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, VideoActivity.class);
-            if (!videoList.isEmpty()) {
-                intent.putExtra("videoID", videoList.get(0).getVidID());
-                startActivity(intent);
-            }
+            Intent intent = new Intent(this,AddVideo.class);
+            startActivity(intent);
+//            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
+//            intent.setType("video/*");
+//            startActivityForResult(intent, 2);
+
+
+
+//            Intent intent = new Intent(MainActivity.this, VideoActivity.class);
+//            if (!videoList.isEmpty()) {
+//                intent.putExtra("videoID", videoList.get(0).getVidID());
+//                startActivity(intent);
+//            }
         });
     }
 

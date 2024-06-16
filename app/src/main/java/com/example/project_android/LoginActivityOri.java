@@ -23,6 +23,7 @@ public class LoginActivityOri extends AppCompatActivity {
     public void onCreateAccountClicked(View view) {
         Intent intent = new Intent(this, RegistrationActivity.class);
         startActivity(intent);
+        finish();
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {

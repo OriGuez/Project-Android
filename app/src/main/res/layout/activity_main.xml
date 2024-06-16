@@ -8,15 +8,6 @@
     tools:context=".MainActivity">
 
     <!-- Profile Picture -->
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/profilePic"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="32dp"
-        android:scaleType="centerCrop"
-        app:shapeAppearanceOverlay="@style/roundedImageView"
-        tools:srcCompat="@tools:sample/avatars" />
 
     <!-- Username TextView -->
     <TextView
@@ -60,16 +51,16 @@
         android:text="Play Video" />
 
     <!-- Logout Button -->
+
+    <!-- RecyclerView for Video Grid -->
     <Button
         android:id="@+id/LogOutButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="568dp"
         android:text="@string/logOut" />
 
-    <!-- RecyclerView for Video Grid -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
@@ -80,5 +71,43 @@
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:clipToPadding="false" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="91dp"
+        android:layout_alignParentBottom="true"
+        android:background="#00FFFFFF"
+        android:orientation="horizontal">
+
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/profilePic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#00FFFFFF"
+            android:scaleType="fitCenter"
+            app:shapeAppearanceOverlay="@style/roundedImageView"
+            tools:srcCompat="@tools:sample/avatars" />
+
+        <ImageButton
+            android:id="@+id/imageButton3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/addvid" />
+
+        <ImageButton
+            android:id="@+id/imageButton2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/home" />
+
+    </LinearLayout>
 
 </RelativeLayout>

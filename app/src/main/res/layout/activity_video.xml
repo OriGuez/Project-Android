@@ -162,10 +162,17 @@
                 android:textStyle="bold" />
 
             <!-- Comments List -->
-            <ListView
-                android:id="@+id/commentsListView"
+            <!-- Comments List inside NestedScrollView -->
+            <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
-                android:layout_height="229dp" />
+                android:layout_height="wrap_content"
+                android:fillViewport="true">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/commentsRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </androidx.core.widget.NestedScrollView>
 
             <!-- Add Comment EditText -->
             <EditText
