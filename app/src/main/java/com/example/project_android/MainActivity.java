@@ -150,9 +150,9 @@ public class MainActivity extends AppCompatActivity {
             if (profilePic != null)
                 profilePic.setImageBitmap(currentUser.getImage());
         } else {
-//            registerButton.setVisibility(View.VISIBLE);
-//            loginButton.setVisibility(View.VISIBLE);
-//            logoutButton.setVisibility(View.GONE);
+            registerButton.setVisibility(View.VISIBLE);
+            loginButton.setVisibility(View.VISIBLE);
+            logoutButton.setVisibility(View.GONE);
         }
     }
     @Override
