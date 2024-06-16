@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -35,7 +34,7 @@
                 android:id="@+id/titleTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="12dp"
+                android:padding="16dp"
                 android:text="@string/title"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -47,9 +46,7 @@
                 android:layout_height="wrap_content"
                 android:padding="16dp"
                 android:text="@string/description"
-                android:textColor="@color/material_dynamic_neutral0"
                 android:textSize="16sp" />
-
 
             <EditText
                 android:id="@+id/editTitleEditText"
@@ -59,6 +56,7 @@
                 android:inputType="text"
                 android:padding="16dp"
                 android:visibility="gone" />
+
             <EditText
                 android:id="@+id/editDescriptionEditText"
                 android:layout_width="match_parent"
@@ -67,37 +65,13 @@
                 android:inputType="textMultiLine"
                 android:padding="16dp"
                 android:visibility="gone" />
+
             <Button
                 android:id="@+id/saveEditVidButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/save_changes"
                 android:visibility="gone" />
-
-            <!-- Publisher TextView -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="8dp">
-
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/publisherPic"
-                    android:layout_width="40sp"
-                    android:layout_height="40sp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ic_def_user"
-                    app:shapeAppearanceOverlay="@style/roundedImageView"
-                    tools:ignore="MissingConstraints" />
-
-                <TextView
-                    android:id="@+id/publisherTextView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="9dp"
-                    android:text="@string/publisher"
-                    android:textSize="20sp" />
-            </LinearLayout>
 
             <!-- Date TextView -->
             <TextView
@@ -107,6 +81,7 @@
                 android:padding="16dp"
                 android:text="@string/date"
                 android:textSize="16sp" />
+
             <!-- Share and Like Buttons -->
             <LinearLayout
                 android:layout_width="match_parent"
@@ -151,6 +126,16 @@
                     android:layout_weight="1"
                     android:text="@string/like" />
             </LinearLayout>
+
+            <!-- Publisher TextView -->
+            <TextView
+                android:id="@+id/publisherTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="@string/publisher"
+                android:textSize="16sp" />
+
             <!-- Comments Title TextView -->
             <TextView
                 android:id="@+id/commentsTitleTextView"
@@ -160,7 +145,6 @@
                 android:text="@string/comments"
                 android:textSize="18sp"
                 android:textStyle="bold" />
-
             <!-- Comments List inside NestedScrollView -->
             <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
@@ -172,6 +156,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
             </androidx.core.widget.NestedScrollView>
+            <!-- Comments ListView -->
+            <ListView
+                android:id="@+id/commentsListView"
+                android:layout_width="match_parent"
+                android:layout_height="229dp" />
 
             <!-- Add Comment EditText -->
             <EditText
@@ -181,7 +170,6 @@
                 android:hint="@string/add_a_comment"
                 android:inputType="textMultiLine"
                 android:padding="16dp" />
-
             <!-- Add Comment Button -->
             <Button
                 android:id="@+id/addCommentButton"
@@ -189,13 +177,14 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 android:text="@string/add_comment" />
-
+            <!-- RecyclerView for Video Grid -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:clipToPadding="false" />
+
         </LinearLayout>
     </ScrollView>
 
