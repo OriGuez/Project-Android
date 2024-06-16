@@ -1,5 +1,14 @@
 package com.example.project_android;
-
+import static java.lang.Integer.MAX_VALUE;
+import android.content.ContentResolver;
+import android.content.Intent;
+import android.content.res.AssetManager;
+import android.content.res.Configuration;
+import android.media.Image;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Random;
+import androidx.appcompat.app.AlertDialog;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.AssetManager;
@@ -14,13 +23,18 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.VideoView;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import java.util.List;
+import android.widget.MediaController;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.widget.MediaController;
-import java.util.List;
 
 public class VideoActivity extends AppCompatActivity {
-    private CommentAdapter adapter;
+
+    //private CommentAdapter adapter;
+    private CommentRecyclerViewAdapter adapter;
+    private RecyclerView commentsRecyclerView;
     private VideoAdapter videoAdapter;
     private VideoView videoView;
     private TextView titleTextView;
@@ -34,6 +48,11 @@ public class VideoActivity extends AppCompatActivity {
     private TextView likeText;
     private ImageButton shareButton;
     private ImageButton deleteVideoButton;
+    private ImageButton editVideoButton;
+    private EditText editTitleEditText;
+    private EditText editDescriptionEditText;
+    private Button saveButton;
+    private boolean isEditMode = false;
     private RecyclerView videoRecyclerView;
     private Video currentVideo;
     AssetManager assetManager;
@@ -65,32 +84,48 @@ public class VideoActivity extends AppCompatActivity {
         descriptionTextView = findViewById(R.id.descriptionTextView);
         dateTextView = findViewById(R.id.dateTextView);
         publisherTextView = findViewById(R.id.publisherTextView);
-        commentsListView = findViewById(R.id.commentsListView);
+
+
+        //commentsListView = findViewById(R.id.commentsListView);
+
+        commentsRecyclerView = findViewById(R.id.commentsRecyclerView);
+
+
         commentAddText = findViewById(R.id.commentAddText);
         addComment = findViewById(R.id.addCommentButton);
         likeButton = findViewById(R.id.likeButton);
         likeText = findViewById(R.id.likeText);
         shareButton = findViewById(R.id.shareButton);
         deleteVideoButton = findViewById(R.id.deleteVideoButton);
+        editVideoButton = findViewById(R.id.editVideoButton);
+        editTitleEditText = findViewById(R.id.editTitleEditText);
+        editDescriptionEditText = findViewById(R.id.editDescriptionEditText);
+        saveButton = findViewById(R.id.saveEditVidButton);
+        editTitleEditText.setVisibility(View.GONE);
+        editDescriptionEditText.setVisibility(View.GONE);
+        saveButton.setVisibility(View.GONE);
+       
         videoRecyclerView = findViewById(R.id.recyclerView);
-
         if (MainActivity.currentUser == null) {
             addComment.setVisibility(View.GONE);
             commentAddText.setVisibility(View.GONE);
             likeButton.setVisibility(View.GONE);
             likeText.setVisibility(View.GONE);
+            deleteVideoButton.setVisibility(View.GONE);
+            editVideoButton.setVisibility(View.GONE);
         } else {
-            updateLikeButton(likeButton, likeText);
+            //if user is logged update the Like button
+            UpdateLikeButton(likeButton, likeText);
         }
 
         addComment.setOnClickListener(v -> {
             String commentText = commentAddText.getText().toString().trim();
             if (!commentText.isEmpty()) {
-                Video.Comment newComment = new Video.Comment(commentText, "User", "Now");
                 if (MainActivity.currentUser != null) {
-                    currentVideo.getComments().add(new Video.Comment("User", MainActivity.currentUser.getUsername(), commentText));
-                } else {
-                    currentVideo.getComments().add(new Video.Comment("User", "Anon", commentText));
+                    Random random = new Random();
+                    String newCommentID = Integer.toString(random.nextInt(MAX_VALUE));
+                    // Create a new comment object (assuming Video.Comment has appropriate constructor)
+                    currentVideo.getComments().add(new Video.Comment(newCommentID, MainActivity.currentUser.getUsername(), commentText));
                 }
                 adapter.notifyDataSetChanged();
                 commentAddText.getText().clear();
@@ -130,13 +165,35 @@ public class VideoActivity extends AppCompatActivity {
         deleteVideoButton.setOnClickListener(v -> {
             showDeleteConfirmationDialog();
         });
+        editVideoButton.setOnClickListener(v -> {
+            if (!isEditMode) {
+                // Enter edit mode
+                enterEditMode();
+            }
+        });
+        saveButton.setOnClickListener(v -> {
+            // Save changes and exit edit mode
+            saveChanges();
+            exitEditMode();
+        });
+        int resID = getResources().getIdentifier("vid" + videoID, "raw", getPackageName());
 
         // Set up video playback
-        Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + getRawResourceIdByName(currentVideo.getUrl()));
+        Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + resID);
         videoView.setVideoURI(videoUri);
+        Log.d("AddVideoActivity", "Received URI: " + videoUri.toString());
         MediaController mediaController = new MediaController(this);
         mediaController.setAnchorView(videoView);
         videoView.setMediaController(mediaController);
+        // Start the video
+
+
+        // Set up video playback
+//         Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + getRawResourceIdByName(currentVideo.getUrl()));
+//         videoView.setVideoURI(videoUri);
+//         MediaController mediaController = new MediaController(this);
+//         mediaController.setAnchorView(videoView);
+//         videoView.setMediaController(mediaController);
         videoView.start();
 
         // Set video details
@@ -146,20 +203,19 @@ public class VideoActivity extends AppCompatActivity {
         publisherTextView.setText(currentVideo.getPublisher());
 
         // Set up comments list
-        List<Video.Comment> comments = currentVideo.getComments();
-        adapter = new CommentAdapter(this, comments);
-        commentsListView.setAdapter(adapter);
-
-        // Set up RecyclerView for scrolling videos
-        videoRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
+        //List<Video.Comment> comments = currentVideo.getComments();
+        adapter = new CommentRecyclerViewAdapter(this, currentVideo.getComments());
+        commentsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        commentsRecyclerView.setAdapter(adapter);
+          videoRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
         videoAdapter = new VideoAdapter(this, MainActivity.videoList, "Video");
         videoRecyclerView.setAdapter(videoAdapter);
     }
 
     private void showDeleteConfirmationDialog() {
         new AlertDialog.Builder(this, R.style.MyDialogTheme)
-                .setTitle("Delete Video")
-                .setMessage("Are you sure you want to delete this video?")
+                .setTitle(R.string.delete_video)
+                .setMessage(R.string.sure_delete_video)
                 .setPositiveButton(R.string.yes, (dialog, which) -> {
                     deleteCurrentVideo();
                 })
@@ -183,6 +239,46 @@ public class VideoActivity extends AppCompatActivity {
         }
         likeButton.setImageDrawable(getResources().getDrawable(R.drawable.like));
         isLiked.setText(R.string.like);
+    }
+
+    private void enterEditMode() {
+        // Show edit fields and save button
+        editTitleEditText.setVisibility(View.VISIBLE);
+        editDescriptionEditText.setVisibility(View.VISIBLE);
+        saveButton.setVisibility(View.VISIBLE);
+        // Hide non-editable fields
+        titleTextView.setVisibility(View.GONE);
+        descriptionTextView.setVisibility(View.GONE);
+        // Populate edit fields with current video details
+        editTitleEditText.setText(currentVideo.getTitle());
+        editDescriptionEditText.setText(currentVideo.getDescription());
+        // Change edit button text to "Cancel"
+        editVideoButton.setVisibility(View.GONE);
+        // Set edit mode flag
+        isEditMode = true;
+    }
+
+    private void exitEditMode() {
+        // Hide edit fields and save button
+        editTitleEditText.setVisibility(View.GONE);
+        editDescriptionEditText.setVisibility(View.GONE);
+        saveButton.setVisibility(View.GONE);
+        // Show non-editable fields
+        titleTextView.setVisibility(View.VISIBLE);
+        descriptionTextView.setVisibility(View.VISIBLE);
+        // Change edit button text back to "Edit"
+        editVideoButton.setVisibility(View.VISIBLE);
+        // Reset edit mode flag
+        isEditMode = false;
+    }
+
+    private void saveChanges() {
+        // Save changes to currentVideo object
+        currentVideo.setTitle(editTitleEditText.getText().toString());
+        currentVideo.setDescription(editDescriptionEditText.getText().toString());
+        // Update UI with new details
+        titleTextView.setText(currentVideo.getTitle());
+        descriptionTextView.setText(currentVideo.getDescription());
     }
 
     private int getRawResourceIdByName(String resourceName) {

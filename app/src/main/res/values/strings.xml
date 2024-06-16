@@ -32,6 +32,14 @@
     <string name="share_via">Share Via</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="delete_video">Delete Video</string>
+    <string name="sure_delete_video">Are you sure you want to delete this video?</string>
+    <string name="publisher_name">Publisher Name</string>
+    <string name="comment_content">Comment content</string>
+    <string name="edit_title">Edit Title</string>
+    <string name="edit_description">Edit Description</string>
+    <string name="save_changes">Save</string>
+    <string name="cancel_edit">Cancel</string>
 
 
 </resources>

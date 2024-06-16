@@ -1,0 +1,7 @@
+<!-- res/values/colors.xml -->
+<resources>
+    <color name="viewtube_red">#FF0000</color>
+    <color name="backgroundColor">#FCFCFC</color>
+    <color name="textColor">#FFFFFF</color>
+
+</resources>
