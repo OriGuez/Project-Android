@@ -1,65 +1,47 @@
-<?xml version="1.0" encoding="utf-8"?>
+<!-- res/layout/activity_add_video.xml -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="@android:color/white">
+    tools:context=".AddVideo">
 
     <EditText
-        android:id="@+id/VideoTitleAdd"
+        android:id="@+id/editVideoTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:hint="@string/videotitle"
-        android:textColor="@android:color/black"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+        android:hint="Video Title"
+        android:layout_marginBottom="16dp" />
 
     <EditText
-        android:id="@+id/vidDescriptionAdd"
+        android:id="@+id/editVideoDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:gravity="top"
-        android:hint="@string/video_description"
+        android:hint="Video Description"
+        android:layout_marginBottom="16dp"
         android:inputType="textMultiLine"
-        android:minLines="6"
-        android:scrollbars="vertical"
-        android:textColor="@android:color/black"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+        android:minLines="3" />
 
     <Button
-        android:id="@+id/uploadButtonAddVid"
+        android:id="@+id/buttonUploadVideo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="@string/upload_thumbnail"
-        android:textColor="@android:color/white"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        style="@style/ViewtubeButton"/>
-
-
-    <ImageView
-        android:id="@+id/thumbnailAdd"
-        android:layout_width="180dp"
-        android:layout_height="100dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="16dp"
-        android:src="@android:drawable/ic_menu_camera" />
+        android:text="Upload Video"
+        android:layout_marginBottom="16dp" />
 
     <Button
-        android:id="@+id/registerButton"
+        android:id="@+id/buttonUploadThumbnail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="@string/upload_video"
-        android:textColor="@android:color/white"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        style="@style/ViewtubeButton" />
+        android:text="Upload Thumbnail"
+        android:layout_marginBottom="16dp" />
 
+    <Button
+        android:id="@+id/buttonSubmitVideo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Submit"
+        android:layout_marginTop="24dp" />
 
 </LinearLayout>

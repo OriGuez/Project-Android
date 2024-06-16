@@ -1,14 +1,11 @@
 package com.example.project_android;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.AssetManager;
-import android.content.res.Configuration;
-import android.media.Image;
-
-import androidx.appcompat.app.AlertDialog;
-
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,22 +13,15 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.VideoView;
-import android.widget.ArrayAdapter;
-
 import androidx.appcompat.app.AppCompatActivity;
-
-import java.util.List;
-
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.widget.MediaController;
-
-import androidx.activity.EdgeToEdge;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import java.util.List;
 
 public class VideoActivity extends AppCompatActivity {
     private CommentAdapter adapter;
-
+    private VideoAdapter videoAdapter;
     private VideoView videoView;
     private TextView titleTextView;
     private TextView dateTextView;
@@ -44,29 +34,31 @@ public class VideoActivity extends AppCompatActivity {
     private TextView likeText;
     private ImageButton shareButton;
     private ImageButton deleteVideoButton;
-
-
+    private RecyclerView videoRecyclerView;
     private Video currentVideo;
     AssetManager assetManager;
+
+
+    private static final String TAG = "VideoActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         assetManager = getAssets();
+
         // Retrieve the ID from the intent's extras
         String videoID = getIntent().getStringExtra("videoID");
-        //EdgeToEdge.enable(this);
+        Log.d(TAG, "Received videoID: " + videoID);
+
         for (Video video : MainActivity.videoList) {
-            // Check if the video's ID matches the target ID
             if (video.getVidID().equals(videoID)) {
-                // Found the video, you can now work with it
-                // For example, you can store it in a variable or perform any action you need
                 currentVideo = video;
-                // If you want to stop searching after finding the first match, you can break out of the loop
                 break;
             }
         }
+
         setContentView(R.layout.activity_video);
+
         // Initialize views
         videoView = findViewById(R.id.videoView);
         titleTextView = findViewById(R.id.titleTextView);
@@ -80,32 +72,31 @@ public class VideoActivity extends AppCompatActivity {
         likeText = findViewById(R.id.likeText);
         shareButton = findViewById(R.id.shareButton);
         deleteVideoButton = findViewById(R.id.deleteVideoButton);
+        videoRecyclerView = findViewById(R.id.recyclerView);
+
         if (MainActivity.currentUser == null) {
             addComment.setVisibility(View.GONE);
             commentAddText.setVisibility(View.GONE);
             likeButton.setVisibility(View.GONE);
             likeText.setVisibility(View.GONE);
         } else {
-            UpdateLikeButton(likeButton, likeText);
+            updateLikeButton(likeButton, likeText);
         }
+
         addComment.setOnClickListener(v -> {
             String commentText = commentAddText.getText().toString().trim();
             if (!commentText.isEmpty()) {
-                // Create a new comment object (assuming Video.Comment has appropriate constructor)
                 Video.Comment newComment = new Video.Comment(commentText, "User", "Now");
                 if (MainActivity.currentUser != null) {
-                    // Create a new comment object (assuming Video.Comment has appropriate constructor)
                     currentVideo.getComments().add(new Video.Comment("User", MainActivity.currentUser.getUsername(), commentText));
                 } else {
                     currentVideo.getComments().add(new Video.Comment("User", "Anon", commentText));
-
                 }
-                // Notify the adapter that the data set has changed
                 adapter.notifyDataSetChanged();
-                // Clear the EditText
                 commentAddText.getText().clear();
             }
         });
+
         likeButton.setOnClickListener(v -> {
             boolean isFound = false;
             for (String user : currentVideo.getWhoLikedList()) {
@@ -123,6 +114,7 @@ public class VideoActivity extends AppCompatActivity {
                 likeText.setText(R.string.liked);
             }
         });
+
         shareButton.setOnClickListener(v -> {
             String textToShare = currentVideo.getUrl();
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
@@ -134,35 +126,41 @@ public class VideoActivity extends AppCompatActivity {
                 startActivity(chooser);
             }
         });
+
         deleteVideoButton.setOnClickListener(v -> {
             showDeleteConfirmationDialog();
-
         });
+
         // Set up video playback
-        Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.vid6);
+        Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + getRawResourceIdByName(currentVideo.getUrl()));
         videoView.setVideoURI(videoUri);
-        // Add media controller for video controls
         MediaController mediaController = new MediaController(this);
         mediaController.setAnchorView(videoView);
         videoView.setMediaController(mediaController);
-        // Start the video
         videoView.start();
+
         // Set video details
         titleTextView.setText(currentVideo.getTitle());
         descriptionTextView.setText(currentVideo.getDescription());
         dateTextView.setText(currentVideo.getUpload_date());
         publisherTextView.setText(currentVideo.getPublisher());
+
         // Set up comments list
         List<Video.Comment> comments = currentVideo.getComments();
         adapter = new CommentAdapter(this, comments);
         commentsListView.setAdapter(adapter);
+
+        // Set up RecyclerView for scrolling videos
+        videoRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
+        videoAdapter = new VideoAdapter(this, MainActivity.videoList, "Video");
+        videoRecyclerView.setAdapter(videoAdapter);
     }
+
     private void showDeleteConfirmationDialog() {
-        new AlertDialog.Builder(this,R.style.MyDialogTheme)
+        new AlertDialog.Builder(this, R.style.MyDialogTheme)
                 .setTitle("Delete Video")
                 .setMessage("Are you sure you want to delete this video?")
                 .setPositiveButton(R.string.yes, (dialog, which) -> {
-                    // Perform delete operation here
                     deleteCurrentVideo();
                 })
                 .setNegativeButton(R.string.no, null)
@@ -171,13 +169,11 @@ public class VideoActivity extends AppCompatActivity {
     }
 
     private void deleteCurrentVideo() {
-        // Implement your delete logic here
-        // For example, remove the video from the list and finish the activity
         MainActivity.videoList.remove(currentVideo);
-        finish(); // Close the activity after deletion
+        finish();
     }
 
-    void UpdateLikeButton(ImageButton likeButton, TextView isLiked) {
+    private void updateLikeButton(ImageButton likeButton, TextView isLiked) {
         for (String user : currentVideo.getWhoLikedList()) {
             if (user.equals(MainActivity.currentUser.getUsername())) {
                 likeButton.setImageDrawable(getResources().getDrawable(R.drawable.likebuttonpressed));
@@ -187,5 +183,11 @@ public class VideoActivity extends AppCompatActivity {
         }
         likeButton.setImageDrawable(getResources().getDrawable(R.drawable.like));
         isLiked.setText(R.string.like);
+    }
+
+    private int getRawResourceIdByName(String resourceName) {
+        // Ensure the resource name is correctly formatted
+        String formattedResourceName = resourceName.replace("/videos/", "").replace(".mp4", "");
+        return getResources().getIdentifier(formattedResourceName, "raw", getPackageName());
     }
 }
