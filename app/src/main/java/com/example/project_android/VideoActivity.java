@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Random;
 import androidx.appcompat.app.AlertDialog;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.net.Uri;
@@ -31,8 +30,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.widget.MediaController;
 
 public class VideoActivity extends AppCompatActivity {
-
-    //private CommentAdapter adapter;
     private CommentRecyclerViewAdapter adapter;
     private RecyclerView commentsRecyclerView;
     private VideoAdapter videoAdapter;
@@ -41,7 +38,6 @@ public class VideoActivity extends AppCompatActivity {
     private TextView dateTextView;
     private TextView descriptionTextView;
     private TextView publisherTextView;
-    private ListView commentsListView;
     private Button addComment;
     private EditText commentAddText;
     private ImageButton likeButton;
@@ -84,13 +80,7 @@ public class VideoActivity extends AppCompatActivity {
         descriptionTextView = findViewById(R.id.descriptionTextView);
         dateTextView = findViewById(R.id.dateTextView);
         publisherTextView = findViewById(R.id.publisherTextView);
-
-
-        //commentsListView = findViewById(R.id.commentsListView);
-
         commentsRecyclerView = findViewById(R.id.commentsRecyclerView);
-
-
         commentAddText = findViewById(R.id.commentAddText);
         addComment = findViewById(R.id.addCommentButton);
         likeButton = findViewById(R.id.likeButton);
@@ -104,7 +94,6 @@ public class VideoActivity extends AppCompatActivity {
         editTitleEditText.setVisibility(View.GONE);
         editDescriptionEditText.setVisibility(View.GONE);
         saveButton.setVisibility(View.GONE);
-       
         videoRecyclerView = findViewById(R.id.recyclerView);
         if (MainActivity.currentUser == null) {
             addComment.setVisibility(View.GONE);
@@ -229,7 +218,7 @@ public class VideoActivity extends AppCompatActivity {
         finish();
     }
 
-    private void updateLikeButton(ImageButton likeButton, TextView isLiked) {
+    private void UpdateLikeButton(ImageButton likeButton, TextView isLiked) {
         for (String user : currentVideo.getWhoLikedList()) {
             if (user.equals(MainActivity.currentUser.getUsername())) {
                 likeButton.setImageDrawable(getResources().getDrawable(R.drawable.likebuttonpressed));

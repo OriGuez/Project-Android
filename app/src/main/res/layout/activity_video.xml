@@ -75,29 +75,29 @@
                 android:visibility="gone" />
 
             <!-- Publisher TextView -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="8dp">
-
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/publisherPic"
-                android:layout_width="40sp"
-                android:layout_height="40sp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_def_user"
-                app:shapeAppearanceOverlay="@style/roundedImageView"
-                tools:ignore="MissingConstraints" />
-
-            <TextView
-                android:id="@+id/publisherTextView"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="9dp"
-                android:text="@string/publisher"
-                android:textSize="20sp" />
-        </LinearLayout>
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/publisherPic"
+                    android:layout_width="40sp"
+                    android:layout_height="40sp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_def_user"
+                    app:shapeAppearanceOverlay="@style/roundedImageView"
+                    tools:ignore="MissingConstraints" />
+
+                <TextView
+                    android:id="@+id/publisherTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="9dp"
+                    android:text="@string/publisher"
+                    android:textSize="20sp" />
+            </LinearLayout>
 
             <!-- Date TextView -->
             <TextView
@@ -161,7 +161,6 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <!-- Comments List -->
             <!-- Comments List inside NestedScrollView -->
             <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
@@ -182,14 +181,6 @@
                 android:hint="@string/add_a_comment"
                 android:inputType="textMultiLine"
                 android:padding="16dp" />
-            <!-- RecyclerView for Video Grid -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:clipToPadding="false" />
-
 
             <!-- Add Comment Button -->
             <Button
@@ -199,6 +190,12 @@
                 android:layout_margin="16dp"
                 android:text="@string/add_comment" />
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:clipToPadding="false" />
         </LinearLayout>
     </ScrollView>
 

@@ -57,28 +57,12 @@ public class AddVideo extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_video);
-        addVid = findViewById(R.id.uploadButtonAddVid);
-        tryVV=findViewById(R.id.vidvie);
-
-//        // Check for permissions
-//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-//                != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(this,
-//                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-//                    REQUEST_CODE_PERMISSIONS);
-//        } else {
-//            Toast.makeText(this, "Permission denied!", Toast.LENGTH_SHORT).show();
-//        }
-
-
 //         addVid.setOnClickListener(v -> {
 //             pickVideo();
 //         });
 
 
-    }
-
-    @Override
+        //   @Override
 //     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
 //         super.onRequestPermissionsResult(requestCode, permissions, grantResults); // Call the superclass implementation
 //         if (requestCode == REQUEST_CODE_PERMISSIONS) {
@@ -96,7 +80,7 @@ public class AddVideo extends AppCompatActivity {
 //         startActivityForResult(intent, REQUEST_CODE_PICK_VIDEO);
 //     }
 
-    @Override
+//    @Override
 //     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
 //         super.onActivityResult(requestCode, resultCode, data);
 //         if (requestCode == REQUEST_CODE_PICK_VIDEO && resultCode == RESULT_OK && data != null) {
@@ -106,8 +90,8 @@ public class AddVideo extends AppCompatActivity {
 //                 tryVV.setVideoURI(videoURI);
 //                 tryVV.start();
 //                //save the URI
-            }
-        }
+//            }
+//        }
 
         editVideoTitle = findViewById(R.id.editVideoTitle);
         editVideoDescription = findViewById(R.id.editVideoDescription);
