@@ -49,9 +49,6 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
                 if(source.equals("Video")) {
                     ((Activity) context).finish();
                 }
-
-
-
         });
     }
 

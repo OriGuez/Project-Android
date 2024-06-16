@@ -1,14 +1,6 @@
 package com.example.project_android;
-import static java.lang.Integer.MAX_VALUE;
-import android.content.ContentResolver;
-import android.content.Intent;
-import android.content.res.AssetManager;
-import android.content.res.Configuration;
-import android.media.Image;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Random;
-import androidx.appcompat.app.AlertDialog;
+
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.net.Uri;
@@ -21,23 +13,24 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.VideoView;
+
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import java.util.List;
-import android.widget.MediaController;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.widget.MediaController;
 
+import java.util.List;
+
 public class VideoActivity extends AppCompatActivity {
-    private CommentRecyclerViewAdapter adapter;
-    private RecyclerView commentsRecyclerView;
+    private CommentAdapter adapter;
     private VideoAdapter videoAdapter;
     private VideoView videoView;
     private TextView titleTextView;
     private TextView dateTextView;
     private TextView descriptionTextView;
     private TextView publisherTextView;
+    private ListView commentsListView;
     private Button addComment;
     private EditText commentAddText;
     private ImageButton likeButton;
@@ -80,7 +73,7 @@ public class VideoActivity extends AppCompatActivity {
         descriptionTextView = findViewById(R.id.descriptionTextView);
         dateTextView = findViewById(R.id.dateTextView);
         publisherTextView = findViewById(R.id.publisherTextView);
-        commentsRecyclerView = findViewById(R.id.commentsRecyclerView);
+        commentsListView = findViewById(R.id.commentsListView);
         commentAddText = findViewById(R.id.commentAddText);
         addComment = findViewById(R.id.addCommentButton);
         likeButton = findViewById(R.id.likeButton);
@@ -95,6 +88,7 @@ public class VideoActivity extends AppCompatActivity {
         editDescriptionEditText.setVisibility(View.GONE);
         saveButton.setVisibility(View.GONE);
         videoRecyclerView = findViewById(R.id.recyclerView);
+
         if (MainActivity.currentUser == null) {
             addComment.setVisibility(View.GONE);
             commentAddText.setVisibility(View.GONE);
@@ -102,19 +96,19 @@ public class VideoActivity extends AppCompatActivity {
             likeText.setVisibility(View.GONE);
             deleteVideoButton.setVisibility(View.GONE);
             editVideoButton.setVisibility(View.GONE);
+
         } else {
-            //if user is logged update the Like button
-            UpdateLikeButton(likeButton, likeText);
+            updateLikeButton(likeButton, likeText);
         }
 
         addComment.setOnClickListener(v -> {
             String commentText = commentAddText.getText().toString().trim();
             if (!commentText.isEmpty()) {
+                Video.Comment newComment = new Video.Comment(commentText, "User", "Now");
                 if (MainActivity.currentUser != null) {
-                    Random random = new Random();
-                    String newCommentID = Integer.toString(random.nextInt(MAX_VALUE));
-                    // Create a new comment object (assuming Video.Comment has appropriate constructor)
-                    currentVideo.getComments().add(new Video.Comment(newCommentID, MainActivity.currentUser.getUsername(), commentText));
+                    currentVideo.getComments().add(new Video.Comment("User", MainActivity.currentUser.getUsername(), commentText));
+                } else {
+                    currentVideo.getComments().add(new Video.Comment("User", "Anon", commentText));
                 }
                 adapter.notifyDataSetChanged();
                 commentAddText.getText().clear();
@@ -165,24 +159,12 @@ public class VideoActivity extends AppCompatActivity {
             saveChanges();
             exitEditMode();
         });
-        int resID = getResources().getIdentifier("vid" + videoID, "raw", getPackageName());
-
         // Set up video playback
-        Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + resID);
+        Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + getRawResourceIdByName(currentVideo.getUrl()));
         videoView.setVideoURI(videoUri);
-        Log.d("AddVideoActivity", "Received URI: " + videoUri.toString());
         MediaController mediaController = new MediaController(this);
         mediaController.setAnchorView(videoView);
         videoView.setMediaController(mediaController);
-        // Start the video
-
-
-        // Set up video playback
-//         Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + getRawResourceIdByName(currentVideo.getUrl()));
-//         videoView.setVideoURI(videoUri);
-//         MediaController mediaController = new MediaController(this);
-//         mediaController.setAnchorView(videoView);
-//         videoView.setMediaController(mediaController);
         videoView.start();
 
         // Set video details
@@ -192,19 +174,20 @@ public class VideoActivity extends AppCompatActivity {
         publisherTextView.setText(currentVideo.getPublisher());
 
         // Set up comments list
-        //List<Video.Comment> comments = currentVideo.getComments();
-        adapter = new CommentRecyclerViewAdapter(this, currentVideo.getComments());
-        commentsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        commentsRecyclerView.setAdapter(adapter);
-          videoRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
+        List<Video.Comment> comments = currentVideo.getComments();
+        adapter = new CommentAdapter(this, comments);
+        commentsListView.setAdapter(adapter);
+
+        // Set up RecyclerView for scrolling videos
+        videoRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
         videoAdapter = new VideoAdapter(this, MainActivity.videoList, "Video");
         videoRecyclerView.setAdapter(videoAdapter);
     }
 
     private void showDeleteConfirmationDialog() {
         new AlertDialog.Builder(this, R.style.MyDialogTheme)
-                .setTitle(R.string.delete_video)
-                .setMessage(R.string.sure_delete_video)
+                .setTitle("Delete Video")
+                .setMessage("Are you sure you want to delete this video?")
                 .setPositiveButton(R.string.yes, (dialog, which) -> {
                     deleteCurrentVideo();
                 })
@@ -218,7 +201,7 @@ public class VideoActivity extends AppCompatActivity {
         finish();
     }
 
-    private void UpdateLikeButton(ImageButton likeButton, TextView isLiked) {
+    private void updateLikeButton(ImageButton likeButton, TextView isLiked) {
         for (String user : currentVideo.getWhoLikedList()) {
             if (user.equals(MainActivity.currentUser.getUsername())) {
                 likeButton.setImageDrawable(getResources().getDrawable(R.drawable.likebuttonpressed));
@@ -229,7 +212,6 @@ public class VideoActivity extends AppCompatActivity {
         likeButton.setImageDrawable(getResources().getDrawable(R.drawable.like));
         isLiked.setText(R.string.like);
     }
-
     private void enterEditMode() {
         // Show edit fields and save button
         editTitleEditText.setVisibility(View.VISIBLE);
@@ -269,7 +251,6 @@ public class VideoActivity extends AppCompatActivity {
         titleTextView.setText(currentVideo.getTitle());
         descriptionTextView.setText(currentVideo.getDescription());
     }
-
     private int getRawResourceIdByName(String resourceName) {
         // Ensure the resource name is correctly formatted
         String formattedResourceName = resourceName.replace("/videos/", "").replace(".mp4", "");

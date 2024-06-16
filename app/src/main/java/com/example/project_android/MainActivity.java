@@ -8,12 +8,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.EditText;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.material.textfield.TextInputLayout;
+
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Debug;
@@ -23,14 +27,15 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     public static UserData currentUser;
-    public static boolean isLoggedUser = false;
     public static List<UserData> userDataList;
     public static List<Video> videoList;
 
@@ -41,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private Button addVideoButton;
     private ImageView profilePic;
     private VideoAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,9 +55,9 @@ public class MainActivity extends AppCompatActivity {
         userDataList = new ArrayList<>();
         currentUser = null;
 
-         registerButton = findViewById(R.id.registerMe);
-         loginButton = findViewById(R.id.LoginMe);
-         logoutButton = findViewById(R.id.LogOutButton);
+        registerButton = findViewById(R.id.registerMe);
+        loginButton = findViewById(R.id.LoginMe);
+        logoutButton = findViewById(R.id.LogOutButton);
 //         videoButton = findViewById(R.id.playVideoButton);
 
         addVideoButton = findViewById(R.id.buttonAddVideo);
@@ -85,13 +91,9 @@ public class MainActivity extends AppCompatActivity {
         // Set OnClickListener for logout button
         logoutButton.setOnClickListener(v -> {
 
-//             isLoggedUser = false;
             currentUser = null;
             loggedVisibilityLogic();
         });
-
-
-
 
 
 //            Intent intent = new Intent(MainActivity.this, VideoActivity.class);
@@ -102,7 +104,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Set OnClickListener for add video button
         addVideoButton.setOnClickListener(v -> {
-            if (isLoggedUser) {
+            if (currentUser != null
+            ) {
                 Intent intent = new Intent(MainActivity.this, AddVideo.class);
                 startActivity(intent);
             } else {
@@ -133,7 +136,8 @@ public class MainActivity extends AppCompatActivity {
         String jsonString = JsonUtils.loadJSONFromAsset(this, "vidDB.json");
         if (jsonString != null) {
             Gson gson = new Gson();
-            Type videoListType = new TypeToken<List<Video>>() {}.getType();
+            Type videoListType = new TypeToken<List<Video>>() {
+            }.getType();
             videos = gson.fromJson(jsonString, videoListType);
         }
         return videos;
@@ -155,6 +159,7 @@ public class MainActivity extends AppCompatActivity {
             logoutButton.setVisibility(View.GONE);
         }
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
