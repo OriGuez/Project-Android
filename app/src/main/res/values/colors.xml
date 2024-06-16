@@ -1,4 +1,6 @@
 <!-- res/values/colors.xml -->
 <resources>
     <color name="viewtube_red">#FF0000</color> <!-- Replace with your desired color code -->
+    <color name="colorLightGrey">#DDDDDD</color>
+
 </resources>

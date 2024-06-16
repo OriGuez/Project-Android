@@ -1,12 +1,14 @@
 <resources>
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+<!--    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">-->
     <!-- Base application theme -->
-<!--     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar"> -->
+    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here -->
         <item name="colorPrimary">@color/viewtube_red</item>
 
 <!--<item name="colorPrimaryDark">#0099FF</item>-->
         <item name="colorAccent">#0099FF</item>
+
+
         <item name="buttonStyle">@style/ViewtubeButton</item>
     </style>
 
@@ -22,4 +24,10 @@
     <style name="MyDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="colorPrimary">@color/viewtube_red</item>
     </style>
+    <style name="RoundedImageViewStyle">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+
+        <!-- Add this inside your styles.xml -->
 </resources>
