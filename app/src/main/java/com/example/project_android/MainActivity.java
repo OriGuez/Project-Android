@@ -29,8 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    public static Uri publicURI;
-
     public static UserData currentUser;
     public static boolean isLoggedUser = false;
     public static List<UserData> userDataList;
@@ -40,21 +38,20 @@ public class MainActivity extends AppCompatActivity {
     private Button registerButton;
     private Button loginButton;
     private Button logoutButton;
-    private Button addVideoButton; 
+    private Button addVideoButton;
     private ImageView profilePic;
-    private VideoAdapter adapter; 
+    private VideoAdapter adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         videoList = loadVideoData();
         setContentView(R.layout.activity_main);
-        videoList = new ArrayList<>();
         userDataList = new ArrayList<>();
         currentUser = null;
 
-//         registerButton = findViewById(R.id.registerMe);
-//         loginButton = findViewById(R.id.LoginMe);
-//         logoutButton = findViewById(R.id.LogOutButton);
+         registerButton = findViewById(R.id.registerMe);
+         loginButton = findViewById(R.id.LoginMe);
+         logoutButton = findViewById(R.id.LogOutButton);
 //         videoButton = findViewById(R.id.playVideoButton);
 
         addVideoButton = findViewById(R.id.buttonAddVideo);
@@ -62,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
 // Initialize new button
 
         // Set up RecyclerView
-        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView = findViewById(R.id.recyclerViewVideos);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 1));
         adapter = new VideoAdapter(this, videoList, "Main");
         recyclerView.setAdapter(adapter);
@@ -150,19 +147,14 @@ public class MainActivity extends AppCompatActivity {
             logoutButton.setVisibility(View.VISIBLE);
             TextView userTextView = findViewById(R.id.usernameTextView);
             userTextView.setText("welcome, " + currentUser.getUsername());
-              if (profilePic != null) {
-                    profilePic.setImageBitmap(currentUser.getImage());
-                }
-            }
-
-      
+            if (profilePic != null)
+                profilePic.setImageBitmap(currentUser.getImage());
         } else {
             registerButton.setVisibility(View.VISIBLE);
             loginButton.setVisibility(View.VISIBLE);
             logoutButton.setVisibility(View.GONE);
         }
     }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
