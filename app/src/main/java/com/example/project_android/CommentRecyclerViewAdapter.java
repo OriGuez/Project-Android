@@ -18,12 +18,15 @@ import java.util.List;
 public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecyclerViewAdapter.ViewHolder> {
 
     private List<Video.Comment> comments;
+    private RecyclerView recyclerView;
+
     private LayoutInflater inflater;
     private Context context;
 
-    public CommentRecyclerViewAdapter(Context context, List<Video.Comment> comments) {
+    public CommentRecyclerViewAdapter(Context context, List<Video.Comment> comments, RecyclerView recyclerView) {
         this.context = context;
         this.comments = comments;
+        this.recyclerView = recyclerView;
         this.inflater = LayoutInflater.from(context);
     }
 
@@ -85,6 +88,7 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
             comments.remove(position);
             notifyItemRemoved(position);
             notifyItemRangeChanged(position, comments.size());
+            RecyclerViewUtils.setRecyclerViewHeightBasedOnItems(recyclerView);
         });
 
         if (MainActivity.currentUser == null) {

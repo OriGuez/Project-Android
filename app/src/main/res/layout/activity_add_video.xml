@@ -44,4 +44,11 @@
         android:text="Submit"
         android:layout_marginTop="24dp" />
 
+    <!-- VideoView to display selected video -->
+    <VideoView
+        android:id="@+id/videoView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp" />
+
 </LinearLayout>

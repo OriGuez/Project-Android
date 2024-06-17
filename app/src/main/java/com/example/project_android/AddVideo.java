@@ -1,50 +1,22 @@
 package com.example.project_android;
 
-import static java.lang.Integer.MAX_VALUE;
-
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Bundle;
-import android.widget.Button;
-import android.net.Uri;
-import android.Manifest;
-import android.widget.Toast;
-
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-
-import android.provider.MediaStore;
-import android.widget.VideoView;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
-
-import java.io.IOException;
-
-import java.util.Random;
+import java.io.File;
 
 public class AddVideo extends AppCompatActivity {
-    private Button addVid;
-    private VideoView tryVV;
-    private static final int REQUEST_CODE_PICK_VIDEO = 1;
-    private static final int REQUEST_CODE_PERMISSIONS = 2;
-    private Uri videoURI;
-
+    public static Uri here;
     private EditText editVideoTitle;
     private EditText editVideoDescription;
     private Button buttonUploadVideo;
@@ -52,52 +24,35 @@ public class AddVideo extends AppCompatActivity {
     private Button buttonSubmitVideo;
     private Uri videoUri;
     private Uri thumbnailUri;
+    private VideoView videoView;
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (videoUri != null) {
+            //videoView.seekTo(currentVideoPosition);
+            videoView.start();
+        }
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (videoView.isPlaying()) {
+            //currentVideoPosition = videoView.getCurrentPosition();
+            videoView.pause();
+        }
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_video);
-//         addVid.setOnClickListener(v -> {
-//             pickVideo();
-//         });
-
-
-        //   @Override
-//     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-//         super.onRequestPermissionsResult(requestCode, permissions, grantResults); // Call the superclass implementation
-//         if (requestCode == REQUEST_CODE_PERMISSIONS) {
-//             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                 //loadLastSavedVideo();
-//             } else {
-//                 Toast.makeText(this, "Permission denied!", Toast.LENGTH_SHORT).show();
-//             }
-//         }
-//     }
-
-//     public void pickVideo() {
-//         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
-//         intent.setType("video/*");
-//         startActivityForResult(intent, REQUEST_CODE_PICK_VIDEO);
-//     }
-
-//    @Override
-//     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//         super.onActivityResult(requestCode, resultCode, data);
-//         if (requestCode == REQUEST_CODE_PICK_VIDEO && resultCode == RESULT_OK && data != null) {
-//              videoURI = data.getData();
-//             if (videoURI != null) {
-//                 MainActivity.publicURI=videoURI;
-//                 tryVV.setVideoURI(videoURI);
-//                 tryVV.start();
-//                //save the URI
-//            }
-//        }
 
         editVideoTitle = findViewById(R.id.editVideoTitle);
         editVideoDescription = findViewById(R.id.editVideoDescription);
         buttonUploadVideo = findViewById(R.id.buttonUploadVideo);
         buttonUploadThumbnail = findViewById(R.id.buttonUploadThumbnail);
         buttonSubmitVideo = findViewById(R.id.buttonSubmitVideo);
+        videoView = findViewById(R.id.videoView);
 
         // Set up the upload buttons
         buttonUploadVideo.setOnClickListener(v -> openVideoPicker());
@@ -111,6 +66,7 @@ public class AddVideo extends AppCompatActivity {
                 if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                     videoUri = result.getData().getData();
                     Toast.makeText(this, "Video Selected", Toast.LENGTH_SHORT).show();
+                    playVideo();
                 }
             });
 
@@ -119,6 +75,7 @@ public class AddVideo extends AppCompatActivity {
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                     thumbnailUri = result.getData().getData();
+                    here=thumbnailUri;
                     Toast.makeText(this, "Thumbnail Selected", Toast.LENGTH_SHORT).show();
                 }
             });
@@ -145,6 +102,7 @@ public class AddVideo extends AppCompatActivity {
         // Create a new Video object
         Video newVideo = new Video();
         newVideo.setTitle(title);
+        newVideo.setVidID("15");
         newVideo.setDescription(description);
         newVideo.setUrl(videoUri.toString());
         newVideo.setThumbnailUrl(thumbnailUri.toString());
@@ -153,9 +111,14 @@ public class AddVideo extends AppCompatActivity {
 
         // Add new video to video list
         MainActivity.videoList.add(newVideo);
-
+        here=videoUri;
         // Inform user and finish activity
         Toast.makeText(this, "Video Added Successfully", Toast.LENGTH_SHORT).show();
         finish();
+    }
+
+    private void playVideo() {
+        videoView.setVideoURI(videoUri);
+        videoView.start();
     }
 }

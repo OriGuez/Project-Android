@@ -8,7 +8,7 @@
     <!-- Video Player Section -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="218dp"
+        android:layout_height="235dp"
         android:orientation="vertical">
 
         <VideoView
@@ -145,22 +145,15 @@
                 android:text="@string/comments"
                 android:textSize="18sp"
                 android:textStyle="bold" />
-            <!-- Comments List inside NestedScrollView -->
-            <androidx.core.widget.NestedScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fillViewport="true">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/commentsRecyclerView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </androidx.core.widget.NestedScrollView>
             <!-- Comments ListView -->
-            <ListView
-                android:id="@+id/commentsListView"
+<!--            <ListView-->
+<!--                android:id="@+id/commentsListView"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="229dp" />-->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/commentsRecyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="229dp" />
+                android:layout_height="wrap_content" />
 
             <!-- Add Comment EditText -->
             <EditText

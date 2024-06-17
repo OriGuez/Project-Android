@@ -1,8 +1,14 @@
 package com.example.project_android;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -44,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
     private Button loginButton;
     private Button logoutButton;
     private Button addVideoButton;
+    private Button btnToggleDark;
+
     private ImageView profilePic;
     private VideoAdapter adapter;
 
@@ -52,30 +60,27 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         videoList = loadVideoData();
         setContentView(R.layout.activity_main);
+        // Request permission to read external storage
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+        }
         userDataList = new ArrayList<>();
         currentUser = null;
-
+        btnToggleDark = findViewById(R.id.btnToggleDark);
         registerButton = findViewById(R.id.registerMe);
         loginButton = findViewById(R.id.LoginMe);
         logoutButton = findViewById(R.id.LogOutButton);
-//         videoButton = findViewById(R.id.playVideoButton);
-
         addVideoButton = findViewById(R.id.buttonAddVideo);
         addVideoButton.setContentDescription("Add Video");
-// Initialize new button
-
         // Set up RecyclerView
         recyclerView = findViewById(R.id.recyclerViewVideos);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 1));
         adapter = new VideoAdapter(this, videoList, "Main");
         recyclerView.setAdapter(adapter);
-
-
         // Set up profile picture
         // profilePic = findViewById(R.id.profilePic);
-
         loggedVisibilityLogic();
-
         // Set OnClickListener for register button
         registerButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, RegistrationActivity.class);
@@ -90,17 +95,21 @@ public class MainActivity extends AppCompatActivity {
 
         // Set OnClickListener for logout button
         logoutButton.setOnClickListener(v -> {
-
             currentUser = null;
             loggedVisibilityLogic();
         });
+        btnToggleDark.setOnClickListener(v -> {
+            int currentNightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+            if (currentNightMode == Configuration.UI_MODE_NIGHT_NO) {
+                // Toggle to dark mode
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            } else {
+                // Toggle to light mode
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            }
 
-
-//            Intent intent = new Intent(MainActivity.this, VideoActivity.class);
-//            if (!videoList.isEmpty()) {
-//                intent.putExtra("videoID", videoList.get(0).getVidID());
-//                startActivity(intent);
-//            }
+            recreate(); // Apply the theme changes immediately
+        });
 
         // Set OnClickListener for add video button
         addVideoButton.setOnClickListener(v -> {

@@ -2,6 +2,7 @@ package com.example.project_android;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,7 +16,10 @@ import android.widget.TextView;
 import android.widget.VideoView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.widget.MediaController;
@@ -23,14 +27,16 @@ import android.widget.MediaController;
 import java.util.List;
 
 public class VideoActivity extends AppCompatActivity {
-    private CommentAdapter adapter;
+    //private CommentAdapter adapter;
+    private CommentRecyclerViewAdapter recycleAdapter;
+    private RecyclerView commentsRecycleView;
     private VideoAdapter videoAdapter;
     private VideoView videoView;
     private TextView titleTextView;
     private TextView dateTextView;
     private TextView descriptionTextView;
     private TextView publisherTextView;
-    private ListView commentsListView;
+    //private ListView commentsListView;
     private Button addComment;
     private EditText commentAddText;
     private ImageButton likeButton;
@@ -66,14 +72,13 @@ public class VideoActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_video);
-
         // Initialize views
         videoView = findViewById(R.id.videoView);
         titleTextView = findViewById(R.id.titleTextView);
         descriptionTextView = findViewById(R.id.descriptionTextView);
         dateTextView = findViewById(R.id.dateTextView);
         publisherTextView = findViewById(R.id.publisherTextView);
-        commentsListView = findViewById(R.id.commentsListView);
+        //commentsListView = findViewById(R.id.commentsListView);
         commentAddText = findViewById(R.id.commentAddText);
         addComment = findViewById(R.id.addCommentButton);
         likeButton = findViewById(R.id.likeButton);
@@ -88,7 +93,7 @@ public class VideoActivity extends AppCompatActivity {
         editDescriptionEditText.setVisibility(View.GONE);
         saveButton.setVisibility(View.GONE);
         videoRecyclerView = findViewById(R.id.recyclerView);
-
+        commentsRecycleView = findViewById(R.id.commentsRecyclerView);
         if (MainActivity.currentUser == null) {
             addComment.setVisibility(View.GONE);
             commentAddText.setVisibility(View.GONE);
@@ -110,7 +115,9 @@ public class VideoActivity extends AppCompatActivity {
                 } else {
                     currentVideo.getComments().add(new Video.Comment("User", "Anon", commentText));
                 }
-                adapter.notifyDataSetChanged();
+                //adapter.notifyDataSetChanged();
+                recycleAdapter.notifyDataSetChanged();
+                RecyclerViewUtils.setRecyclerViewHeightBasedOnItems(commentsRecycleView);
                 commentAddText.getText().clear();
             }
         });
@@ -174,9 +181,13 @@ public class VideoActivity extends AppCompatActivity {
         publisherTextView.setText(currentVideo.getPublisher());
 
         // Set up comments list
-        List<Video.Comment> comments = currentVideo.getComments();
-        adapter = new CommentAdapter(this, comments);
-        commentsListView.setAdapter(adapter);
+        //List<Video.Comment> comments = currentVideo.getComments();
+        //adapter = new CommentAdapter(this, comments);
+        //commentsListView.setAdapter(adapter);
+        recycleAdapter = new CommentRecyclerViewAdapter(this, currentVideo.getComments(),commentsRecycleView);
+        commentsRecycleView.setLayoutManager(new LinearLayoutManager(this));
+        commentsRecycleView.setAdapter(recycleAdapter);
+        commentsRecycleView.post(() -> RecyclerViewUtils.setRecyclerViewHeightBasedOnItems(commentsRecycleView));
 
         // Set up RecyclerView for scrolling videos
         videoRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));

@@ -8,6 +8,7 @@
     <string name="upload_profile_picture">העלה תמונת פרופיל</string>
     <string name="profile_picture_description">תמונת פרופיל</string>
     <string name="register_button">הרשמה</string>
+    <string name="add_video_button">הוסף סרטון</string>
     <string name="loginButton">התחבר</string>
     <string name="username">שם משתמש</string>
     <string name="password">סיסמה</string>
@@ -34,10 +35,11 @@
     <string name="no">לא</string>
     <string name="delete_video">מחק סרטון</string>
     <string name="sure_delete_video">האם אתה בטוח שברצונך למחוק את הסרטון?</string>
-    <string name="publisher_name">Publisher Name</string>
-    <string name="comment_content">Comment content</string>
-    <string name="edit_title">Edit Title</string>
-    <string name="edit_description">Edit Description</string>
-    <string name="save_changes">Save</string>
-    <string name="cancel_edit">Cancel</string>
+    <string name="publisher_name">שם מעלה</string>
+    <string name="comment_content">תוכן תגובה</string>
+    <string name="edit_title">ערוך כותרת</string>
+    <string name="edit_description">ערוך תיאור</string>
+    <string name="save_changes">שמור</string>
+    <string name="cancel_edit">בטל</string>
+    <string name="dark_mode">מצב כהה</string>
 </resources>
