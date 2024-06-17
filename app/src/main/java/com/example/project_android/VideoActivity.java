@@ -180,21 +180,23 @@ public class VideoActivity extends AppCompatActivity {
             exitEditMode();
         });
         // Set up video playback
-       // Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + getRawResourceIdByName(currentVideo.getUrl()));
-        //videoView.setVideoURI(AddVideo.here);
-        // Decode Base64 video and play it
-        try {
-            Uri vUri = decodeBase64ToVideoUri(currentVideo.getBase64Video());
-            videoView.setVideoURI(vUri);
-        } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Failed to decode video", Toast.LENGTH_SHORT).show();
+        if (currentVideo.getUrl() != null) {
+            Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + getRawResourceIdByName(currentVideo.getUrl()));
+            videoView.setVideoURI(videoUri);
+        } else {
+            // Decode Base64 video and play it
+            try {
+                Uri vUri = decodeBase64ToVideoUri(currentVideo.getBase64Video());
+                videoView.setVideoURI(vUri);
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(this, "Failed to decode video", Toast.LENGTH_SHORT).show();
+            }
         }
         MediaController mediaController = new MediaController(this);
         mediaController.setAnchorView(videoView);
         videoView.setMediaController(mediaController);
         videoView.start();
-
         // Set video details
         titleTextView.setText(currentVideo.getTitle());
         descriptionTextView.setText(currentVideo.getDescription());
@@ -205,7 +207,7 @@ public class VideoActivity extends AppCompatActivity {
         //List<Video.Comment> comments = currentVideo.getComments();
         //adapter = new CommentAdapter(this, comments);
         //commentsListView.setAdapter(adapter);
-        recycleAdapter = new CommentRecyclerViewAdapter(this, currentVideo.getComments(),commentsRecycleView);
+        recycleAdapter = new CommentRecyclerViewAdapter(this, currentVideo.getComments(), commentsRecycleView);
         commentsRecycleView.setLayoutManager(new LinearLayoutManager(this));
         commentsRecycleView.setAdapter(recycleAdapter);
         commentsRecycleView.post(() -> RecyclerViewUtils.setRecyclerViewHeightBasedOnItems(commentsRecycleView));
@@ -244,6 +246,7 @@ public class VideoActivity extends AppCompatActivity {
         likeButton.setImageDrawable(getResources().getDrawable(R.drawable.like));
         isLiked.setText(R.string.like);
     }
+
     private void enterEditMode() {
         // Show edit fields and save button
         editTitleEditText.setVisibility(View.VISIBLE);
@@ -283,11 +286,13 @@ public class VideoActivity extends AppCompatActivity {
         titleTextView.setText(currentVideo.getTitle());
         descriptionTextView.setText(currentVideo.getDescription());
     }
+
     private int getRawResourceIdByName(String resourceName) {
         // Ensure the resource name is correctly formatted
         String formattedResourceName = resourceName.replace("/videos/", "").replace(".mp4", "");
         return getResources().getIdentifier(formattedResourceName, "raw", getPackageName());
     }
+
     private void checkPermissions() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -296,6 +301,7 @@ public class VideoActivity extends AppCompatActivity {
                     1);
         }
     }
+
     private Uri decodeBase64ToVideoUri(String base64Video) throws IOException {
         byte[] decodedBytes = Base64.decode(base64Video, Base64.DEFAULT);
         File tempFile = File.createTempFile("decoded_video", ".mp4", getCacheDir());

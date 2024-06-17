@@ -1,6 +1,6 @@
 package com.example.project_android;
-
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -9,15 +9,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import android.widget.VideoView;
-
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 public class AddVideo extends AppCompatActivity {
     private EditText editVideoTitle;
@@ -28,6 +29,7 @@ public class AddVideo extends AppCompatActivity {
     private Uri videoUri;
     private Uri thumbnailUri;
     private VideoView videoView;
+    private Bitmap thumbPic;
 
     @Override
     protected void onResume() {
@@ -49,7 +51,6 @@ public class AddVideo extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_video);
-
         editVideoTitle = findViewById(R.id.editVideoTitle);
         editVideoDescription = findViewById(R.id.editVideoDescription);
         buttonUploadVideo = findViewById(R.id.buttonUploadVideo);
@@ -78,6 +79,12 @@ public class AddVideo extends AppCompatActivity {
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                     thumbnailUri = result.getData().getData();
+                    try {
+                        thumbPic = MediaStore.Images.Media.getBitmap(getContentResolver(), thumbnailUri);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    //selectedProfilePicture = MediaStore.Images.Media.getBitmap(getContentResolver(), imgURI);
                     Toast.makeText(this, "Thumbnail Selected", Toast.LENGTH_SHORT).show();
                 }
             });
@@ -97,7 +104,6 @@ public class AddVideo extends AppCompatActivity {
     private void submitVideo() {
         String title = editVideoTitle.getText().toString().trim();
         String description = editVideoDescription.getText().toString().trim();
-
         if (title.isEmpty() || description.isEmpty() || videoUri == null || thumbnailUri == null) {
             Toast.makeText(this, "Please fill all fields and upload video and thumbnail.", Toast.LENGTH_LONG).show();
             return;
@@ -112,16 +118,16 @@ public class AddVideo extends AppCompatActivity {
             newVideo.setWhoLikedList(new ArrayList<>());
             newVideo.setComments(new ArrayList<>());
             newVideo.setTitle(title);
-            newVideo.setVidID("11");
+            newVideo.setVidID(generateUniqueID());
             newVideo.setDescription(description);
             newVideo.setBase64Video(base64Video);
             newVideo.setThumbnailUrl(thumbnailUri.toString());
             newVideo.setPublisher(MainActivity.currentUser.getUsername()); // Replace with actual user
             newVideo.setUpload_date("Now"); // Replace with current date
-
             // Add new video to video list
             MainActivity.videoList.add(newVideo);
-
+            if (thumbPic !=null)
+                newVideo.setThumbnailPicture(thumbPic);
             // Inform user and finish activity
             Toast.makeText(this, "Video Added Successfully", Toast.LENGTH_SHORT).show();
 
@@ -153,5 +159,17 @@ public class AddVideo extends AppCompatActivity {
             byteBuffer.write(buffer, 0, len);
         }
         return byteBuffer.toByteArray();
+    }
+
+    public String generateUniqueID() {
+        Set<String> existingIDs = new HashSet<>();
+        for (Video video : MainActivity.videoList) {
+            existingIDs.add(video.getVidID());
+        }
+        String newID;
+        do {
+            newID = UUID.randomUUID().toString();
+        } while (existingIDs.contains(newID));
+        return newID;
     }
 }

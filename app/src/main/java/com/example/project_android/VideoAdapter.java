@@ -4,13 +4,16 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.List;
 
 public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHolder> {
@@ -39,16 +42,23 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
 
         // Load thumbnail from resources
         int thumbnailResourceId = getThumbnailResourceId(video.getThumbnailUrl());
-        holder.thumbnailImageView.setImageResource(thumbnailResourceId);
-
+        if (thumbnailResourceId == 0) {
+            Bitmap pic = video.getThumbnailPicture();
+            if (pic != null)
+                holder.thumbnailImageView.setImageBitmap(pic);
+            else
+                holder.thumbnailImageView.setImageResource(R.drawable.logo);
+        } else {
+            holder.thumbnailImageView.setImageResource(thumbnailResourceId);
+        }
         holder.itemView.setOnClickListener(v -> {
 
-                Intent intent = new Intent(context, VideoActivity.class);
-                intent.putExtra("videoID", video.getVidID());
-                context.startActivity(intent);
-                if(source.equals("Video")) {
-                    ((Activity) context).finish();
-                }
+            Intent intent = new Intent(context, VideoActivity.class);
+            intent.putExtra("videoID", video.getVidID());
+            context.startActivity(intent);
+            if (source.equals("Video")) {
+                ((Activity) context).finish();
+            }
         });
     }
 
@@ -77,9 +87,9 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         Resources resources = context.getResources();
         int resourceId = resources.getIdentifier(resourceName, "raw", context.getPackageName());
 
-        if (resourceId == 0) {
-            resourceId = R.drawable.logo; // Example default resource
-        }
+//        if (resourceId == 0) {
+//            resourceId = R.drawable.logo; // Example default resource
+//        }
 
         return resourceId;
     }
