@@ -1,8 +1,13 @@
 package com.example.project_android;
 
+import android.graphics.Bitmap;
+
 import java.util.List;
 
 public class Video {
+    private String base64Video;
+    private Bitmap thumbnailPicture;
+
     private String title;
     private String description;
     private String publisher;
@@ -12,7 +17,13 @@ public class Video {
     private String upload_date;
     private List<String> whoLikedList;
     private List<Comment> comments;
+    public String getBase64Video() {
+        return base64Video;
+    }
 
+    public void setBase64Video(String base64Video) {
+        this.base64Video = base64Video;
+    }
     // Add getters and setters
     public String getTitle() {
         return title;
@@ -84,6 +95,14 @@ public class Video {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Bitmap getThumbnailPicture() {
+        return thumbnailPicture;
+    }
+
+    public void setThumbnailPicture(Bitmap thumbnailPicture) {
+        this.thumbnailPicture = thumbnailPicture;
     }
 
     // Nested Comment class

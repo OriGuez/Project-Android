@@ -1,11 +1,13 @@
 package com.example.project_android;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -13,6 +15,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +27,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.widget.MediaController;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 public class VideoActivity extends AppCompatActivity {
@@ -72,6 +79,12 @@ public class VideoActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_video);
+        checkPermissions();
+        // Request permission to read external storage
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+        }
         // Initialize views
         videoView = findViewById(R.id.videoView);
         titleTextView = findViewById(R.id.titleTextView);
@@ -167,8 +180,16 @@ public class VideoActivity extends AppCompatActivity {
             exitEditMode();
         });
         // Set up video playback
-        Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + getRawResourceIdByName(currentVideo.getUrl()));
-        videoView.setVideoURI(videoUri);
+       // Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + getRawResourceIdByName(currentVideo.getUrl()));
+        //videoView.setVideoURI(AddVideo.here);
+        // Decode Base64 video and play it
+        try {
+            Uri vUri = decodeBase64ToVideoUri(currentVideo.getBase64Video());
+            videoView.setVideoURI(vUri);
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Failed to decode video", Toast.LENGTH_SHORT).show();
+        }
         MediaController mediaController = new MediaController(this);
         mediaController.setAnchorView(videoView);
         videoView.setMediaController(mediaController);
@@ -266,5 +287,21 @@ public class VideoActivity extends AppCompatActivity {
         // Ensure the resource name is correctly formatted
         String formattedResourceName = resourceName.replace("/videos/", "").replace(".mp4", "");
         return getResources().getIdentifier(formattedResourceName, "raw", getPackageName());
+    }
+    private void checkPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    1);
+        }
+    }
+    private Uri decodeBase64ToVideoUri(String base64Video) throws IOException {
+        byte[] decodedBytes = Base64.decode(base64Video, Base64.DEFAULT);
+        File tempFile = File.createTempFile("decoded_video", ".mp4", getCacheDir());
+        try (FileOutputStream fos = new FileOutputStream(tempFile)) {
+            fos.write(decodedBytes);
+        }
+        return Uri.fromFile(tempFile);
     }
 }
