@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Project-Android</string>
+    <string name="app_name">ViewTube</string>
+    <string name="password_dont_match">הסיסמאות לא תואמות</string>
+    <string name="channelNameRequired">נדרש שם ערוץ</string>
+    <string name="profilePicRequired">נדרשת תמונת פרופיל</string>
+    <string name="usernameRequired">נדרש שם משתמש</string>
+    <string name="invalidLogin">שם משתמש או סיסמה לא תקינים</string>
+    <string name="invalidPassword">סיסמה צריכה להיות באורך של לפחות 8 תווים</string>
+    <string name="invalidPassword2">סיסמה צריכה להכיל לפחות תו אחד שאינו ספרה</string>
     <string name="username_hint">שם משתמש</string>
     <string name="password_hint">סיסמה</string>
     <string name="confirm_password_hint">אימות סיסמה</string>
@@ -8,6 +15,7 @@
     <string name="upload_profile_picture">העלה תמונת פרופיל</string>
     <string name="profile_picture_description">תמונת פרופיל</string>
     <string name="register_button">הרשמה</string>
+    <string name="add_video_button">הוסף סרטון</string>
     <string name="loginButton">התחבר</string>
     <string name="username">שם משתמש</string>
     <string name="password">סיסמה</string>
@@ -34,10 +42,23 @@
     <string name="no">לא</string>
     <string name="delete_video">מחק סרטון</string>
     <string name="sure_delete_video">האם אתה בטוח שברצונך למחוק את הסרטון?</string>
-    <string name="publisher_name">Publisher Name</string>
-    <string name="comment_content">Comment content</string>
-    <string name="edit_title">Edit Title</string>
-    <string name="edit_description">Edit Description</string>
-    <string name="save_changes">Save</string>
-    <string name="cancel_edit">Cancel</string>
+    <string name="publisher_name">שם מעלה</string>
+    <string name="comment_content">תוכן תגובה</string>
+    <string name="edit_title">ערוך כותרת</string>
+    <string name="edit_description">ערוך תיאור</string>
+    <string name="save_changes">שמור</string>
+    <string name="cancel_edit">בטל</string>
+    <string name="dark_mode">מצב כהה</string>
+    <string name="video_title">כותרת הסרטון</string>
+    <string name="submit">העלה</string>
+    <string name="welcome_to_viewtube">ברוך הבא לViewtube</string>
+    <string name="new_to_viewtube">חדש בViewtube?</string>
+    <string name="create_an_account">צור חשבון</string>
+    <string name="youtube_logo">לוגו</string>
+    <string name="welcome">ברוך הבא</string>
+    <string name="confirm_password">אימות סיסמה</string>
+    <string name="channel_name">שם הערוץ</string>
+    <string name="videoAdded">הסרטון נוסף בהצלחה</string>
+    <string name="fillAll">בבקשה מלא את כל השדות הנחוצים והעלה תמונת נושא וסרטון</string>
+
 </resources>
