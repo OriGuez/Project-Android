@@ -13,7 +13,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
@@ -30,8 +29,6 @@ import android.widget.MediaController;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
 
 public class VideoActivity extends AppCompatActivity {
     //private CommentAdapter adapter;
@@ -43,7 +40,6 @@ public class VideoActivity extends AppCompatActivity {
     private TextView dateTextView;
     private TextView descriptionTextView;
     private TextView publisherTextView;
-    //private ListView commentsListView;
     private Button addComment;
     private EditText commentAddText;
     private ImageButton likeButton;
@@ -58,7 +54,6 @@ public class VideoActivity extends AppCompatActivity {
     private RecyclerView videoRecyclerView;
     private Video currentVideo;
     AssetManager assetManager;
-
 
     private static final String TAG = "VideoActivity";
 
@@ -91,7 +86,6 @@ public class VideoActivity extends AppCompatActivity {
         descriptionTextView = findViewById(R.id.descriptionTextView);
         dateTextView = findViewById(R.id.dateTextView);
         publisherTextView = findViewById(R.id.publisherTextView);
-        //commentsListView = findViewById(R.id.commentsListView);
         commentAddText = findViewById(R.id.commentAddText);
         addComment = findViewById(R.id.addCommentButton);
         likeButton = findViewById(R.id.likeButton);
@@ -114,15 +108,12 @@ public class VideoActivity extends AppCompatActivity {
             likeText.setVisibility(View.GONE);
             deleteVideoButton.setVisibility(View.GONE);
             editVideoButton.setVisibility(View.GONE);
-
         } else {
             updateLikeButton(likeButton, likeText);
         }
-
         addComment.setOnClickListener(v -> {
             String commentText = commentAddText.getText().toString().trim();
             if (!commentText.isEmpty()) {
-                Video.Comment newComment = new Video.Comment(commentText, "User", "Now");
                 if (MainActivity.currentUser != null) {
                     currentVideo.getComments().add(new Video.Comment("User", MainActivity.currentUser.getUsername(), commentText));
                 } else {
@@ -202,11 +193,6 @@ public class VideoActivity extends AppCompatActivity {
         descriptionTextView.setText(currentVideo.getDescription());
         dateTextView.setText(currentVideo.getUpload_date());
         publisherTextView.setText(currentVideo.getPublisher());
-
-        // Set up comments list
-        //List<Video.Comment> comments = currentVideo.getComments();
-        //adapter = new CommentAdapter(this, comments);
-        //commentsListView.setAdapter(adapter);
         recycleAdapter = new CommentRecyclerViewAdapter(this, currentVideo.getComments(), commentsRecycleView);
         commentsRecycleView.setLayoutManager(new LinearLayoutManager(this));
         commentsRecycleView.setAdapter(recycleAdapter);
@@ -220,13 +206,13 @@ public class VideoActivity extends AppCompatActivity {
 
     private void showDeleteConfirmationDialog() {
         new AlertDialog.Builder(this, R.style.MyDialogTheme)
-                .setTitle("Delete Video")
-                .setMessage("Are you sure you want to delete this video?")
+                .setTitle(getString(R.string.delete_video))
+                .setMessage(getString(R.string.sure_delete_video))
                 .setPositiveButton(R.string.yes, (dialog, which) -> {
                     deleteCurrentVideo();
                 })
                 .setNegativeButton(R.string.no, null)
-                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setIcon(android.R.drawable.ic_menu_delete)
                 .show();
     }
 

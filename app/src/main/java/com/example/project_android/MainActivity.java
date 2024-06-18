@@ -101,14 +101,14 @@ public class MainActivity extends AppCompatActivity {
         btnToggleDark.setOnClickListener(v -> {
             int currentNightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
             if (currentNightMode == Configuration.UI_MODE_NIGHT_NO) {
-                // Toggle to dark mode
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                // Set to dark mode
+                getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                // Update UI elements for dark mode (e.g., set background color to dark)
             } else {
-                // Toggle to light mode
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                // Set to light mode
+                getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                // Update UI elements for light mode (e.g., set background color to light)
             }
-
-            recreate(); // Apply the theme changes immediately
         });
 
         // Set OnClickListener for add video button
@@ -134,14 +134,6 @@ public class MainActivity extends AppCompatActivity {
     // Method to load video data
     private List<Video> loadVideoData() {
         List<Video> videos = new ArrayList<>();
-        // Load the JSON from assets
-//         String jsonString = JsonUtils.loadJSONFromAsset(this, "vidDB.json");
-        // Parse the JSON using Gson
-//         Gson gson = new Gson();
-//         Type videoListType = new TypeToken<List<Video>>() {
-//         }.getType();
-//         videos = gson.fromJson(jsonString, videoListType);
-
         String jsonString = JsonUtils.loadJSONFromAsset(this, "vidDB.json");
         if (jsonString != null) {
             Gson gson = new Gson();
@@ -168,6 +160,25 @@ public class MainActivity extends AppCompatActivity {
             logoutButton.setVisibility(View.GONE);
         }
     }
+
+    private void updateForDarkMode() {
+
+    }
+
+    private void updateForLightMode() {
+
+    }
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        final int nightMode = newConfig.uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        if (nightMode == Configuration.UI_MODE_NIGHT_YES) {
+            getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else {
+            getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
+    }
+
 
     @Override
     protected void onDestroy() {

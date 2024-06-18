@@ -31,7 +31,7 @@
                 android:id="@+id/youtubeLogo"
                 android:layout_width="51dp"
                 android:layout_height="36dp"
-                android:contentDescription="YouTube Logo"
+                android:contentDescription="@string/youtube_logo"
                 android:src="@drawable/logo" />
 
             <!-- Spacer to push buttons to the right -->
@@ -111,7 +111,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="Welcome"
+                    android:text="@string/welcome"
                     android:textSize="18sp" />
             </LinearLayout>
 

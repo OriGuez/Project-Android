@@ -1,5 +1,6 @@
 package com.example.project_android;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,7 +12,11 @@ import android.widget.Toast;
 import android.widget.VideoView;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import android.Manifest;
 
 public class AddVideo extends AppCompatActivity {
     private EditText editVideoTitle;
@@ -30,6 +36,10 @@ public class AddVideo extends AppCompatActivity {
     private Uri thumbnailUri;
     private VideoView videoView;
     private Bitmap thumbPic;
+    private static final int REQUEST_CODE_PICK_VIDEO = 10;
+    private static final int REQUEST_CODE_PICK_PICTURE = 11;
+
+    private static final int REQUEST_CODE_PERMISSIONS = 2;
 
     @Override
     protected void onResume() {
@@ -51,6 +61,15 @@ public class AddVideo extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_video);
+                // Check for permissions
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    REQUEST_CODE_PERMISSIONS);
+        } else {
+            Toast.makeText(this, "Permission denied!", Toast.LENGTH_SHORT).show();
+        }
         editVideoTitle = findViewById(R.id.editVideoTitle);
         editVideoDescription = findViewById(R.id.editVideoDescription);
         buttonUploadVideo = findViewById(R.id.buttonUploadVideo);
@@ -64,15 +83,6 @@ public class AddVideo extends AppCompatActivity {
         buttonSubmitVideo.setOnClickListener(v -> submitVideo());
     }
 
-    // Activity result launcher for video picking
-    private final ActivityResultLauncher<Intent> videoPickerLauncher =
-            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                    videoUri = result.getData().getData();
-                    Toast.makeText(this, "Video Selected", Toast.LENGTH_SHORT).show();
-                    playVideo();
-                }
-            });
 
     // Activity result launcher for thumbnail picking
     private final ActivityResultLauncher<Intent> thumbnailPickerLauncher =
@@ -90,15 +100,17 @@ public class AddVideo extends AppCompatActivity {
             });
 
     private void openVideoPicker() {
-        Intent intent = new Intent(Intent.ACTION_PICK);
+        Intent intent = new Intent();
         intent.setType("video/*");
-        videoPickerLauncher.launch(intent);
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Video"), REQUEST_CODE_PICK_VIDEO);
     }
 
     private void openThumbnailPicker() {
-        Intent intent = new Intent(Intent.ACTION_PICK);
+        Intent intent = new Intent();
         intent.setType("image/*");
-        thumbnailPickerLauncher.launch(intent);
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Image"), REQUEST_CODE_PICK_PICTURE);
     }
 
     private void submitVideo() {
@@ -171,5 +183,22 @@ public class AddVideo extends AppCompatActivity {
             newID = UUID.randomUUID().toString();
         } while (existingIDs.contains(newID));
         return newID;
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_PICK_VIDEO && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            videoUri = data.getData();
+            videoView.setVideoURI(videoUri);
+            videoView.start();
+        }
+        else if (requestCode == REQUEST_CODE_PICK_PICTURE && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            thumbnailUri = data.getData();
+            try {
+                thumbPic = MediaStore.Images.Media.getBitmap(getContentResolver(), thumbnailUri);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }
