@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+
+xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -9,38 +10,101 @@
     android:orientation="vertical"
     android:padding="0dp"
     tools:context=".MainActivity">
-
-    <!-- Top Menu -->
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/topMenu"
+    <!-- Top AppBarLayout with Toolbar -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
-        android:layout_height="57dp"
-        android:background="@color/colorLightGrey"
-        android:elevation="4dp"
+        android:layout_height="wrap_content"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-        <!-- Horizontal LinearLayout for side-by-side items -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/topMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorLightGrey"
+            android:elevation="4dp"
+            app:layout_scrollFlags="scroll|enterAlways">
+
+            <!-- Horizontal LinearLayout for side-by-side items -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <!-- YouTube Logo -->
+                <ImageView
+                    android:id="@+id/youtubeLogo"
+                    android:layout_width="51dp"
+                    android:layout_height="36dp"
+                    android:contentDescription="YouTube Logo"
+                    android:src="@drawable/logo" />
+
+                <!-- Spacer to push buttons to the right -->
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <!-- Add your buttons here -->
+
+            </LinearLayout>
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- NestedScrollView for scrollable content -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <!-- Content Container -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <!-- Your other content here -->
+
+            <!-- Logout Button -->
+            <Button
+                android:id="@+id/LogOutButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:text="@string/logOut" />
+
+            <!-- RecyclerView for Video Grid -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewVideos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Bottom Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/bottomToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/colorLightGrey"
+        android:elevation="4dp">
+
+        <!-- Add your items for the bottom toolbar here -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <!-- YouTube Logo -->
-            <ImageView
-                android:id="@+id/youtubeLogo"
-                android:layout_width="51dp"
-                android:layout_height="36dp"
-                android:contentDescription="YouTube Logo"
-                android:src="@drawable/logo" />
-
-            <!-- Spacer to push buttons to the right -->
-            <View
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-            <!-- Add Video Button -->
+            <!-- Example: Add Video Button -->
             <Button
                 android:id="@+id/buttonAddVideo"
                 android:layout_width="wrap_content"
@@ -61,7 +125,6 @@
                 android:padding="8dp"
                 android:text="@string/login" />
 
-
             <!-- Register Button -->
             <Button
                 android:id="@+id/registerMe"
@@ -71,59 +134,11 @@
                 android:drawablePadding="8dp"
                 android:padding="8dp"
                 android:text="@string/register_button" />
+
+
+
+
         </LinearLayout>
     </androidx.appcompat.widget.Toolbar>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    <!-- Scrollable Content -->
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-
-        <!-- Container for Scrollable Content -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center_horizontal">
-
-            <!-- Profile Section -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:orientation="vertical"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp">
-
-                <!-- Username TextView -->
-                <TextView
-                    android:id="@+id/usernameTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:text="Welcome"
-                    android:textSize="18sp" />
-            </LinearLayout>
-
-            <!-- RecyclerView for Video Grid -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewVideos"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:clipToPadding="false" />
-
-            <!-- Logout Button -->
-            <Button
-                android:id="@+id/LogOutButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="16dp"
-                android:text="@string/logOut" />
-
-        </LinearLayout>
-    </ScrollView>
-
-</LinearLayout>
