@@ -1,6 +1,7 @@
 package com.example.project_android;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -14,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import android.app.UiModeManager;
 
 import android.provider.MediaStore;
 import android.text.Editable;
@@ -41,12 +44,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
     public static UserData currentUser;
     public static List<UserData> userDataList;
     public static List<Video> videoList;
 
     private RecyclerView recyclerView;
-    private Button registerButton;
+    //private Button registerButton;
     private Button loginButton;
     private Button logoutButton;
     private Button addVideoButton;
@@ -54,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
 
     private ImageView profilePic;
     private VideoAdapter adapter;
+    private boolean isDarkMode = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,10 +71,16 @@ public class MainActivity extends AppCompatActivity {
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
         }
+        // Check the current mode and set the button text accordingly
+        if ((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES)
+            isDarkMode = true;
+        else
+            isDarkMode = false;
+
         userDataList = new ArrayList<>();
         currentUser = null;
         btnToggleDark = findViewById(R.id.btnToggleDark);
-        registerButton = findViewById(R.id.registerMe);
+        //registerButton = findViewById(R.id.registerMe);
         loginButton = findViewById(R.id.LoginMe);
         logoutButton = findViewById(R.id.LogOutButton);
         addVideoButton = findViewById(R.id.buttonAddVideo);
@@ -82,10 +94,10 @@ public class MainActivity extends AppCompatActivity {
         // profilePic = findViewById(R.id.profilePic);
         loggedVisibilityLogic();
         // Set OnClickListener for register button
-        registerButton.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, RegistrationActivity.class);
-            startActivity(intent);
-        });
+//        registerButton.setOnClickListener(v -> {
+//            Intent intent = new Intent(MainActivity.this, RegistrationActivity.class);
+//            startActivity(intent);
+//        });
 
         // Set OnClickListener for login button
         loginButton.setOnClickListener(v -> {
@@ -99,16 +111,12 @@ public class MainActivity extends AppCompatActivity {
             loggedVisibilityLogic();
         });
         btnToggleDark.setOnClickListener(v -> {
-            int currentNightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-            if (currentNightMode == Configuration.UI_MODE_NIGHT_NO) {
-                // Set to dark mode
-                getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                // Update UI elements for dark mode (e.g., set background color to dark)
+            if (isDarkMode) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
             } else {
-                // Set to light mode
-                getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                // Update UI elements for light mode (e.g., set background color to light)
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
             }
+            isDarkMode = !isDarkMode;
         });
 
         // Set OnClickListener for add video button
@@ -129,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
         if (adapter != null) {
             adapter.notifyDataSetChanged();
         }
+        loggedVisibilityLogic();
     }
 
     // Method to load video data
@@ -147,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
     private void loggedVisibilityLogic() {
         // Check if the user is logged in and adjust visibility of buttons
         if (currentUser != null) {
-            registerButton.setVisibility(View.GONE);
+//            registerButton.setVisibility(View.GONE);
             loginButton.setVisibility(View.GONE);
             logoutButton.setVisibility(View.VISIBLE);
             TextView userTextView = findViewById(R.id.usernameTextView);
@@ -155,29 +164,23 @@ public class MainActivity extends AppCompatActivity {
             if (profilePic != null)
                 profilePic.setImageBitmap(currentUser.getImage());
         } else {
-            registerButton.setVisibility(View.VISIBLE);
+//            registerButton.setVisibility(View.VISIBLE);
             loginButton.setVisibility(View.VISIBLE);
             logoutButton.setVisibility(View.GONE);
         }
     }
 
-    private void updateForDarkMode() {
 
-    }
-
-    private void updateForLightMode() {
-
-    }
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        final int nightMode = newConfig.uiMode & Configuration.UI_MODE_NIGHT_MASK;
-        if (nightMode == Configuration.UI_MODE_NIGHT_YES) {
-            getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        } else {
-            getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        }
-    }
+//    @Override
+//    public void onConfigurationChanged(Configuration newConfig) {
+//        super.onConfigurationChanged(newConfig);
+//        final int nightMode = newConfig.uiMode & Configuration.UI_MODE_NIGHT_MASK;
+//        if (nightMode == Configuration.UI_MODE_NIGHT_YES) {
+//            getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+//        } else {
+//            getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+//        }
+//    }
 
 
     @Override

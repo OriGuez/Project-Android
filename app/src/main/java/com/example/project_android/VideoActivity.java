@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
@@ -31,7 +32,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class VideoActivity extends AppCompatActivity {
-    //private CommentAdapter adapter;
     private CommentRecyclerViewAdapter recycleAdapter;
     private RecyclerView commentsRecycleView;
     private VideoAdapter videoAdapter;
@@ -54,6 +54,7 @@ public class VideoActivity extends AppCompatActivity {
     private RecyclerView videoRecyclerView;
     private Video currentVideo;
     AssetManager assetManager;
+    ImageView profileImageView;
 
     private static final String TAG = "VideoActivity";
 
@@ -74,12 +75,7 @@ public class VideoActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_video);
-        checkPermissions();
-        // Request permission to read external storage
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-        }
+
         // Initialize views
         videoView = findViewById(R.id.videoView);
         titleTextView = findViewById(R.id.titleTextView);
@@ -96,80 +92,123 @@ public class VideoActivity extends AppCompatActivity {
         editTitleEditText = findViewById(R.id.editTitleEditText);
         editDescriptionEditText = findViewById(R.id.editDescriptionEditText);
         saveButton = findViewById(R.id.saveEditVidButton);
-        editTitleEditText.setVisibility(View.GONE);
-        editDescriptionEditText.setVisibility(View.GONE);
-        saveButton.setVisibility(View.GONE);
         videoRecyclerView = findViewById(R.id.recyclerView);
         commentsRecycleView = findViewById(R.id.commentsRecyclerView);
-        if (MainActivity.currentUser == null) {
-            addComment.setVisibility(View.GONE);
-            commentAddText.setVisibility(View.GONE);
-            likeButton.setVisibility(View.GONE);
-            likeText.setVisibility(View.GONE);
-            deleteVideoButton.setVisibility(View.GONE);
-            editVideoButton.setVisibility(View.GONE);
-        } else {
-            updateLikeButton(likeButton, likeText);
-        }
-        addComment.setOnClickListener(v -> {
-            String commentText = commentAddText.getText().toString().trim();
-            if (!commentText.isEmpty()) {
-                if (MainActivity.currentUser != null) {
-                    currentVideo.getComments().add(new Video.Comment("User", MainActivity.currentUser.getUsername(), commentText));
-                } else {
-                    currentVideo.getComments().add(new Video.Comment("User", "Anon", commentText));
-                }
-                //adapter.notifyDataSetChanged();
-                recycleAdapter.notifyDataSetChanged();
-                RecyclerViewUtils.setRecyclerViewHeightBasedOnItems(commentsRecycleView);
-                commentAddText.getText().clear();
-            }
-        });
-
-        likeButton.setOnClickListener(v -> {
-            boolean isFound = false;
-            for (String user : currentVideo.getWhoLikedList()) {
-                if (user.equals(MainActivity.currentUser.getUsername())) {
-                    likeButton.setImageDrawable(getResources().getDrawable(R.drawable.like));
-                    likeText.setText(R.string.like);
-                    isFound = true;
-                    currentVideo.getWhoLikedList().remove(user);
+        profileImageView = findViewById(R.id.publisherProfilePic);
+        if (profileImageView != null && MainActivity.userDataList != null) {
+            for (UserData user : MainActivity.userDataList) {
+                if (user.getUsername().equals(currentVideo.getPublisher()))
+                {
+                    profileImageView.setImageBitmap(user.getImage());
                     break;
                 }
             }
-            if (!isFound) {
-                currentVideo.getWhoLikedList().add(MainActivity.currentUser.getUsername());
-                likeButton.setImageDrawable(getResources().getDrawable(R.drawable.likebuttonpressed));
-                likeText.setText(R.string.liked);
-            }
-        });
+        }
+        // Check if the view exists before interacting with it
+        if (editTitleEditText != null) {
+            editTitleEditText.setVisibility(View.GONE);
+        }
+        if (editDescriptionEditText != null) {
+            editDescriptionEditText.setVisibility(View.GONE);
+        }
+        if (saveButton != null) {
+            saveButton.setVisibility(View.GONE);
+        }
 
-        shareButton.setOnClickListener(v -> {
-            String textToShare = currentVideo.getUrl();
-            Intent shareIntent = new Intent(Intent.ACTION_SEND);
-            shareIntent.setType("text/plain");
-            shareIntent.putExtra(Intent.EXTRA_TEXT, textToShare);
-            String title = getResources().getString(R.string.share_via);
-            Intent chooser = Intent.createChooser(shareIntent, title);
-            if (shareIntent.resolveActivity(getPackageManager()) != null) {
-                startActivity(chooser);
+        if (MainActivity.currentUser == null) {
+            if (addComment != null) {
+                addComment.setVisibility(View.GONE);
             }
-        });
+            if (commentAddText != null) {
+                commentAddText.setVisibility(View.GONE);
+            }
+            if (likeButton != null) {
+                likeButton.setVisibility(View.GONE);
+            }
+            if (likeText != null) {
+                likeText.setVisibility(View.GONE);
+            }
+            if (deleteVideoButton != null) {
+                deleteVideoButton.setVisibility(View.GONE);
+            }
+            if (editVideoButton != null) {
+                editVideoButton.setVisibility(View.GONE);
+            }
+        } else {
+            updateLikeButton(likeButton, likeText);
+        }
 
-        deleteVideoButton.setOnClickListener(v -> {
-            showDeleteConfirmationDialog();
-        });
-        editVideoButton.setOnClickListener(v -> {
-            if (!isEditMode) {
-                // Enter edit mode
-                enterEditMode();
-            }
-        });
-        saveButton.setOnClickListener(v -> {
-            // Save changes and exit edit mode
-            saveChanges();
-            exitEditMode();
-        });
+        if (addComment != null) {
+            addComment.setOnClickListener(v -> {
+                String commentText = commentAddText.getText().toString().trim();
+                if (!commentText.isEmpty()) {
+                    if (MainActivity.currentUser != null) {
+                        currentVideo.getComments().add(new Video.Comment("User", MainActivity.currentUser.getUsername(), commentText));
+                    } else {
+                        currentVideo.getComments().add(new Video.Comment("User", "Anon", commentText));
+                    }
+                    recycleAdapter.notifyDataSetChanged();
+                    RecyclerViewUtils.setRecyclerViewHeightBasedOnItems(commentsRecycleView);
+                    commentAddText.getText().clear();
+                }
+            });
+        }
+
+        if (likeButton != null) {
+            likeButton.setOnClickListener(v -> {
+                boolean isFound = false;
+                for (String user : currentVideo.getWhoLikedList()) {
+                    if (user.equals(MainActivity.currentUser.getUsername())) {
+                        likeButton.setImageDrawable(getResources().getDrawable(R.drawable.like));
+                        likeText.setText(R.string.like);
+                        isFound = true;
+                        currentVideo.getWhoLikedList().remove(user);
+                        break;
+                    }
+                }
+                if (!isFound) {
+                    currentVideo.getWhoLikedList().add(MainActivity.currentUser.getUsername());
+                    likeButton.setImageDrawable(getResources().getDrawable(R.drawable.likebuttonpressed));
+                    likeText.setText(R.string.liked);
+                }
+            });
+        }
+
+        if (shareButton != null) {
+            shareButton.setOnClickListener(v -> {
+                String textToShare = currentVideo.getUrl();
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                shareIntent.putExtra(Intent.EXTRA_TEXT, textToShare);
+                String title = getResources().getString(R.string.share_via);
+                Intent chooser = Intent.createChooser(shareIntent, title);
+                if (shareIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(chooser);
+                }
+            });
+        }
+
+        if (deleteVideoButton != null) {
+            deleteVideoButton.setOnClickListener(v -> {
+                showDeleteConfirmationDialog();
+            });
+        }
+
+        if (editVideoButton != null) {
+            editVideoButton.setOnClickListener(v -> {
+                if (!isEditMode) {
+                    enterEditMode();
+                }
+            });
+        }
+
+        if (saveButton != null) {
+            saveButton.setOnClickListener(v -> {
+                saveChanges();
+                exitEditMode();
+            });
+        }
+
         // Set up video playback
         if (currentVideo.getUrl() != null) {
             Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + getRawResourceIdByName(currentVideo.getUrl()));
@@ -188,20 +227,33 @@ public class VideoActivity extends AppCompatActivity {
         mediaController.setAnchorView(videoView);
         videoView.setMediaController(mediaController);
         videoView.start();
-        // Set video details
-        titleTextView.setText(currentVideo.getTitle());
-        descriptionTextView.setText(currentVideo.getDescription());
-        dateTextView.setText(currentVideo.getUpload_date());
-        publisherTextView.setText(currentVideo.getPublisher());
-        recycleAdapter = new CommentRecyclerViewAdapter(this, currentVideo.getComments(), commentsRecycleView);
-        commentsRecycleView.setLayoutManager(new LinearLayoutManager(this));
-        commentsRecycleView.setAdapter(recycleAdapter);
-        commentsRecycleView.post(() -> RecyclerViewUtils.setRecyclerViewHeightBasedOnItems(commentsRecycleView));
 
-        // Set up RecyclerView for scrolling videos
-        videoRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
-        videoAdapter = new VideoAdapter(this, MainActivity.videoList, "Video");
-        videoRecyclerView.setAdapter(videoAdapter);
+        // Set video details
+        if (titleTextView != null) {
+            titleTextView.setText(currentVideo.getTitle());
+        }
+        if (descriptionTextView != null) {
+            descriptionTextView.setText(currentVideo.getDescription());
+        }
+        if (dateTextView != null) {
+            dateTextView.setText(currentVideo.getUpload_date());
+        }
+        if (publisherTextView != null) {
+            publisherTextView.setText(currentVideo.getPublisher());
+        }
+
+        if (commentsRecycleView != null) {
+            recycleAdapter = new CommentRecyclerViewAdapter(this, currentVideo.getComments(), commentsRecycleView);
+            commentsRecycleView.setLayoutManager(new LinearLayoutManager(this));
+            commentsRecycleView.setAdapter(recycleAdapter);
+            commentsRecycleView.post(() -> RecyclerViewUtils.setRecyclerViewHeightBasedOnItems(commentsRecycleView));
+        }
+
+        if (videoRecyclerView != null) {
+            videoRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
+            videoAdapter = new VideoAdapter(this, MainActivity.videoList, "Video");
+            videoRecyclerView.setAdapter(videoAdapter);
+        }
     }
 
     private void showDeleteConfirmationDialog() {
@@ -222,6 +274,8 @@ public class VideoActivity extends AppCompatActivity {
     }
 
     private void updateLikeButton(ImageButton likeButton, TextView isLiked) {
+        if (likeButton == null || isLiked == null) return;
+
         for (String user : currentVideo.getWhoLikedList()) {
             if (user.equals(MainActivity.currentUser.getUsername())) {
                 likeButton.setImageDrawable(getResources().getDrawable(R.drawable.likebuttonpressed));
@@ -234,6 +288,10 @@ public class VideoActivity extends AppCompatActivity {
     }
 
     private void enterEditMode() {
+        if (editTitleEditText == null || editDescriptionEditText == null || saveButton == null ||
+                titleTextView == null || descriptionTextView == null || editVideoButton == null)
+            return;
+
         // Show edit fields and save button
         editTitleEditText.setVisibility(View.VISIBLE);
         editDescriptionEditText.setVisibility(View.VISIBLE);
@@ -251,6 +309,10 @@ public class VideoActivity extends AppCompatActivity {
     }
 
     private void exitEditMode() {
+        if (editTitleEditText == null || editDescriptionEditText == null || saveButton == null ||
+                titleTextView == null || descriptionTextView == null || editVideoButton == null)
+            return;
+
         // Hide edit fields and save button
         editTitleEditText.setVisibility(View.GONE);
         editDescriptionEditText.setVisibility(View.GONE);
@@ -265,27 +327,23 @@ public class VideoActivity extends AppCompatActivity {
     }
 
     private void saveChanges() {
+        if (editTitleEditText == null || editDescriptionEditText == null) return;
+
         // Save changes to currentVideo object
         currentVideo.setTitle(editTitleEditText.getText().toString());
         currentVideo.setDescription(editDescriptionEditText.getText().toString());
         // Update UI with new details
-        titleTextView.setText(currentVideo.getTitle());
-        descriptionTextView.setText(currentVideo.getDescription());
+        if (titleTextView != null) {
+            titleTextView.setText(currentVideo.getTitle());
+        }
+        if (descriptionTextView != null) {
+            descriptionTextView.setText(currentVideo.getDescription());
+        }
     }
 
     private int getRawResourceIdByName(String resourceName) {
-        // Ensure the resource name is correctly formatted
         String formattedResourceName = resourceName.replace("/videos/", "").replace(".mp4", "");
         return getResources().getIdentifier(formattedResourceName, "raw", getPackageName());
-    }
-
-    private void checkPermissions() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    1);
-        }
     }
 
     private Uri decodeBase64ToVideoUri(String base64Video) throws IOException {

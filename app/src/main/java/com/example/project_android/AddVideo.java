@@ -38,9 +38,6 @@ public class AddVideo extends AppCompatActivity {
     private Bitmap thumbPic;
     private static final int REQUEST_CODE_PICK_VIDEO = 10;
     private static final int REQUEST_CODE_PICK_PICTURE = 11;
-
-    private static final int REQUEST_CODE_PERMISSIONS = 2;
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -61,43 +58,17 @@ public class AddVideo extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_video);
-                // Check for permissions
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    REQUEST_CODE_PERMISSIONS);
-        } else {
-            Toast.makeText(this, "Permission denied!", Toast.LENGTH_SHORT).show();
-        }
         editVideoTitle = findViewById(R.id.editVideoTitle);
         editVideoDescription = findViewById(R.id.editVideoDescription);
         buttonUploadVideo = findViewById(R.id.buttonUploadVideo);
         buttonUploadThumbnail = findViewById(R.id.buttonUploadThumbnail);
         buttonSubmitVideo = findViewById(R.id.buttonSubmitVideo);
         videoView = findViewById(R.id.videoView);
-
         // Set up the upload buttons
         buttonUploadVideo.setOnClickListener(v -> openVideoPicker());
         buttonUploadThumbnail.setOnClickListener(v -> openThumbnailPicker());
         buttonSubmitVideo.setOnClickListener(v -> submitVideo());
     }
-
-
-    // Activity result launcher for thumbnail picking
-    private final ActivityResultLauncher<Intent> thumbnailPickerLauncher =
-            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                    thumbnailUri = result.getData().getData();
-                    try {
-                        thumbPic = MediaStore.Images.Media.getBitmap(getContentResolver(), thumbnailUri);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    //selectedProfilePicture = MediaStore.Images.Media.getBitmap(getContentResolver(), imgURI);
-                    Toast.makeText(this, "Thumbnail Selected", Toast.LENGTH_SHORT).show();
-                }
-            });
 
     private void openVideoPicker() {
         Intent intent = new Intent();
@@ -117,7 +88,7 @@ public class AddVideo extends AppCompatActivity {
         String title = editVideoTitle.getText().toString().trim();
         String description = editVideoDescription.getText().toString().trim();
         if (title.isEmpty() || description.isEmpty() || videoUri == null || thumbnailUri == null) {
-            Toast.makeText(this, "Please fill all fields and upload video and thumbnail.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.fillAll), Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -141,18 +112,13 @@ public class AddVideo extends AppCompatActivity {
             if (thumbPic !=null)
                 newVideo.setThumbnailPicture(thumbPic);
             // Inform user and finish activity
-            Toast.makeText(this, "Video Added Successfully", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.videoAdded), Toast.LENGTH_SHORT).show();
 
             finish();
         } catch (IOException e) {
             e.printStackTrace();
             Toast.makeText(this, "Failed to encode video", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private void playVideo() {
-        videoView.setVideoURI(videoUri);
-        videoView.start();
     }
 
     private String encodeVideoToBase64(Uri videoUri) throws IOException {

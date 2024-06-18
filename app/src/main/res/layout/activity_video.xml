@@ -16,9 +16,9 @@
             android:id="@+id/videoView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="fitCenter"
             android:layout_gravity="center"
-            android:adjustViewBounds="true" />
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter" />
     </LinearLayout>
 
     <!-- Scrollable Content Section -->
@@ -130,14 +130,30 @@
                     android:text="@string/like" />
             </LinearLayout>
 
-            <!-- Publisher TextView -->
-            <TextView
-                android:id="@+id/publisherTextView"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:text="@string/publisher"
-                android:textSize="16sp" />
+                android:gravity="center_vertical">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/publisherProfilePic"
+                    android:layout_width="40sp"
+                    android:layout_height="40sp"
+                    android:layout_centerInParent="true"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_def_user"
+                    app:shapeAppearanceOverlay="@style/roundedImageView" />
+                <!-- Publisher TextView -->
+                <TextView
+                    android:id="@+id/publisherTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="1dp"
+                    android:text="@string/publisher"
+                    android:textDirection="locale"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
 
             <!-- Comments Title TextView -->
             <TextView
@@ -148,11 +164,7 @@
                 android:text="@string/comments"
                 android:textSize="18sp"
                 android:textStyle="bold" />
-            <!-- Comments ListView -->
-<!--            <ListView-->
-<!--                android:id="@+id/commentsListView"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="229dp" />-->
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/commentsRecyclerView"
                 android:layout_width="match_parent"

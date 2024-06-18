@@ -7,7 +7,7 @@
     <string name="channelNameRequired">Channel name is required</string>
     <string name="profilePicRequired">Profile picture is required</string>
     <string name="usernameRequired">Username is required</string>
-
+    <string name="videoAdded">Video Added Successfully</string>
     <string name="username_hint">Username</string>
     <string name="password_hint">Password</string>
     <string name="confirm_password_hint">Confirm Password</string>
@@ -58,6 +58,7 @@
     <string name="welcome">Welcome</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="channel_name">Channel Name</string>
+    <string name="fillAll">Please fill all fields and upload video and thumbnail.</string>
 
 
 </resources>

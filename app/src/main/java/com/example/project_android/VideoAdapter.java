@@ -39,6 +39,15 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         Video video = videoList.get(position);
         holder.titleTextView.setText(video.getTitle());
         holder.publisherTextView.setText(video.getPublisher());
+        if (holder.profilePic != null && MainActivity.userDataList != null) {
+            for (UserData user : MainActivity.userDataList) {
+                if (user.getUsername().equals(video.getPublisher()))
+                {
+                    holder.profilePic.setImageBitmap(user.getImage());
+                    break;
+                }
+            }
+        }
 
         // Load thumbnail from resources
         int thumbnailResourceId = getThumbnailResourceId(video.getThumbnailUrl());
@@ -71,12 +80,14 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         ImageView thumbnailImageView;
         TextView titleTextView;
         TextView publisherTextView;
+        ImageView profilePic;
 
         public VideoViewHolder(@NonNull View itemView) {
             super(itemView);
             thumbnailImageView = itemView.findViewById(R.id.thumbnailImageView);
             titleTextView = itemView.findViewById(R.id.titleTextView);
             publisherTextView = itemView.findViewById(R.id.publisherTextView);
+            profilePic=itemView.findViewById(R.id.publisherPicInList);
         }
     }
 
