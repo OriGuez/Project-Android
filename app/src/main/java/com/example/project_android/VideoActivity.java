@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Base64;
@@ -14,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
@@ -37,6 +39,7 @@ public class VideoActivity extends AppCompatActivity {
     private VideoAdapter videoAdapter;
     private VideoView videoView;
     private TextView titleTextView;
+    private TextView CommentSectionTitle;
     private TextView dateTextView;
     private TextView descriptionTextView;
     private TextView publisherTextView;
@@ -53,6 +56,7 @@ public class VideoActivity extends AppCompatActivity {
     private boolean isEditMode = false;
     private RecyclerView videoRecyclerView;
     private Video currentVideo;
+    private LinearLayout vidScreenLayout;
     AssetManager assetManager;
     ImageView profileImageView;
 
@@ -95,6 +99,8 @@ public class VideoActivity extends AppCompatActivity {
         videoRecyclerView = findViewById(R.id.recyclerView);
         commentsRecycleView = findViewById(R.id.commentsRecyclerView);
         profileImageView = findViewById(R.id.publisherProfilePic);
+        CommentSectionTitle=findViewById(R.id.commentsTitleTextView);
+        vidScreenLayout=findViewById(R.id.vidLO);
         if (profileImageView != null && MainActivity.userDataList != null) {
             for (UserData user : MainActivity.userDataList) {
                 if (user.getUsername().equals(currentVideo.getPublisher()))
@@ -103,6 +109,43 @@ public class VideoActivity extends AppCompatActivity {
                     break;
                 }
             }
+        }
+        if (MainActivity.isDarkMode)
+        {
+            if (titleTextView!=null)
+                titleTextView.setTextColor(Color.WHITE);
+            if (descriptionTextView!=null)
+                descriptionTextView.setTextColor(Color.WHITE);
+            if (descriptionTextView!=null)
+                descriptionTextView.setTextColor(Color.WHITE);
+            if (publisherTextView!=null)
+                publisherTextView.setTextColor(Color.WHITE);
+            if (dateTextView!=null)
+                dateTextView.setTextColor(Color.WHITE);
+            if (CommentSectionTitle!=null)
+                CommentSectionTitle.setTextColor(Color.WHITE);
+            if (likeText!=null)
+                likeText.setTextColor(Color.WHITE);
+            if (vidScreenLayout!=null)
+                vidScreenLayout.setBackgroundColor(Color.DKGRAY);
+        }
+        else {
+            if (titleTextView!=null)
+                titleTextView.setTextColor(Color.BLACK);
+            if (descriptionTextView!=null)
+                descriptionTextView.setTextColor(Color.BLACK);
+            if (descriptionTextView!=null)
+                descriptionTextView.setTextColor(Color.BLACK);
+            if (publisherTextView!=null)
+                publisherTextView.setTextColor(Color.BLACK);
+            if (dateTextView!=null)
+                dateTextView.setTextColor(Color.BLACK);
+            if (CommentSectionTitle!=null)
+                CommentSectionTitle.setTextColor(Color.BLACK);
+            if (likeText!=null)
+                likeText.setTextColor(Color.BLACK);
+            if (vidScreenLayout!=null)
+                vidScreenLayout.setBackgroundColor(Color.WHITE);
         }
         // Check if the view exists before interacting with it
         if (editTitleEditText != null) {

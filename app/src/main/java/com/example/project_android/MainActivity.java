@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatDelegate;
@@ -34,6 +35,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,7 +60,8 @@ public class MainActivity extends AppCompatActivity {
 
     private ImageView profilePic;
     private VideoAdapter adapter;
-    private boolean isDarkMode = false;
+    private LinearLayout mainLayout;
+    public static boolean isDarkMode = false;
 
 
     @Override
@@ -84,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.LoginMe);
         logoutButton = findViewById(R.id.LogOutButton);
         addVideoButton = findViewById(R.id.buttonAddVideo);
+        mainLayout=findViewById(R.id.main);
         addVideoButton.setContentDescription("Add Video");
         // Set up RecyclerView
         recyclerView = findViewById(R.id.recyclerViewVideos);
@@ -112,9 +116,11 @@ public class MainActivity extends AppCompatActivity {
         });
         btnToggleDark.setOnClickListener(v -> {
             if (isDarkMode) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                mainLayout.setBackgroundColor(Color.WHITE);
+                adapter.notifyDataSetChanged();
             } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                mainLayout.setBackgroundColor(Color.DKGRAY);
+                adapter.notifyDataSetChanged();
             }
             isDarkMode = !isDarkMode;
         });

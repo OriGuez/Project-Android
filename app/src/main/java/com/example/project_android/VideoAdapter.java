@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,10 +40,16 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         Video video = videoList.get(position);
         holder.titleTextView.setText(video.getTitle());
         holder.publisherTextView.setText(video.getPublisher());
+        if (MainActivity.isDarkMode) {
+            holder.publisherTextView.setTextColor(Color.WHITE);
+            holder.titleTextView.setTextColor(Color.WHITE);
+        } else {
+            holder.publisherTextView.setTextColor(Color.BLACK);
+            holder.titleTextView.setTextColor(Color.BLACK);
+        }
         if (holder.profilePic != null && MainActivity.userDataList != null) {
             for (UserData user : MainActivity.userDataList) {
-                if (user.getUsername().equals(video.getPublisher()))
-                {
+                if (user.getUsername().equals(video.getPublisher())) {
                     holder.profilePic.setImageBitmap(user.getImage());
                     break;
                 }
@@ -87,7 +94,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
             thumbnailImageView = itemView.findViewById(R.id.thumbnailImageView);
             titleTextView = itemView.findViewById(R.id.titleTextView);
             publisherTextView = itemView.findViewById(R.id.publisherTextView);
-            profilePic=itemView.findViewById(R.id.publisherPicInList);
+            profilePic = itemView.findViewById(R.id.publisherPicInList);
         }
     }
 

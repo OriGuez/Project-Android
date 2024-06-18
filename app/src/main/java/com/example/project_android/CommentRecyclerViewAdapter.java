@@ -2,6 +2,7 @@ package com.example.project_android;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +44,14 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
 
         holder.publisherTextView.setText(comment.getPublisher());
         holder.commentContentTextView.setText(comment.getText());
-
+        if (MainActivity.isDarkMode) {
+            holder.publisherTextView.setTextColor(Color.WHITE);
+            holder.commentContentTextView.setTextColor(Color.WHITE);
+        }
+        else {
+            holder.publisherTextView.setTextColor(Color.BLACK);
+            holder.commentContentTextView.setTextColor(Color.BLACK);
+        }
         // Reset the profile image to a default image or clear it before setting a new one
         holder.profileImageView.setImageResource(R.drawable.ic_def_user); // Assuming R.drawable.default_profile_image is your default image
 
