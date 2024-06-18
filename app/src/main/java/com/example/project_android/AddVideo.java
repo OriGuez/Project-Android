@@ -1,50 +1,32 @@
 package com.example.project_android;
-
-import static java.lang.Integer.MAX_VALUE;
-
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Bundle;
-import android.widget.Button;
-import android.net.Uri;
-import android.Manifest;
-import android.widget.Toast;
-
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-
-import android.provider.MediaStore;
-import android.widget.VideoView;
-import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.view.View;
+import android.util.Base64;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
+import android.widget.VideoView;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
-
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-
-import java.util.Random;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+import android.Manifest;
 
 public class AddVideo extends AppCompatActivity {
-    private Button addVid;
-    private VideoView tryVV;
-    private static final int REQUEST_CODE_PICK_VIDEO = 1;
-    private static final int REQUEST_CODE_PERMISSIONS = 2;
-    private Uri videoURI;
-
     private EditText editVideoTitle;
     private EditText editVideoDescription;
     private Button buttonUploadVideo;
@@ -52,110 +34,137 @@ public class AddVideo extends AppCompatActivity {
     private Button buttonSubmitVideo;
     private Uri videoUri;
     private Uri thumbnailUri;
+    private VideoView videoView;
+    private Bitmap thumbPic;
+    private static final int REQUEST_CODE_PICK_VIDEO = 10;
+    private static final int REQUEST_CODE_PICK_PICTURE = 11;
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (videoUri != null) {
+            videoView.start();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (videoView.isPlaying()) {
+            videoView.pause();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_video);
-//         addVid.setOnClickListener(v -> {
-//             pickVideo();
-//         });
-
-
-        //   @Override
-//     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-//         super.onRequestPermissionsResult(requestCode, permissions, grantResults); // Call the superclass implementation
-//         if (requestCode == REQUEST_CODE_PERMISSIONS) {
-//             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                 //loadLastSavedVideo();
-//             } else {
-//                 Toast.makeText(this, "Permission denied!", Toast.LENGTH_SHORT).show();
-//             }
-//         }
-//     }
-
-//     public void pickVideo() {
-//         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
-//         intent.setType("video/*");
-//         startActivityForResult(intent, REQUEST_CODE_PICK_VIDEO);
-//     }
-
-//    @Override
-//     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//         super.onActivityResult(requestCode, resultCode, data);
-//         if (requestCode == REQUEST_CODE_PICK_VIDEO && resultCode == RESULT_OK && data != null) {
-//              videoURI = data.getData();
-//             if (videoURI != null) {
-//                 MainActivity.publicURI=videoURI;
-//                 tryVV.setVideoURI(videoURI);
-//                 tryVV.start();
-//                //save the URI
-//            }
-//        }
-
         editVideoTitle = findViewById(R.id.editVideoTitle);
         editVideoDescription = findViewById(R.id.editVideoDescription);
         buttonUploadVideo = findViewById(R.id.buttonUploadVideo);
         buttonUploadThumbnail = findViewById(R.id.buttonUploadThumbnail);
         buttonSubmitVideo = findViewById(R.id.buttonSubmitVideo);
-
+        videoView = findViewById(R.id.videoView);
         // Set up the upload buttons
         buttonUploadVideo.setOnClickListener(v -> openVideoPicker());
         buttonUploadThumbnail.setOnClickListener(v -> openThumbnailPicker());
         buttonSubmitVideo.setOnClickListener(v -> submitVideo());
     }
 
-    // Activity result launcher for video picking
-    private final ActivityResultLauncher<Intent> videoPickerLauncher =
-            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                    videoUri = result.getData().getData();
-                    Toast.makeText(this, "Video Selected", Toast.LENGTH_SHORT).show();
-                }
-            });
-
-    // Activity result launcher for thumbnail picking
-    private final ActivityResultLauncher<Intent> thumbnailPickerLauncher =
-            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                    thumbnailUri = result.getData().getData();
-                    Toast.makeText(this, "Thumbnail Selected", Toast.LENGTH_SHORT).show();
-                }
-            });
-
     private void openVideoPicker() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
-        videoPickerLauncher.launch(intent);
+        Intent intent = new Intent();
+        intent.setType("video/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Video"), REQUEST_CODE_PICK_VIDEO);
     }
 
     private void openThumbnailPicker() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        thumbnailPickerLauncher.launch(intent);
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Image"), REQUEST_CODE_PICK_PICTURE);
     }
 
     private void submitVideo() {
         String title = editVideoTitle.getText().toString().trim();
         String description = editVideoDescription.getText().toString().trim();
-
         if (title.isEmpty() || description.isEmpty() || videoUri == null || thumbnailUri == null) {
-            Toast.makeText(this, "Please fill all fields and upload video and thumbnail.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.fillAll), Toast.LENGTH_LONG).show();
             return;
         }
 
-        // Create a new Video object
-        Video newVideo = new Video();
-        newVideo.setTitle(title);
-        newVideo.setDescription(description);
-        newVideo.setUrl(videoUri.toString());
-        newVideo.setThumbnailUrl(thumbnailUri.toString());
-        newVideo.setPublisher("CurrentUser"); // Replace with actual user
-        newVideo.setUpload_date("Now"); // Replace with current date
+        try {
+            // Encode video to Base64
+            String base64Video = encodeVideoToBase64(videoUri);
 
-        // Add new video to video list
-        MainActivity.videoList.add(newVideo);
+            // Create a new Video object
+            Video newVideo = new Video();
+            newVideo.setWhoLikedList(new ArrayList<>());
+            newVideo.setComments(new ArrayList<>());
+            newVideo.setTitle(title);
+            newVideo.setVidID(generateUniqueID());
+            newVideo.setDescription(description);
+            newVideo.setBase64Video(base64Video);
+            newVideo.setThumbnailUrl(thumbnailUri.toString());
+            newVideo.setPublisher(MainActivity.currentUser.getUsername()); // Replace with actual user
+            newVideo.setUpload_date("Now"); // Replace with current date
+            // Add new video to video list
+            MainActivity.videoList.add(newVideo);
+            if (thumbPic !=null)
+                newVideo.setThumbnailPicture(thumbPic);
+            // Inform user and finish activity
+            Toast.makeText(this, getString(R.string.videoAdded), Toast.LENGTH_SHORT).show();
 
-        // Inform user and finish activity
-        Toast.makeText(this, "Video Added Successfully", Toast.LENGTH_SHORT).show();
-        finish();
+            finish();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Failed to encode video", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private String encodeVideoToBase64(Uri videoUri) throws IOException {
+        InputStream inputStream = getContentResolver().openInputStream(videoUri);
+        byte[] byteArray = getBytes(inputStream);
+        return Base64.encodeToString(byteArray, Base64.DEFAULT);
+    }
+
+    private byte[] getBytes(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+        int bufferSize = 1024;
+        byte[] buffer = new byte[bufferSize];
+
+        int len;
+        while ((len = inputStream.read(buffer)) != -1) {
+            byteBuffer.write(buffer, 0, len);
+        }
+        return byteBuffer.toByteArray();
+    }
+
+    public String generateUniqueID() {
+        Set<String> existingIDs = new HashSet<>();
+        for (Video video : MainActivity.videoList) {
+            existingIDs.add(video.getVidID());
+        }
+        String newID;
+        do {
+            newID = UUID.randomUUID().toString();
+        } while (existingIDs.contains(newID));
+        return newID;
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_PICK_VIDEO && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            videoUri = data.getData();
+            videoView.setVideoURI(videoUri);
+            videoView.start();
+        }
+        else if (requestCode == REQUEST_CODE_PICK_PICTURE && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            thumbnailUri = data.getData();
+            try {
+                thumbPic = MediaStore.Images.Media.getBitmap(getContentResolver(), thumbnailUri);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }

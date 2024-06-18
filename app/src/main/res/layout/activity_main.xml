@@ -31,7 +31,7 @@
                 android:id="@+id/youtubeLogo"
                 android:layout_width="51dp"
                 android:layout_height="36dp"
-                android:contentDescription="YouTube Logo"
+                android:contentDescription="@string/youtube_logo"
                 android:src="@drawable/logo" />
 
             <!-- Spacer to push buttons to the right -->
@@ -45,33 +45,34 @@
                 android:id="@+id/buttonAddVideo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:background="?attr/colorAccent"
-                android:drawablePadding="8dp"
                 android:padding="8dp"
                 android:text="@string/add_video_button" />
 
+            <Button
+                android:id="@+id/btnToggleDark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:text="@string/dark_mode" />
             <!-- Login Button -->
             <Button
                 android:id="@+id/LoginMe"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:drawablePadding="8dp"
                 android:padding="8dp"
                 android:text="@string/login" />
 
 
-            <!-- Register Button -->
+
+            <!-- Logout Button -->
             <Button
-                android:id="@+id/registerMe"
+                android:id="@+id/LogOutButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:drawablePadding="8dp"
                 android:padding="8dp"
-                android:text="@string/register_button" />
+                android:text="@string/logOut" />
         </LinearLayout>
+
     </androidx.appcompat.widget.Toolbar>
 
     <!-- Scrollable Content -->
@@ -102,7 +103,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="Welcome"
+                    android:text="@string/welcome"
                     android:textSize="18sp" />
             </LinearLayout>
 
@@ -113,15 +114,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:clipToPadding="false" />
-
-            <!-- Logout Button -->
-            <Button
-                android:id="@+id/LogOutButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="16dp"
-                android:text="@string/logOut" />
 
         </LinearLayout>
     </ScrollView>

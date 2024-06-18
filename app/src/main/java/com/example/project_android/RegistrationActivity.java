@@ -88,34 +88,32 @@ public class RegistrationActivity extends AppCompatActivity {
         return password.length() >= 8 && password.matches(".*\\D.*");
     }
     private void registerUser() {
-        //Toast.makeText(this, "0000000", Toast.LENGTH_SHORT).show();
-
         String username = usernameEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
         String confirmPassword = confirmPasswordEditText.getText().toString().trim();
         String channelName = channelNameEditText.getText().toString().trim();
         if (!isValidPassword(password)) {
             // Handle password validation error
-            passwordEditText.setError("Password must be at least 8 characters long and contain at least one non-digit character");
+            passwordEditText.setError(getString(R.string.invalidPassword));
             return;
         }
         // Check if password and confirm password match
         if (!password.equals(confirmPassword)) {
             // Handle password mismatch error
-            confirmPasswordEditText.setError("Passwords do not match");
+            confirmPasswordEditText.setError(getString(R.string.password_dont_match));
             return;
         }
         if (channelName.isEmpty()) {
-            channelNameEditText.setError("Channel name is required");
+            channelNameEditText.setError(getString(R.string.channelNameRequired));
             return;
         }
         if (selectedProfilePicture == null) {
             //  show a Toast message
-            Toast.makeText(this, "Profile picture is required", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.profilePicRequired), Toast.LENGTH_SHORT).show();
             return;
         }
         if (username.isEmpty()) {
-            usernameEditText.setError("Username is required");
+            usernameEditText.setError(getString(R.string.usernameRequired));
             return;
         }
 

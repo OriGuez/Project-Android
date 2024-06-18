@@ -11,14 +11,14 @@
         android:id="@+id/editVideoTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Video Title"
+        android:hint="@string/video_title"
         android:layout_marginBottom="16dp" />
 
     <EditText
         android:id="@+id/editVideoDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Video Description"
+        android:hint="@string/video_description"
         android:layout_marginBottom="16dp"
         android:inputType="textMultiLine"
         android:minLines="3" />
@@ -27,21 +27,28 @@
         android:id="@+id/buttonUploadVideo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Upload Video"
+        android:text="@string/upload_video"
         android:layout_marginBottom="16dp" />
 
     <Button
         android:id="@+id/buttonUploadThumbnail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Upload Thumbnail"
+        android:text="@string/upload_thumbnail"
         android:layout_marginBottom="16dp" />
 
     <Button
         android:id="@+id/buttonSubmitVideo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Submit"
+        android:text="@string/submit"
+        android:layout_marginTop="24dp" />
+
+    <!-- VideoView to display selected video -->
+    <VideoView
+        android:id="@+id/videoView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="24dp" />
 
 </LinearLayout>

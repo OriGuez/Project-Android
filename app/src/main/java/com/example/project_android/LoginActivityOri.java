@@ -38,13 +38,10 @@ public class LoginActivityOri extends AppCompatActivity {
             String enteredPassword = passwordEditText.getText().toString();
 
             if (validateLogin(enteredUsername, enteredPassword)) {
-                //Intent intent = new Intent(this, MainActivity.class);
-                //startActivity(intent);
-                // If login is successful, navigate to another activity or perform some action
                 finish(); // close the LoginActivity
             } else {
                 // If login fails, show a toast message
-                Toast.makeText(this, "Invalid username or password", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.invalidLogin, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -56,9 +53,9 @@ public class LoginActivityOri extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String password = s.toString();
                 if (password.length() < 8) {
-                    passwordLayout.setError("Password must be at least 8 characters long");
+                    passwordLayout.setError(getString(R.string.invalidPassword));
                 } else if (password.matches("\\d+")) {
-                    passwordLayout.setError("Password must contain at least one non-numeric character");
+                    passwordLayout.setError(getString(R.string.invalidPassword2));
                 } else {
                     passwordLayout.setError(null);
                 }

@@ -2,6 +2,7 @@ package com.example.project_android;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,12 +19,15 @@ import java.util.List;
 public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecyclerViewAdapter.ViewHolder> {
 
     private List<Video.Comment> comments;
+    private RecyclerView recyclerView;
+
     private LayoutInflater inflater;
     private Context context;
 
-    public CommentRecyclerViewAdapter(Context context, List<Video.Comment> comments) {
+    public CommentRecyclerViewAdapter(Context context, List<Video.Comment> comments, RecyclerView recyclerView) {
         this.context = context;
         this.comments = comments;
+        this.recyclerView = recyclerView;
         this.inflater = LayoutInflater.from(context);
     }
 
@@ -40,7 +44,14 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
 
         holder.publisherTextView.setText(comment.getPublisher());
         holder.commentContentTextView.setText(comment.getText());
-
+        if (MainActivity.isDarkMode) {
+            holder.publisherTextView.setTextColor(Color.WHITE);
+            holder.commentContentTextView.setTextColor(Color.WHITE);
+        }
+        else {
+            holder.publisherTextView.setTextColor(Color.BLACK);
+            holder.commentContentTextView.setTextColor(Color.BLACK);
+        }
         // Reset the profile image to a default image or clear it before setting a new one
         holder.profileImageView.setImageResource(R.drawable.ic_def_user); // Assuming R.drawable.default_profile_image is your default image
 
@@ -85,6 +96,7 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
             comments.remove(position);
             notifyItemRemoved(position);
             notifyItemRangeChanged(position, comments.size());
+            RecyclerViewUtils.setRecyclerViewHeightBasedOnItems(recyclerView);
         });
 
         if (MainActivity.currentUser == null) {
