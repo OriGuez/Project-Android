@@ -23,6 +23,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
     private List<Video> videoListFull; // Full list to hold all items initially
     private Context context;
 
+
     public VideoAdapter(Context context, List<Video> videoList, String source) {
         this.context = context;
         this.videoList = videoList;
@@ -56,6 +57,10 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         return new VideoViewHolder(view);
     }
 
+    public void updateVideoList(List<Video> newVideoList) {
+        this.videoList = newVideoList;
+        notifyDataSetChanged();
+    }
     @Override
     public void onBindViewHolder(@NonNull VideoViewHolder holder, int position) {
         Video video = videoList.get(position);
@@ -144,4 +149,5 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         }
         notifyDataSetChanged();
     }
+
 }
