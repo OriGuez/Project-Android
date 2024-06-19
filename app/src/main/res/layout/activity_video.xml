@@ -5,14 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-
+    <!-- Video Player Section -->
     <LinearLayout
         android:id="@+id/videoContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/black"
-        android:orientation="vertical"
-        android:gravity="center">
+        android:gravity="center"
+        android:orientation="vertical">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -28,18 +28,17 @@
         </RelativeLayout>
     </LinearLayout>
 
-
+    <!-- Scrollable Content Section -->
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-
+            <!-- Title TextView -->
             <TextView
                 android:id="@+id/titleTextView"
                 android:layout_width="match_parent"
@@ -49,7 +48,7 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-
+            <!-- Description TextView -->
             <TextView
                 android:id="@+id/descriptionTextView"
                 android:layout_width="match_parent"
@@ -83,7 +82,7 @@
                 android:text="@string/save_changes"
                 android:visibility="gone" />
 
-
+            <!-- Date TextView -->
             <TextView
                 android:id="@+id/dateTextView"
                 android:layout_width="match_parent"
@@ -92,7 +91,7 @@
                 android:text="@string/date"
                 android:textSize="16sp" />
 
-
+            <!-- Share and Like Buttons -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="77dp"
@@ -150,7 +149,7 @@
                     android:scaleType="centerCrop"
                     android:src="@drawable/ic_def_user"
                     app:shapeAppearanceOverlay="@style/roundedImageView" />
-
+                <!-- Publisher TextView -->
                 <TextView
                     android:id="@+id/publisherTextView"
                     android:layout_width="match_parent"
@@ -162,43 +161,67 @@
 
             </LinearLayout>
 
-
-            <TextView
-                android:id="@+id/commentsTitleTextView"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:text="@string/comments"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:orientation="vertical">
+                <!-- Comments Title TextView -->
+                <TextView
+                    android:id="@+id/commentsTitleTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:text="@string/comments"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/commentsRecyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/commentsRecyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                </RelativeLayout>
 
 
-            <EditText
-                android:id="@+id/commentAddText"
+                <!-- Add Comment EditText -->
+                <EditText
+                    android:id="@+id/commentAddText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/add_a_comment"
+                    android:inputType="textMultiLine"
+                    android:padding="16dp" />
+                <!-- Add Comment Button -->
+                <Button
+                    android:id="@+id/addCommentButton"
+                    android:layout_width="347dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="16dp"
+                    android:text="@string/add_comment" />
+
+            </LinearLayout>
+
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/add_a_comment"
-                android:inputType="textMultiLine"
-                android:padding="16dp" />
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+                <!-- RecyclerView for Video Grid -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:clipToPadding="false" />
 
-            <Button
-                android:id="@+id/addCommentButton"
-                android:layout_width="347dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:text="@string/add_comment" />
+            </RelativeLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:clipToPadding="false" />
 
         </LinearLayout>
     </ScrollView>

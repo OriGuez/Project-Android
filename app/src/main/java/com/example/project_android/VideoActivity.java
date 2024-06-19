@@ -73,6 +73,12 @@ public class VideoActivity extends AppCompatActivity {
         }
         setContentView(R.layout.activity_video);
         InitializeUiComponents();
+        if (commentsRecycleView != null) {
+            commentsRecycleView.setNestedScrollingEnabled(false);
+        }
+        if (videoRecyclerView != null) {
+            videoRecyclerView.setNestedScrollingEnabled(false);
+        }
         if (profileImageView != null && MainActivity.userDataList != null) {
             for (UserData user : MainActivity.userDataList) {
                 if (user.getUsername().equals(currentVideo.getPublisher()))
@@ -127,7 +133,7 @@ public class VideoActivity extends AppCompatActivity {
                         currentVideo.getComments().add(new Video.Comment("User", "Anon", commentText));
                     }
                     recycleAdapter.notifyDataSetChanged();
-                    RecyclerViewUtils.setRecyclerViewHeightBasedOnItems(commentsRecycleView);
+                    //RecyclerViewUtils.setRecyclerViewHeightBasedOnItems(commentsRecycleView);
                     commentAddText.getText().clear();
                 }
             });
@@ -225,7 +231,7 @@ public class VideoActivity extends AppCompatActivity {
             recycleAdapter = new CommentRecyclerViewAdapter(this, currentVideo.getComments(), commentsRecycleView);
             commentsRecycleView.setLayoutManager(new LinearLayoutManager(this));
             commentsRecycleView.setAdapter(recycleAdapter);
-            commentsRecycleView.post(() -> RecyclerViewUtils.setRecyclerViewHeightBasedOnItems(commentsRecycleView));
+            //commentsRecycleView.post(() -> RecyclerViewUtils.setRecyclerViewHeightBasedOnItems(commentsRecycleView));
         }
 
         if (videoRecyclerView != null) {

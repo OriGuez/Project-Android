@@ -6,7 +6,7 @@
     <string name="profilePicRequired">נדרשת תמונת פרופיל</string>
     <string name="usernameRequired">נדרש שם משתמש</string>
     <string name="invalidLogin">שם משתמש או סיסמה לא תקינים</string>
-    <string name="invalidPassword">סיסמה צריכה להיות באורך של לפחות 8 תווים</string>
+    <string name="invalidPassword">סיסמה צריכה להכיל לפחות 8 תווים ולפחות תו אחד שאינו ספרה</string>
     <string name="invalidPassword2">סיסמה צריכה להכיל לפחות תו אחד שאינו ספרה</string>
     <string name="username_hint">שם משתמש</string>
     <string name="password_hint">סיסמה</string>
@@ -61,6 +61,7 @@
     <string name="videoAdded">הסרטון נוסף בהצלחה</string>
     <string name="take_pic">צלם תמונת פרופיל</string>
     <string name="capture_video">צלם סרטון</string>
+    <string name="search">חיפוש</string>
     <string name="fillAll">בבקשה מלא את כל השדות הנחוצים והעלה תמונת נושא וסרטון</string>
-
+    <string name="usernameExists">שם המשתמש כבר קיים</string>
 </resources>
