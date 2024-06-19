@@ -1,32 +1,29 @@
 package com.example.project_android;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.os.Bundle;
-import android.widget.EditText;
-import android.widget.PopupMenu;
 import android.graphics.PorterDuff;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.app.ActivityCompat;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.PopupMenu;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.imageview.ShapeableImageView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import android.graphics.Bitmap;
-import android.util.Log;
-import androidx.appcompat.app.AppCompatActivity;
-import android.view.View;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.Toast;
-import androidx.appcompat.widget.SearchView;
-import androidx.appcompat.app.AppCompatActivity;
-import com.google.android.material.imageview.ShapeableImageView;
 import java.util.ArrayList;
 import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
     public static UserData currentUser;
     public static List<UserData> userDataList;
@@ -38,51 +35,29 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton btnToggleDark;
     private ShapeableImageView profilePic;
     private ImageView youtubeLogo;
-    private androidx.appcompat.widget.Toolbar topMenu;
-    private androidx.appcompat.widget.Toolbar bottomToolbar;
-//     private Button loginButton;
-//     private Button logoutButton;
-//     private Button addVideoButton;
-//     private Button btnToggleDark;
-//     private ImageView profilePic;
+    private Toolbar topMenu;
+    private Toolbar bottomToolbar;
     private VideoAdapter adapter;
     private androidx.coordinatorlayout.widget.CoordinatorLayout mainLayout;
     public static boolean isDarkMode = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         videoList = loadVideoData();
         setContentView(R.layout.activity_main);
+
         // Initialize views
         searchView = findViewById(R.id.searchView);
         youtubeLogo = findViewById(R.id.youtubeLogo);
         applySearchViewColors(searchView, isDarkMode);
+
         // Set SearchView listeners to hide/show the logo
         searchView.setOnSearchClickListener(v -> youtubeLogo.setVisibility(View.GONE));
         searchView.setOnCloseListener(() -> {
             youtubeLogo.setVisibility(View.VISIBLE);
             return false;
         });
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                performSearch(query);
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                performSearch(newText);
-                return true;
-            }
-        });
-
-//         // Request permission to read external storage
-//         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-//                 != PackageManager.PERMISSION_GRANTED) {
-//             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-//         }
 
         userDataList = new ArrayList<>();
         currentUser = null;
@@ -100,9 +75,10 @@ public class MainActivity extends AppCompatActivity {
         // Set up profile picture
         profilePic = findViewById(R.id.publisherProfilePic);
         loggedVisibilityLogic();
+
         // Set OnClickListener for login button
         loginButton.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, LoginActivityOri.class);
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
         });
 
@@ -141,9 +117,23 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Click Listener for publisherProfilePic
-        findViewById(R.id.publisherProfilePic).setOnClickListener(v -> {
+        profilePic.setOnClickListener(v -> {
             if (currentUser != null) {
                 showPopupMenu(v);
+            }
+        });
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                performSearch(query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                performSearch(newText);
+                return true;
             }
         });
     }
@@ -175,7 +165,6 @@ public class MainActivity extends AppCompatActivity {
             loginButton.setVisibility(View.GONE);
             addVideoButton.setVisibility(View.VISIBLE);
             if (profilePic != null) {
-                // Assuming currentUser.getImage() returns Bitmap
                 Bitmap userImage = currentUser.getImage();
                 if (userImage != null) {
                     profilePic.setImageBitmap(userImage);
@@ -194,14 +183,13 @@ public class MainActivity extends AppCompatActivity {
 
     public void showPopupMenu(View view) {
         PopupMenu popupMenu = new PopupMenu(this, view);
-        // Create menu items programmatically
-        popupMenu.getMenu().add("Profile"); // Add Profile item
-        popupMenu.getMenu().add("Settings"); // Add Settings item
-        popupMenu.getMenu().add("Logout"); // Add Logout item
-        // Set listener for menu item clicks
+        popupMenu.getMenu().add(currentUser.getUsername());
+        popupMenu.getMenu().add(currentUser.getChannelName());
+        popupMenu.getMenu().add(Menu.NONE, R.id.menu_logout, Menu.NONE, "Sign out");
+
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getTitle().toString()) {
-                case "Logout":
+                case "Sign out":
                     // Handle logout action
                     currentUser = null; // Logout the user
                     loggedVisibilityLogic(); // Update UI visibility
@@ -213,6 +201,7 @@ public class MainActivity extends AppCompatActivity {
         });
         popupMenu.show();
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -221,20 +210,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // Method to perform search based on query
     private void performSearch(String query) {
-        // Filter your videoList based on the query and update RecyclerView
         List<Video> filteredList = filter(videoList, query);
         adapter.updateVideoList(filteredList);
-
     }
 
-    // Method to filter videoList based on search query
     private List<Video> filter(List<Video> videos, String query) {
         query = query.toLowerCase().trim();
         List<Video> filteredList = new ArrayList<>();
         for (Video video : videos) {
-            // Perform filtering based on your criteria (e.g., title, description)
             if (video.getTitle().toLowerCase().contains(query)) {
                 filteredList.add(video);
             }

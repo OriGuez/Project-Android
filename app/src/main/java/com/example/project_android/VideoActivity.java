@@ -1,6 +1,5 @@
 package com.example.project_android;
 
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
