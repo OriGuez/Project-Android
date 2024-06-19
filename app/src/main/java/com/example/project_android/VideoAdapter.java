@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
@@ -20,14 +19,14 @@ import java.util.List;
 public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHolder> {
     private String source;
     private List<Video> videoList;
-    private List<Video> videoListFull; // Full list to hold all items initially
+    private List<Video> videoListFull;
     private Context context;
 
 
     public VideoAdapter(Context context, List<Video> videoList, String source) {
         this.context = context;
         this.videoList = videoList;
-        this.videoListFull = new ArrayList<>(videoList); // Make a copy of the original list
+        this.videoListFull = new ArrayList<>(videoList);
         this.source = source;
     }
     public void filterList(String query) {
@@ -39,7 +38,6 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
             String lowerCaseQuery = query.toLowerCase();
 
             for (Video video : videoListFull) {
-                // Customize your filtering logic here (e.g., title contains query)
                 if (video.getTitle().toLowerCase().contains(lowerCaseQuery)) {
                     filteredList.add(video);
                 }
@@ -141,7 +139,6 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         } else {
             query = query.toLowerCase().trim();
             for (Video video : videoListFull) {
-                // Filter logic based on your requirement (e.g., filter by title)
                 if (video.getTitle().toLowerCase().contains(query)) {
                     videoList.add(video);
                 }
@@ -149,5 +146,4 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         }
         notifyDataSetChanged();
     }
-
 }

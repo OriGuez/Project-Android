@@ -1,7 +1,6 @@
 package com.example.project_android;
 
 import android.graphics.Bitmap;
-
 import java.util.List;
 
 public class Video {

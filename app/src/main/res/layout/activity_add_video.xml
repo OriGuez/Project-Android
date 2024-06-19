@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-        <!-- YouTube Logo -->
+
         <ImageView
             android:id="@+id/youtubeLogo"
             android:layout_width="51dp"
@@ -85,7 +85,7 @@
             android:layout_width="match_parent"
             android:layout_height="293dp"
             android:orientation="vertical">
-            <!-- VideoView to display selected video -->
+
             <VideoView
                 android:id="@+id/videoView"
                 android:layout_width="match_parent"

@@ -29,7 +29,7 @@
             android:exported="false"
             android:theme="@style/Theme.MyApp" />
         <activity
-            android:name=".LoginActivityOri"
+            android:name=".LoginActivity"
             android:exported="false"
             android:theme="@style/Theme.MyApp" />
         <activity

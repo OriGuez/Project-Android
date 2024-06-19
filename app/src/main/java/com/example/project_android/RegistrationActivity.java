@@ -13,13 +13,11 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
 import java.io.IOException;
 
 public class RegistrationActivity extends AppCompatActivity {
@@ -149,7 +147,7 @@ public class RegistrationActivity extends AppCompatActivity {
         UserData user = new UserData(username, password, channelName, selectedProfilePicture);
         user.setImageURI(imgURI);
         MainActivity.userDataList.add(user);
-        Intent intent = new Intent(this, LoginActivityOri.class);
+        Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
         finish();
     }

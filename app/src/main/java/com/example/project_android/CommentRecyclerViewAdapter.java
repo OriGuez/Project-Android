@@ -1,5 +1,4 @@
 package com.example.project_android;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -54,7 +53,7 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
 
         }
         // Reset the profile image to a default image or clear it before setting a new one
-        holder.profileImageView.setImageResource(R.drawable.ic_def_user); // Assuming R.drawable.default_profile_image is your default image
+        holder.profileImageView.setImageResource(R.drawable.ic_def_user);
 
         String uploader = comment.getPublisher();
         Bitmap profilePic = null;
@@ -70,7 +69,7 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
         if (profilePic != null) {
             holder.profileImageView.setImageBitmap(profilePic);
         } else {
-            holder.profileImageView.setImageResource(R.drawable.ic_def_user); // Assuming R.drawable.default_profile_image is your default image
+            holder.profileImageView.setImageResource(R.drawable.ic_def_user);
         }
 
         holder.editCommentButton.setOnClickListener(v -> {

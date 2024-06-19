@@ -1,5 +1,5 @@
-
 package com.example.project_android;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -9,10 +9,9 @@ import android.widget.EditText;
 import android.view.View;
 import com.google.android.material.textfield.TextInputLayout;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 
-public class LoginActivityOri extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
     private Button loginButton;
     private EditText usernameEditText;
     private EditText passwordEditText;
@@ -25,7 +24,7 @@ public class LoginActivityOri extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login_ori);
+        setContentView(R.layout.activity_login);
         usernameEditText = findViewById(R.id.editTextUserName);
         passwordEditText = findViewById(R.id.editTextPassword);
         final TextInputLayout passwordLayout = findViewById(R.id.textInputLayoutPassword);
