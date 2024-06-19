@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         loggedVisibilityLogic();
         if (adapter != null) {
-            adapter.notifyDataSetChanged();
+            adapter.updateVideoList(videoList);
         }
     }
 
@@ -225,7 +225,8 @@ public class MainActivity extends AppCompatActivity {
     private void performSearch(String query) {
         // Filter your videoList based on the query and update RecyclerView
         List<Video> filteredList = filter(videoList, query);
-        adapter.filterList(query);
+        adapter.updateVideoList(filteredList);
+
     }
 
     // Method to filter videoList based on search query
