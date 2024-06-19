@@ -1,54 +1,97 @@
-<!-- res/layout/activity_add_video.xml -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:padding="16dp"
     tools:context=".AddVideo">
 
-    <EditText
-        android:id="@+id/editVideoTitle"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/video_title"
-        android:layout_marginBottom="16dp" />
+        android:orientation="vertical">
+        <!-- YouTube Logo -->
+        <ImageView
+            android:id="@+id/youtubeLogo"
+            android:layout_width="51dp"
+            android:layout_height="36dp"
+            android:contentDescription="@string/youtube_logo"
+            android:layout_gravity="center"
+            android:src="@drawable/logo" />
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:text="@string/add_video_button"
+            android:textSize="24sp" />
 
-    <EditText
-        android:id="@+id/editVideoDescription"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/video_description"
-        android:layout_marginBottom="16dp"
-        android:inputType="textMultiLine"
-        android:minLines="3" />
+        <EditText
+            android:id="@+id/editVideoTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:hint="@string/video_title" />
 
-    <Button
-        android:id="@+id/buttonUploadVideo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/upload_video"
-        android:layout_marginBottom="16dp" />
+        <EditText
+            android:id="@+id/editVideoDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:hint="@string/video_description"
+            android:inputType="textMultiLine"
+            android:minLines="3" />
 
-    <Button
-        android:id="@+id/buttonUploadThumbnail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/upload_thumbnail"
-        android:layout_marginBottom="16dp" />
 
-    <Button
-        android:id="@+id/buttonSubmitVideo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/submit"
-        android:layout_marginTop="24dp" />
 
-    <!-- VideoView to display selected video -->
-    <VideoView
-        android:id="@+id/videoView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp" />
+            <ImageButton
+                android:id="@+id/uploadVidFromGallery"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/purple_500"
+                app:srcCompat="@android:drawable/stat_sys_upload" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:text="@string/upload_video"
+                    />
 
-</LinearLayout>
+        <Button
+            android:id="@+id/buttonUploadThumbnail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="@string/upload_thumbnail" />
+        <ImageView
+            android:id="@+id/thumbnailPrev"
+            android:layout_width="160dp"
+            android:layout_height="90dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:visibility="gone"
+            android:src="@android:drawable/ic_menu_gallery" />
+
+        <Button
+            android:id="@+id/buttonSubmitVideo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/submit" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="293dp"
+            android:orientation="vertical">
+            <!-- VideoView to display selected video -->
+            <VideoView
+                android:id="@+id/videoView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

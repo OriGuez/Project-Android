@@ -1,68 +1,37 @@
 package com.example.project_android;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
-import android.app.UiModeManager;
-
-import android.provider.MediaStore;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.widget.EditText;
-
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.google.android.material.textfield.TextInputLayout;
-
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.Debug;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.appcompat.app.AppCompatActivity;
-
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-
 public class MainActivity extends AppCompatActivity {
 
     public static UserData currentUser;
     public static List<UserData> userDataList;
     public static List<Video> videoList;
-
     private RecyclerView recyclerView;
-    //private Button registerButton;
     private Button loginButton;
     private Button logoutButton;
     private Button addVideoButton;
     private Button btnToggleDark;
-
     private ImageView profilePic;
     private VideoAdapter adapter;
-    private LinearLayout mainLayout;
+    private androidx.coordinatorlayout.widget.CoordinatorLayout mainLayout;
     public static boolean isDarkMode = false;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,12 +43,6 @@ public class MainActivity extends AppCompatActivity {
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
         }
-        // Check the current mode and set the button text accordingly
-        if ((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES)
-            isDarkMode = true;
-        else
-            isDarkMode = false;
-
         userDataList = new ArrayList<>();
         currentUser = null;
         btnToggleDark = findViewById(R.id.btnToggleDark);
@@ -96,12 +59,6 @@ public class MainActivity extends AppCompatActivity {
         // Set up profile picture
         // profilePic = findViewById(R.id.profilePic);
         loggedVisibilityLogic();
-        // Set OnClickListener for register button
-//        registerButton.setOnClickListener(v -> {
-//            Intent intent = new Intent(MainActivity.this, RegistrationActivity.class);
-//            startActivity(intent);
-//        });
-
         // Set OnClickListener for login button
         loginButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, LoginActivityOri.class);
@@ -172,19 +129,6 @@ public class MainActivity extends AppCompatActivity {
             logoutButton.setVisibility(View.GONE);
         }
     }
-
-
-//    @Override
-//    public void onConfigurationChanged(Configuration newConfig) {
-//        super.onConfigurationChanged(newConfig);
-//        final int nightMode = newConfig.uiMode & Configuration.UI_MODE_NIGHT_MASK;
-//        if (nightMode == Configuration.UI_MODE_NIGHT_YES) {
-//            getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-//        } else {
-//            getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-//        }
-//    }
-
 
     @Override
     protected void onDestroy() {
