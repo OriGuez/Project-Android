@@ -4,11 +4,7 @@
     android:id="@+id/vidLO"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-
-    >
-
-
+    android:orientation="vertical">
     <!-- Video Player Section -->
     <LinearLayout
         android:id="@+id/videoContainer"
@@ -195,6 +191,7 @@
                 android:layout_width="347dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
+                android:layout_gravity="center"
                 android:text="@string/add_comment" />
             <!-- RecyclerView for Video Grid -->
             <androidx.recyclerview.widget.RecyclerView

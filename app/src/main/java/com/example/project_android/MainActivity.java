@@ -1,29 +1,23 @@
 package com.example.project_android;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.PopupMenu;
 import android.graphics.PorterDuff;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import android.graphics.Bitmap;
-import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 import androidx.appcompat.widget.SearchView;
-import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.imageview.ShapeableImageView;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,11 +34,6 @@ public class MainActivity extends AppCompatActivity {
     private ImageView youtubeLogo;
     private androidx.appcompat.widget.Toolbar topMenu;
     private androidx.appcompat.widget.Toolbar bottomToolbar;
-//     private Button loginButton;
-//     private Button logoutButton;
-//     private Button addVideoButton;
-//     private Button btnToggleDark;
-//     private ImageView profilePic;
     private VideoAdapter adapter;
     private androidx.coordinatorlayout.widget.CoordinatorLayout mainLayout;
     public static boolean isDarkMode = false;
@@ -55,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         // Initialize views
         searchView = findViewById(R.id.searchView);
+        searchView.clearFocus();
         youtubeLogo = findViewById(R.id.youtubeLogo);
         applySearchViewColors(searchView, isDarkMode);
         // Set SearchView listeners to hide/show the logo
@@ -63,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
             youtubeLogo.setVisibility(View.VISIBLE);
             return false;
         });
-
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -77,13 +66,6 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-
-//         // Request permission to read external storage
-//         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-//                 != PackageManager.PERMISSION_GRANTED) {
-//             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-//         }
-
         userDataList = new ArrayList<>();
         currentUser = null;
         btnToggleDark = findViewById(R.id.btnToggleDark);
@@ -105,16 +87,17 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, LoginActivityOri.class);
             startActivity(intent);
         });
-
         btnToggleDark.setOnClickListener(v -> {
             // Toggle dark mode state
             isDarkMode = !isDarkMode;
-
             // Change background colors
             if (isDarkMode) {
                 mainLayout.setBackgroundColor(Color.DKGRAY);
                 topMenu.setBackgroundColor(Color.DKGRAY);
                 bottomToolbar.setBackgroundColor(Color.DKGRAY);
+                btnToggleDark.setBackgroundColor(Color.TRANSPARENT);
+                loginButton.setBackgroundColor(Color.TRANSPARENT);
+                addVideoButton.setBackgroundColor(Color.TRANSPARENT);
                 btnToggleDark.setImageResource(R.drawable.light_mode);
             } else {
                 mainLayout.setBackgroundColor(Color.WHITE);
@@ -122,14 +105,11 @@ public class MainActivity extends AppCompatActivity {
                 bottomToolbar.setBackgroundColor(Color.WHITE);
                 btnToggleDark.setImageResource(R.drawable.dark_mode);
             }
-
             // Change SearchView colors based on the current mode
             applySearchViewColors(searchView, isDarkMode);
-
-            // Notify adapter if necessary (depends on your adapter logic)
+            // Notify adapter
             adapter.notifyDataSetChanged();
         });
-
         // Set OnClickListener for add video button
         addVideoButton.setOnClickListener(v -> {
             if (currentUser != null) {
@@ -139,7 +119,6 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "You must be logged in to add a video.", Toast.LENGTH_SHORT).show();
             }
         });
-
         // Click Listener for publisherProfilePic
         findViewById(R.id.publisherProfilePic).setOnClickListener(v -> {
             if (currentUser != null) {
@@ -147,7 +126,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -155,8 +133,8 @@ public class MainActivity extends AppCompatActivity {
         if (adapter != null) {
             adapter.updateVideoList(videoList);
         }
+        searchView.clearFocus();
     }
-
     // Method to load video data
     private List<Video> loadVideoData() {
         List<Video> videos = new ArrayList<>();
@@ -168,7 +146,6 @@ public class MainActivity extends AppCompatActivity {
         }
         return videos;
     }
-
     private void loggedVisibilityLogic() {
         // Check if the user is logged in and adjust visibility of buttons
         if (currentUser != null) {
