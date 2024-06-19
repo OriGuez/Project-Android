@@ -97,7 +97,7 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
             comments.remove(position);
             notifyItemRemoved(position);
             notifyItemRangeChanged(position, comments.size());
-            RecyclerViewUtils.setRecyclerViewHeightBasedOnItems(recyclerView);
+            //RecyclerViewUtils.setRecyclerViewHeightBasedOnItems(recyclerView);
         });
 
         if (MainActivity.currentUser == null) {
