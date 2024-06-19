@@ -2,8 +2,6 @@ package com.example.project_android;
 
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-
 import androidx.recyclerview.widget.RecyclerView;
 
 public class RecyclerViewUtils {

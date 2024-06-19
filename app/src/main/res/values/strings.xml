@@ -15,7 +15,7 @@
     <string name="upload_profile_picture">Upload Profile Picture</string>
     <string name="profile_picture_description">Profile Picture</string>
     <string name="register_button">Register</string>
-    <string name="add_video_button">AddVideo</string>
+    <string name="add_video_button">Add Video</string>
     <string name="loginButton">Button</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
@@ -58,6 +58,9 @@
     <string name="welcome">Welcome</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="channel_name">Channel Name</string>
+    <string name="take_pic">Take A Picture</string>
+    <string name="capture_video">Capture Video</string>
+
     <string name="fillAll">Please fill all fields and upload video and thumbnail.</string>
 
 

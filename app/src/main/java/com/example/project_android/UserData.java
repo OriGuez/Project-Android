@@ -7,7 +7,7 @@ public class UserData {
     private String username;
     private String password;
     private String channelName;
-    private Bitmap image; // Changed to single Bitmap
+    private Bitmap image;
     private Uri imageURI;
 
     public UserData(String username, String password, String channelName,Bitmap image) {

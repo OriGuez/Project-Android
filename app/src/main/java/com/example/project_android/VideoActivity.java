@@ -1,9 +1,9 @@
 package com.example.project_android;
 
-import android.Manifest;
+
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Color;
 import android.net.Uri;
@@ -19,16 +19,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
-
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.widget.MediaController;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -77,30 +72,8 @@ public class VideoActivity extends AppCompatActivity {
                 break;
             }
         }
-
         setContentView(R.layout.activity_video);
-
-        // Initialize views
-        videoView = findViewById(R.id.videoView);
-        titleTextView = findViewById(R.id.titleTextView);
-        descriptionTextView = findViewById(R.id.descriptionTextView);
-        dateTextView = findViewById(R.id.dateTextView);
-        publisherTextView = findViewById(R.id.publisherTextView);
-        commentAddText = findViewById(R.id.commentAddText);
-        addComment = findViewById(R.id.addCommentButton);
-        likeButton = findViewById(R.id.likeButton);
-        likeText = findViewById(R.id.likeText);
-        shareButton = findViewById(R.id.shareButton);
-        deleteVideoButton = findViewById(R.id.deleteVideoButton);
-        editVideoButton = findViewById(R.id.editVideoButton);
-        editTitleEditText = findViewById(R.id.editTitleEditText);
-        editDescriptionEditText = findViewById(R.id.editDescriptionEditText);
-        saveButton = findViewById(R.id.saveEditVidButton);
-        videoRecyclerView = findViewById(R.id.recyclerView);
-        commentsRecycleView = findViewById(R.id.commentsRecyclerView);
-        profileImageView = findViewById(R.id.publisherProfilePic);
-        CommentSectionTitle=findViewById(R.id.commentsTitleTextView);
-        vidScreenLayout=findViewById(R.id.vidLO);
+        InitializeUiComponents();
         if (profileImageView != null && MainActivity.userDataList != null) {
             for (UserData user : MainActivity.userDataList) {
                 if (user.getUsername().equals(currentVideo.getPublisher()))
@@ -110,43 +83,7 @@ public class VideoActivity extends AppCompatActivity {
                 }
             }
         }
-        if (MainActivity.isDarkMode)
-        {
-            if (titleTextView!=null)
-                titleTextView.setTextColor(Color.WHITE);
-            if (descriptionTextView!=null)
-                descriptionTextView.setTextColor(Color.WHITE);
-            if (descriptionTextView!=null)
-                descriptionTextView.setTextColor(Color.WHITE);
-            if (publisherTextView!=null)
-                publisherTextView.setTextColor(Color.WHITE);
-            if (dateTextView!=null)
-                dateTextView.setTextColor(Color.WHITE);
-            if (CommentSectionTitle!=null)
-                CommentSectionTitle.setTextColor(Color.WHITE);
-            if (likeText!=null)
-                likeText.setTextColor(Color.WHITE);
-            if (vidScreenLayout!=null)
-                vidScreenLayout.setBackgroundColor(Color.DKGRAY);
-        }
-        else {
-            if (titleTextView!=null)
-                titleTextView.setTextColor(Color.BLACK);
-            if (descriptionTextView!=null)
-                descriptionTextView.setTextColor(Color.BLACK);
-            if (descriptionTextView!=null)
-                descriptionTextView.setTextColor(Color.BLACK);
-            if (publisherTextView!=null)
-                publisherTextView.setTextColor(Color.BLACK);
-            if (dateTextView!=null)
-                dateTextView.setTextColor(Color.BLACK);
-            if (CommentSectionTitle!=null)
-                CommentSectionTitle.setTextColor(Color.BLACK);
-            if (likeText!=null)
-                likeText.setTextColor(Color.BLACK);
-            if (vidScreenLayout!=null)
-                vidScreenLayout.setBackgroundColor(Color.WHITE);
-        }
+        videoPageDarkMode();
         // Check if the view exists before interacting with it
         if (editTitleEditText != null) {
             editTitleEditText.setVisibility(View.GONE);
@@ -396,5 +333,85 @@ public class VideoActivity extends AppCompatActivity {
             fos.write(decodedBytes);
         }
         return Uri.fromFile(tempFile);
+    }
+private void InitializeUiComponents(){
+    // Initialize views
+    videoView = findViewById(R.id.videoView);
+    titleTextView = findViewById(R.id.titleTextView);
+    descriptionTextView = findViewById(R.id.descriptionTextView);
+    dateTextView = findViewById(R.id.dateTextView);
+    publisherTextView = findViewById(R.id.publisherTextView);
+    commentAddText = findViewById(R.id.commentAddText);
+    addComment = findViewById(R.id.addCommentButton);
+    likeButton = findViewById(R.id.likeButton);
+    likeText = findViewById(R.id.likeText);
+    shareButton = findViewById(R.id.shareButton);
+    deleteVideoButton = findViewById(R.id.deleteVideoButton);
+    editVideoButton = findViewById(R.id.editVideoButton);
+    editTitleEditText = findViewById(R.id.editTitleEditText);
+    editDescriptionEditText = findViewById(R.id.editDescriptionEditText);
+    saveButton = findViewById(R.id.saveEditVidButton);
+    videoRecyclerView = findViewById(R.id.recyclerView);
+    commentsRecycleView = findViewById(R.id.commentsRecyclerView);
+    profileImageView = findViewById(R.id.publisherProfilePic);
+    CommentSectionTitle=findViewById(R.id.commentsTitleTextView);
+    vidScreenLayout=findViewById(R.id.vidLO);
+}
+    private void videoPageDarkMode(){
+        if (MainActivity.isDarkMode)
+        {
+            if (titleTextView!=null)
+                titleTextView.setTextColor(Color.WHITE);
+            if (descriptionTextView!=null)
+                descriptionTextView.setTextColor(Color.WHITE);
+            if (descriptionTextView!=null)
+                descriptionTextView.setTextColor(Color.WHITE);
+            if (publisherTextView!=null)
+                publisherTextView.setTextColor(Color.WHITE);
+            if (dateTextView!=null)
+                dateTextView.setTextColor(Color.WHITE);
+            if (CommentSectionTitle!=null)
+                CommentSectionTitle.setTextColor(Color.WHITE);
+            if (likeText!=null)
+                likeText.setTextColor(Color.WHITE);
+            if (editTitleEditText!=null)
+                editTitleEditText.setTextColor(Color.WHITE);
+            if (editDescriptionEditText!=null)
+                editDescriptionEditText.setTextColor(Color.WHITE);
+            if (commentAddText!=null)
+            {
+                commentAddText.setTextColor(Color.WHITE);
+                commentAddText.setHintTextColor(Color.WHITE);
+            }
+            if (vidScreenLayout!=null)
+                vidScreenLayout.setBackgroundColor(Color.DKGRAY);
+        }
+        else {
+            if (titleTextView!=null)
+                titleTextView.setTextColor(Color.BLACK);
+            if (descriptionTextView!=null)
+                descriptionTextView.setTextColor(Color.BLACK);
+            if (descriptionTextView!=null)
+                descriptionTextView.setTextColor(Color.BLACK);
+            if (publisherTextView!=null)
+                publisherTextView.setTextColor(Color.BLACK);
+            if (dateTextView!=null)
+                dateTextView.setTextColor(Color.BLACK);
+            if (CommentSectionTitle!=null)
+                CommentSectionTitle.setTextColor(Color.BLACK);
+            if (likeText!=null)
+                likeText.setTextColor(Color.BLACK);
+            if (editTitleEditText!=null)
+                editTitleEditText.setTextColor(Color.BLACK);
+            if (editDescriptionEditText!=null)
+                editDescriptionEditText.setTextColor(Color.BLACK);
+            if (commentAddText!=null)
+            {
+                commentAddText.setTextColor(Color.BLACK);
+                commentAddText.setHintTextColor(Color.BLACK);
+            }
+            if (vidScreenLayout!=null)
+                vidScreenLayout.setBackgroundColor(Color.WHITE);
+        }
     }
 }

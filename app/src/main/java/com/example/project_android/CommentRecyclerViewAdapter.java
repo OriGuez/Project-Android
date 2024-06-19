@@ -10,10 +10,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.List;
 
 public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecyclerViewAdapter.ViewHolder> {
@@ -47,10 +45,13 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
         if (MainActivity.isDarkMode) {
             holder.publisherTextView.setTextColor(Color.WHITE);
             holder.commentContentTextView.setTextColor(Color.WHITE);
+            holder.editCommentEditText.setTextColor(Color.WHITE);
         }
         else {
             holder.publisherTextView.setTextColor(Color.BLACK);
             holder.commentContentTextView.setTextColor(Color.BLACK);
+            holder.editCommentEditText.setTextColor(Color.BLACK);
+
         }
         // Reset the profile image to a default image or clear it before setting a new one
         holder.profileImageView.setImageResource(R.drawable.ic_def_user); // Assuming R.drawable.default_profile_image is your default image
