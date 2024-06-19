@@ -14,20 +14,41 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
+import java.util.ArrayList;
 import java.util.List;
 
 public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHolder> {
     private String source;
     private List<Video> videoList;
+    private List<Video> videoListFull; // Full list to hold all items initially
     private Context context;
 
     public VideoAdapter(Context context, List<Video> videoList, String source) {
         this.context = context;
         this.videoList = videoList;
+        this.videoListFull = new ArrayList<>(videoList); // Make a copy of the original list
         this.source = source;
     }
+    public void filterList(String query) {
+        List<Video> filteredList = new ArrayList<>();
 
+        if (query.isEmpty()) {
+            filteredList.addAll(videoListFull); // Display all videos if query is empty
+        } else {
+            String lowerCaseQuery = query.toLowerCase();
+
+            for (Video video : videoListFull) {
+                // Customize your filtering logic here (e.g., title contains query)
+                if (video.getTitle().toLowerCase().contains(lowerCaseQuery)) {
+                    filteredList.add(video);
+                }
+            }
+        }
+
+        videoList.clear();
+        videoList.addAll(filteredList);
+        notifyDataSetChanged();
+    }
     @NonNull
     @Override
     public VideoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -40,13 +61,13 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         Video video = videoList.get(position);
         holder.titleTextView.setText(video.getTitle());
         holder.publisherTextView.setText(video.getPublisher());
-        if (MainActivity.isDarkMode) {
-            holder.publisherTextView.setTextColor(Color.WHITE);
-            holder.titleTextView.setTextColor(Color.WHITE);
-        } else {
-            holder.publisherTextView.setTextColor(Color.BLACK);
-            holder.titleTextView.setTextColor(Color.BLACK);
-        }
+
+        // Set text color based on dark mode
+        int textColor = MainActivity.isDarkMode ? Color.WHITE : Color.BLACK;
+        holder.publisherTextView.setTextColor(textColor);
+        holder.titleTextView.setTextColor(textColor);
+
+        // Set profile picture if available
         if (holder.profilePic != null && MainActivity.userDataList != null) {
             for (UserData user : MainActivity.userDataList) {
                 if (user.getUsername().equals(video.getPublisher())) {
@@ -56,19 +77,21 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
             }
         }
 
-        // Load thumbnail from resources
+        // Load thumbnail from resources or set default logo
         int thumbnailResourceId = getThumbnailResourceId(video.getThumbnailUrl());
-        if (thumbnailResourceId == 0) {
-            Bitmap pic = video.getThumbnailPicture();
-            if (pic != null)
-                holder.thumbnailImageView.setImageBitmap(pic);
-            else
-                holder.thumbnailImageView.setImageResource(R.drawable.logo);
-        } else {
+        if (thumbnailResourceId != 0) {
             holder.thumbnailImageView.setImageResource(thumbnailResourceId);
+        } else {
+            Bitmap defaultThumbnail = video.getThumbnailPicture();
+            if (defaultThumbnail != null) {
+                holder.thumbnailImageView.setImageBitmap(defaultThumbnail);
+            } else {
+                holder.thumbnailImageView.setImageResource(R.drawable.logo);
+            }
         }
-        holder.itemView.setOnClickListener(v -> {
 
+        // Set click listener to open video details activity
+        holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, VideoActivity.class);
             intent.putExtra("videoID", video.getVidID());
             context.startActivity(intent);
@@ -100,15 +123,25 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
 
     // Helper method to get resource ID of thumbnail
     private int getThumbnailResourceId(String thumbnailName) {
-        // Ensure the resource name is correctly prefixed
-        String resourceName = "thumbnail" + thumbnailName.trim();  // Ensure no leading/trailing spaces
+        String resourceName = "thumbnail" + thumbnailName.trim();
         Resources resources = context.getResources();
-        int resourceId = resources.getIdentifier(resourceName, "raw", context.getPackageName());
+        return resources.getIdentifier(resourceName, "raw", context.getPackageName());
+    }
 
-//        if (resourceId == 0) {
-//            resourceId = R.drawable.logo; // Example default resource
-//        }
-
-        return resourceId;
+    // Method to filter adapter's dataset based on query
+    public void filter(String query) {
+        videoList.clear();
+        if (query.isEmpty()) {
+            videoList.addAll(videoListFull);
+        } else {
+            query = query.toLowerCase().trim();
+            for (Video video : videoListFull) {
+                // Filter logic based on your requirement (e.g., filter by title)
+                if (video.getTitle().toLowerCase().contains(query)) {
+                    videoList.add(video);
+                }
+            }
+        }
+        notifyDataSetChanged();
     }
 }

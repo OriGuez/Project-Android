@@ -4,6 +4,11 @@
     <color name="backgroundColor">#212121</color>
     <color name="textColor">#000000</color>
     <color name="colorLightGrey">#DDDDDD</color>
+    <color name="colorMedGrey">#ff888888</color>
+    <color name="search_text_color_light">#000000</color>
+    <color name="search_text_color_dark">#FFFFFF</color>
+    <color name="search_icon_color_light">#000000</color>
+    <color name="search_icon_color_dark">#FFFFFF</color>
 
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
