@@ -9,14 +9,12 @@
     android:orientation="vertical"
     android:padding="0dp"
     tools:context=".MainActivity">
-
     <!-- Top AppBarLayout with Toolbar -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
-
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/topMenu"
             android:layout_width="match_parent"
@@ -24,7 +22,6 @@
             android:background="@color/white"
             android:elevation="4dp"
             app:layout_scrollFlags="scroll|enterAlways">
-
             <!-- Horizontal LinearLayout for side-by-side items -->
             <LinearLayout
                 android:layout_width="match_parent"
@@ -39,16 +36,10 @@
                     android:layout_height="36dp"
                     android:contentDescription="@string/youtube_logo"
                     android:src="@drawable/logo" />
-
-
-
                 <View
                     android:layout_width="77dp"
                     android:layout_height="48dp"
                     android:layout_weight="1" />
-
-
-
                 <androidx.appcompat.widget.SearchView
                     android:id="@+id/searchView"
                     android:layout_width="wrap_content"
@@ -57,17 +48,11 @@
                     android:queryHint="Search"
                     app:iconifiedByDefault="false"
                     android:layout_marginEnd="16dp">
-
                     <ImageView
                         android:id="@+id/search_mag_icon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
-
-
                 </androidx.appcompat.widget.SearchView>
-
-                <!-- Add your buttons here -->
-
             </LinearLayout>
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
@@ -84,7 +69,6 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:orientation="vertical">
-
             <!-- RecyclerView for Video Grid -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewVideos"
@@ -93,10 +77,8 @@
                 android:clipToPadding="false"
                 android:paddingTop="16dp"
                 android:paddingBottom="16dp" />
-
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
-
     <!-- Bottom Toolbar -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/bottomToolbar"
@@ -105,14 +87,12 @@
         android:layout_gravity="bottom"
         android:elevation="4dp"
         android:background="@color/white">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:paddingVertical="8dp">
-
             <!-- Dark Mode Button -->
             <ImageButton
                 android:id="@+id/btnToggleDark"
@@ -122,13 +102,11 @@
                 android:scaleType="fitCenter"
                 android:background="@color/material_on_primary_disabled"
                 android:src="@drawable/dark_mode" />
-
             <!-- Spacer to align the buttons -->
             <View
                 android:layout_width="7dp"
                 android:layout_height="41dp"
                 android:layout_weight="1" />
-
             <!-- Add Video Button -->
             <ImageButton
                 android:id="@+id/buttonAddVideo"
@@ -139,7 +117,6 @@
                 android:scaleType="fitCenter"
                 android:background="@color/material_on_primary_disabled"
                 android:src="@drawable/addvid" />
-
             <!-- Login Button -->
             <ImageButton
                 android:id="@+id/LoginMe"
@@ -149,13 +126,11 @@
                 android:scaleType="fitCenter"
                 android:background="@color/material_on_primary_disabled"
                 android:src="@drawable/login" />
-
             <!-- Spacer to align the buttons -->
             <View
                 android:layout_width="33dp"
                 android:layout_height="43dp"
                 android:layout_weight="1" />
-
             <!-- User Profile Picture -->
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/publisherProfilePic"
@@ -167,10 +142,8 @@
                 android:visibility="visible"
                 app:shapeAppearanceOverlay="@style/roundedImageView"
                 tools:visibility="visible" />
-
         </LinearLayout>
     </androidx.appcompat.widget.Toolbar>
-
     <View
         android:layout_width="456dp"
         android:layout_height="8dp"

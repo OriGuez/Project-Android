@@ -59,6 +59,8 @@
     <string name="confirm_password">אימות סיסמה</string>
     <string name="channel_name">שם הערוץ</string>
     <string name="videoAdded">הסרטון נוסף בהצלחה</string>
+    <string name="take_pic">צלם תמונת פרופיל</string>
+    <string name="capture_video">צלם סרטון</string>
     <string name="fillAll">בבקשה מלא את כל השדות הנחוצים והעלה תמונת נושא וסרטון</string>
 
 </resources>

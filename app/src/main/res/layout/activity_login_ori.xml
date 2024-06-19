@@ -1,96 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
-<LinearLayout
-
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:padding="16dp"
     android:background="@android:color/white">
-
-
-
-    <TextView
-        android:id="@+id/companyNameTextView"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/welcome_to_viewtube"
-        android:textSize="32sp"
-        android:textStyle="bold"
-        android:textColor="#000000"
-        android:gravity="center"
-        android:layout_marginBottom="24dp"/>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayoutUserName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/username">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextUserName"
+        android:orientation="vertical">
+        <!-- YouTube Logo -->
+        <ImageView
+            android:id="@+id/youtubeLogo"
+            android:layout_width="51dp"
+            android:layout_height="36dp"
+            android:contentDescription="@string/youtube_logo"
+            android:layout_gravity="center"
+            android:src="@drawable/logo" />
+        <TextView
+            android:id="@+id/companyNameTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="text"
-            android:textColor="@android:color/black"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:text="@string/welcome_to_viewtube"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:gravity="center"
+            android:layout_marginBottom="24dp"/>
 
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayoutPassword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/password"
-        android:layout_marginTop="16dp">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextPassword"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayoutUserName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPassword"
+            android:hint="@string/username">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextUserName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayoutPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/password"
+            android:layout_marginTop="16dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/loginButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/login"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            style="@style/ViewtubeButton" />
+
+        <TextView
+            android:id="@+id/createAccountTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/new_to_viewtube"
             android:textColor="@android:color/black"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginTop="24dp"/>
 
-    </com.google.android.material.textfield.TextInputLayout>
+        <TextView
+            android:id="@+id/createAccountClickableText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/create_an_account"
+            android:textColor="@android:color/holo_blue_dark"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginTop="9dp"
+            android:clickable="true"
+            android:onClick="onCreateAccountClicked" />
 
-    <Button
-        android:id="@+id/loginButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="@string/login"
-        android:textColor="@android:color/white"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        style="@style/ViewtubeButton" />
-
-    <TextView
-        android:id="@+id/createAccountTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/new_to_viewtube"
-        android:textColor="@android:color/black"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:layout_marginTop="24dp"/>
-
-    <TextView
-        android:id="@+id/createAccountClickableText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/create_an_account"
-        android:textColor="@android:color/holo_blue_dark"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:layout_marginTop="9dp"
-        android:clickable="true"
-        android:onClick="onCreateAccountClicked" />
-
-</LinearLayout>
+    </LinearLayout>
+</ScrollView>

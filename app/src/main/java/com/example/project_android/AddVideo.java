@@ -1,4 +1,6 @@
 package com.example.project_android;
+
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -6,12 +8,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.VideoView;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -24,12 +29,14 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-import android.Manifest;
+
+import android.media.ThumbnailUtils;
 
 public class AddVideo extends AppCompatActivity {
     private EditText editVideoTitle;
     private EditText editVideoDescription;
-    private Button buttonUploadVideo;
+    private ImageButton uploadVidFromGallery;
+    private ImageView thumbnailView;
     private Button buttonUploadThumbnail;
     private Button buttonSubmitVideo;
     private Uri videoUri;
@@ -38,6 +45,10 @@ public class AddVideo extends AppCompatActivity {
     private Bitmap thumbPic;
     private static final int REQUEST_CODE_PICK_VIDEO = 10;
     private static final int REQUEST_CODE_PICK_PICTURE = 11;
+    private static final int PICK_CAMERA_REQUEST = 12;
+
+    private static final int REQUEST_PERMISSION = 100;
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -60,12 +71,13 @@ public class AddVideo extends AppCompatActivity {
         setContentView(R.layout.activity_add_video);
         editVideoTitle = findViewById(R.id.editVideoTitle);
         editVideoDescription = findViewById(R.id.editVideoDescription);
-        buttonUploadVideo = findViewById(R.id.buttonUploadVideo);
         buttonUploadThumbnail = findViewById(R.id.buttonUploadThumbnail);
         buttonSubmitVideo = findViewById(R.id.buttonSubmitVideo);
         videoView = findViewById(R.id.videoView);
+        thumbnailView = findViewById(R.id.thumbnailPrev);
+        uploadVidFromGallery = findViewById(R.id.uploadVidFromGallery);
         // Set up the upload buttons
-        buttonUploadVideo.setOnClickListener(v -> openVideoPicker());
+        uploadVidFromGallery.setOnClickListener(v -> openVideoPicker());
         buttonUploadThumbnail.setOnClickListener(v -> openThumbnailPicker());
         buttonSubmitVideo.setOnClickListener(v -> submitVideo());
     }
@@ -82,6 +94,18 @@ public class AddVideo extends AppCompatActivity {
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Select Image"), REQUEST_CODE_PICK_PICTURE);
+    }
+
+    private void openCameraVideo() {
+
+        // Check for camera permission
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_PERMISSION);
+        } else {
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+            startActivityForResult(takePictureIntent, PICK_CAMERA_REQUEST);
+        }
+
     }
 
     private void submitVideo() {
@@ -109,7 +133,7 @@ public class AddVideo extends AppCompatActivity {
             newVideo.setUpload_date("Now"); // Replace with current date
             // Add new video to video list
             MainActivity.videoList.add(newVideo);
-            if (thumbPic !=null)
+            if (thumbPic != null)
                 newVideo.setThumbnailPicture(thumbPic);
             // Inform user and finish activity
             Toast.makeText(this, getString(R.string.videoAdded), Toast.LENGTH_SHORT).show();
@@ -150,21 +174,44 @@ public class AddVideo extends AppCompatActivity {
         } while (existingIDs.contains(newID));
         return newID;
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_PICK_VIDEO && resultCode == RESULT_OK && data != null && data.getData() != null) {
             videoUri = data.getData();
+            thumbPic = createVideoThumbnail(videoUri.getPath());
             videoView.setVideoURI(videoUri);
             videoView.start();
-        }
-        else if (requestCode == REQUEST_CODE_PICK_PICTURE && resultCode == RESULT_OK && data != null && data.getData() != null) {
+        } else if (requestCode == REQUEST_CODE_PICK_PICTURE && resultCode == RESULT_OK && data != null && data.getData() != null) {
             thumbnailUri = data.getData();
             try {
                 thumbPic = MediaStore.Images.Media.getBitmap(getContentResolver(), thumbnailUri);
+                thumbnailView.setVisibility(View.VISIBLE);
+                thumbnailView.setImageBitmap(thumbPic);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
     }
+
+    public Bitmap createVideoThumbnail(String filePath) {
+        return ThumbnailUtils.createVideoThumbnail(filePath, MediaStore.Video.Thumbnails.MINI_KIND);
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(takePictureIntent, PICK_CAMERA_REQUEST);
+            } else {
+                Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+
 }
