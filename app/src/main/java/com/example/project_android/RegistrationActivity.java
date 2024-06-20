@@ -7,17 +7,21 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
 import java.io.IOException;
 
 public class RegistrationActivity extends AppCompatActivity {
@@ -30,7 +34,6 @@ public class RegistrationActivity extends AppCompatActivity {
     private EditText confirmPasswordEditText;
     private EditText channelNameEditText;
     private ImageButton uploadFromGalleryButton;
-    private Button takePhotoCameraButton;
     private ImageButton takePictureCameraButton;
     private ImageView profilePictureImageView;
     private Button registerButton;
@@ -49,23 +52,41 @@ public class RegistrationActivity extends AppCompatActivity {
         registerButton = findViewById(R.id.registerButton);
         uploadFromGalleryButton = findViewById(R.id.uploadProfilePicImageButton);
         takePictureCameraButton=findViewById(R.id.takePicture);
-        // Set up listeners
-        uploadFromGalleryButton.setOnClickListener(new View.OnClickListener() {
+        // TextWatcher to passwordEditText
+        passwordEditText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onClick(View v) {
-                openImagePicker();
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (!isValidPassword(s.toString())) {
+                    passwordEditText.setError(getString(R.string.invalidPassword));
+                } else {
+                    passwordEditText.setError(null);
+                }
             }
         });
-        takePictureCameraButton.setOnClickListener(v -> {
-            openCamera();
-        });
+        confirmPasswordEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
-        registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                registerUser();
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                validatePasswordsMatch();
             }
         });
+        // Listeners
+        uploadFromGalleryButton.setOnClickListener(v -> openImagePicker());
+        takePictureCameraButton.setOnClickListener(v -> openCamera());
+        registerButton.setOnClickListener(v -> registerUser());
     }
 
     private void openImagePicker() {
@@ -126,7 +147,7 @@ public class RegistrationActivity extends AppCompatActivity {
         }
         // Check if password and confirm password match
         if (!password.equals(confirmPassword)) {
-            // Handle password mismatch error
+            // Handle password error
             confirmPasswordEditText.setError(getString(R.string.password_dont_match));
             return;
         }
@@ -135,12 +156,15 @@ public class RegistrationActivity extends AppCompatActivity {
             return;
         }
         if (selectedProfilePicture == null) {
-            //  show a Toast message
             Toast.makeText(this, getString(R.string.profilePicRequired), Toast.LENGTH_SHORT).show();
             return;
         }
         if (username.isEmpty()) {
             usernameEditText.setError(getString(R.string.usernameRequired));
+            return;
+        }
+        if (!usernameAvaliable(username)){
+            usernameEditText.setError(getString(R.string.usernameExists));
             return;
         }
 
@@ -151,8 +175,23 @@ public class RegistrationActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
-
-
+    private void validatePasswordsMatch() {
+        String password = passwordEditText.getText().toString();
+        String confirmPassword = confirmPasswordEditText.getText().toString();
+        if (!confirmPassword.equals(password)) {
+            confirmPasswordEditText.setError(getString(R.string.password_dont_match));
+        } else {
+            confirmPasswordEditText.setError(null);
+        }
+    }
+    private boolean usernameAvaliable(String username){
+        for (UserData user:MainActivity.userDataList)
+        {
+            if (user.getUsername().equals(username))
+                return false;
+        }
+        return true;
+    }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
