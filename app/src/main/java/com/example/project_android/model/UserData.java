@@ -1,9 +1,10 @@
-package com.example.project_android;
+package com.example.project_android.model;
 
 import android.graphics.Bitmap;
 import android.net.Uri;
 
 public class UserData {
+    private String _id;
     private String username;
     private String password;
     private String channelName;

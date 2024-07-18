@@ -1,4 +1,4 @@
-package com.example.project_android;
+package com.example.project_android.adapters;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -11,17 +11,24 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.project_android.MainActivity;
+import com.example.project_android.R;
+import com.example.project_android.model.Comment;
+import com.example.project_android.model.UserData;
+import com.example.project_android.model.Video;
+
 import java.util.List;
 
 public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecyclerViewAdapter.ViewHolder> {
 
-    private List<Video.Comment> comments;
+    private List<Comment> comments;
     private RecyclerView recyclerView;
 
     private LayoutInflater inflater;
     private Context context;
 
-    public CommentRecyclerViewAdapter(Context context, List<Video.Comment> comments, RecyclerView recyclerView) {
+    public CommentRecyclerViewAdapter(Context context, List<Comment> comments, RecyclerView recyclerView) {
         this.context = context;
         this.comments = comments;
         this.recyclerView = recyclerView;
@@ -37,10 +44,10 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Video.Comment comment = comments.get(position);
+        Comment comment = comments.get(position);
 
-        holder.publisherTextView.setText(comment.getPublisher());
-        holder.commentContentTextView.setText(comment.getText());
+        holder.publisherTextView.setText(comment.getUserId());
+        holder.commentContentTextView.setText(comment.getContent());
         if (MainActivity.isDarkMode) {
             holder.publisherTextView.setTextColor(Color.WHITE);
             holder.commentContentTextView.setTextColor(Color.WHITE);
@@ -55,7 +62,7 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
         // Reset the profile image to a default image or clear it before setting a new one
         holder.profileImageView.setImageResource(R.drawable.ic_def_user);
 
-        String uploader = comment.getPublisher();
+        String uploader = comment.getUserId();
         Bitmap profilePic = null;
         if (MainActivity.userDataList != null) {
             for (UserData user : MainActivity.userDataList) {
@@ -77,13 +84,13 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
             holder.editCommentEditText.setVisibility(View.VISIBLE);
             holder.saveCommentButton.setVisibility(View.VISIBLE);
             holder.editCommentButton.setVisibility(View.GONE);
-            holder.editCommentEditText.setText(comment.getText());
+            holder.editCommentEditText.setText(comment.getContent());
         });
 
         holder.saveCommentButton.setOnClickListener(v -> {
             String newCommentText = holder.editCommentEditText.getText().toString().trim();
             if (!newCommentText.isEmpty()) {
-                comment.setText(newCommentText);
+                comment.setContent(newCommentText);
                 notifyItemChanged(position);
                 holder.editCommentEditText.setVisibility(View.GONE);
                 holder.saveCommentButton.setVisibility(View.GONE);
@@ -106,6 +113,12 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
             holder.deleteCommentButton.setVisibility(View.VISIBLE);
             holder.editCommentButton.setVisibility(View.VISIBLE);
         }
+    }
+
+    public void updateCommentsList(List<Comment> newCommentsList) {
+        comments.clear();
+        comments.addAll(newCommentsList);
+        notifyDataSetChanged();
     }
 
     @Override

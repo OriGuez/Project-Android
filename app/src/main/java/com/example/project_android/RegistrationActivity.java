@@ -22,6 +22,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.project_android.model.UserData;
+
 import java.io.IOException;
 
 public class RegistrationActivity extends AppCompatActivity {

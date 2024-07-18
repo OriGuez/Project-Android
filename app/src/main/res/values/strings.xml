@@ -1,4 +1,5 @@
 <resources>
+    <string name="BaseUrl" translatable="false">http://10.0.2.2:8080/</string>
     <string name="app_name">ViewTube</string>
     <string name="invalidLogin">Invalid username or password</string>
     <string name="invalidPassword">Password must be at least 8 characters long and contain a non-digit character</string>
