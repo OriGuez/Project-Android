@@ -110,7 +110,8 @@ public class UserPageActivity extends AppCompatActivity {
         Toast.makeText(this, "Profile updated", Toast.LENGTH_SHORT).show();
     }
 
-    private List<Video> getUserVideos(String username) {
+    private List<Video> getUserVideos(String username)
+    {
         // Retrieve videos uploaded by the user
         List<Video> videos = new ArrayList<>();
         for (Video video : MainActivity.videoList) {

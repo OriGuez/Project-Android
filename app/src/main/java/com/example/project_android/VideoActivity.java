@@ -239,7 +239,8 @@ public class VideoActivity extends AppCompatActivity {
             videoAdapter = new VideoAdapter(this, MainActivity.videoList, "Video");
             videoRecyclerView.setAdapter(videoAdapter);
         }
-        if (profileImageView != null && MainActivity.userDataList != null) {
+        if (profileImageView != null && MainActivity.userDataList != null)
+        {
             for (UserData user : MainActivity.userDataList) {
                 if (user.getUsername().equals(currentVideo.getPublisher())) {
                     profileImageView.setImageBitmap(user.getImage());

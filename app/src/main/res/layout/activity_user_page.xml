@@ -19,7 +19,7 @@
             android:layout_margin="8dp"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_def_user"
-            app:shapeAppearanceOverlay="@style/roundedImageView" />
+            app:shapeAppearanceOverlay="@style/roundedImageView"/>
 
         <TextView
             android:id="@+id/usernameTextView"

@@ -129,7 +129,8 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
         Button saveCommentButton;
         Button deleteCommentButton;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView)
+        {
             super(itemView);
             profileImageView = itemView.findViewById(R.id.commentProfilePic);
             publisherTextView = itemView.findViewById(R.id.publisherTextView);

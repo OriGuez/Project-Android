@@ -50,7 +50,8 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
 
     @NonNull
     @Override
-    public VideoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public VideoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
+    {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.video_item, parent, false);
         return new VideoViewHolder(view);
     }

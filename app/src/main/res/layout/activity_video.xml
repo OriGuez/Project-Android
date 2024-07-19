@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
     <!-- Video Player Section -->
+
     <LinearLayout
         android:id="@+id/videoContainer"
         android:layout_width="match_parent"
