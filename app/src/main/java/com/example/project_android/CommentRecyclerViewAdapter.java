@@ -1,7 +1,5 @@
 package com.example.project_android;
-
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.view.LayoutInflater;
@@ -52,6 +50,7 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
             holder.publisherTextView.setTextColor(Color.BLACK);
             holder.commentContentTextView.setTextColor(Color.BLACK);
             holder.editCommentEditText.setTextColor(Color.BLACK);
+
         }
         // Reset the profile image to a default image or clear it before setting a new one
         holder.profileImageView.setImageResource(R.drawable.ic_def_user);
@@ -72,12 +71,6 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
         } else {
             holder.profileImageView.setImageResource(R.drawable.ic_def_user);
         }
-
-        holder.profileImageView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, UserPageActivity.class);
-            intent.putExtra("username", uploader);
-            context.startActivity(intent);
-        });
 
         holder.editCommentButton.setOnClickListener(v -> {
             holder.commentContentTextView.setVisibility(View.GONE);

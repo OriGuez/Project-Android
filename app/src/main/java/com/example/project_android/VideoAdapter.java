@@ -9,11 +9,9 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,30 +22,32 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
     private List<Video> videoListFull;
     private Context context;
 
+
     public VideoAdapter(Context context, List<Video> videoList, String source) {
         this.context = context;
         this.videoList = videoList;
         this.videoListFull = new ArrayList<>(videoList);
         this.source = source;
     }
-
     public void filterList(String query) {
         List<Video> filteredList = new ArrayList<>();
+
         if (query.isEmpty()) {
-            filteredList.addAll(videoListFull);
+            filteredList.addAll(videoListFull); // Display all videos if query is empty
         } else {
             String lowerCaseQuery = query.toLowerCase();
+
             for (Video video : videoListFull) {
                 if (video.getTitle().toLowerCase().contains(lowerCaseQuery)) {
                     filteredList.add(video);
                 }
             }
         }
+
         videoList.clear();
         videoList.addAll(filteredList);
         notifyDataSetChanged();
     }
-
     @NonNull
     @Override
     public VideoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -59,19 +59,18 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         this.videoList = newVideoList;
         notifyDataSetChanged();
     }
-
     @Override
     public void onBindViewHolder(@NonNull VideoViewHolder holder, int position) {
         Video video = videoList.get(position);
         holder.titleTextView.setText(video.getTitle());
         holder.publisherTextView.setText(video.getPublisher());
-        holder.uploadDateTextView.setText(video.getUpload_date());
 
+        // Set text color based on dark mode
         int textColor = MainActivity.isDarkMode ? Color.WHITE : Color.BLACK;
         holder.publisherTextView.setTextColor(textColor);
-        holder.uploadDateTextView.setTextColor(textColor);
         holder.titleTextView.setTextColor(textColor);
 
+        // Set profile picture if available
         if (holder.profilePic != null && MainActivity.userDataList != null) {
             for (UserData user : MainActivity.userDataList) {
                 if (user.getUsername().equals(video.getPublisher())) {
@@ -81,6 +80,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
             }
         }
 
+        // Load thumbnail from resources or set default logo
         int thumbnailResourceId = getThumbnailResourceId(video.getThumbnailUrl());
         if (thumbnailResourceId != 0) {
             holder.thumbnailImageView.setImageResource(thumbnailResourceId);
@@ -93,6 +93,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
             }
         }
 
+        // Set click listener to open video details activity
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, VideoActivity.class);
             intent.putExtra("videoID", video.getVidID());
@@ -101,17 +102,6 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
                 ((Activity) context).finish();
             }
         });
-
-        if ("User".equals(source)) {
-            holder.editButton.setVisibility(View.VISIBLE);
-            holder.editButton.setOnClickListener(v -> {
-                Intent intent = new Intent(context, EditVideo.class);
-                intent.putExtra("videoID", video.getVidID());
-                context.startActivity(intent);
-            });
-        } else {
-            holder.editButton.setVisibility(View.GONE);
-        }
     }
 
     @Override
@@ -123,28 +113,25 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         ImageView thumbnailImageView;
         TextView titleTextView;
         TextView publisherTextView;
-
-        TextView uploadDateTextView;
         ImageView profilePic;
-        Button editButton;
 
         public VideoViewHolder(@NonNull View itemView) {
             super(itemView);
             thumbnailImageView = itemView.findViewById(R.id.thumbnailImageView);
             titleTextView = itemView.findViewById(R.id.titleTextView);
             publisherTextView = itemView.findViewById(R.id.publisherTextView);
-            uploadDateTextView = itemView.findViewById(R.id.uploadDateTextView);
             profilePic = itemView.findViewById(R.id.publisherPicInList);
-            editButton = itemView.findViewById(R.id.editVidButton);
         }
     }
 
+    // Helper method to get resource ID of thumbnail
     private int getThumbnailResourceId(String thumbnailName) {
         String resourceName = "thumbnail" + thumbnailName.trim();
         Resources resources = context.getResources();
         return resources.getIdentifier(resourceName, "raw", context.getPackageName());
     }
 
+    // Method to filter adapter's dataset based on query
     public void filter(String query) {
         videoList.clear();
         if (query.isEmpty()) {
