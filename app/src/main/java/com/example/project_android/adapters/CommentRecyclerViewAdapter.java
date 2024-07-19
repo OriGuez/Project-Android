@@ -1,6 +1,7 @@
 package com.example.project_android.adapters;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -72,6 +73,12 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
                 }
             }
         }
+        holder.profileImageView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, UserPageActivity.class);
+            intent.putExtra("username", uploader);
+            context.startActivity(intent);
+        });
+
 
         if (profilePic != null) {
             holder.profileImageView.setImageBitmap(profilePic);

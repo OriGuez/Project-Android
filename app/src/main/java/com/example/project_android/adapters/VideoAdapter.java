@@ -9,9 +9,11 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.view.LayoutInflater;
+import android.widget.Button;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import androidx.appcompat.widget.AppCompatImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -79,10 +81,12 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         Video video = videoList.get(position);
         holder.titleTextView.setText(video.getTitle());
         holder.publisherTextView.setText(video.getPublisher());
+        holder.uploadDateTextView.setText(video.getUpload_date());
 
         // Set text color based on dark mode
         int textColor = MainActivity.isDarkMode ? Color.WHITE : Color.BLACK;
         holder.publisherTextView.setTextColor(textColor);
+        holder.uploadDateTextView.setTextColor(textColor);
         holder.titleTextView.setTextColor(textColor);
 
         // Set profile picture if available
@@ -137,6 +141,17 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
                 ((Activity) context).finish();
             }
         });
+
+        if ("User".equals(source)) {
+            holder.editButton.setVisibility(View.VISIBLE);
+            holder.editButton.setOnClickListener(v -> {
+                Intent intent = new Intent(context, EditVideo.class);
+                intent.putExtra("videoID", video.getVidID());
+                context.startActivity(intent);
+            });
+        } else {
+            holder.editButton.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -146,9 +161,14 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
 
     public static class VideoViewHolder extends RecyclerView.ViewHolder {
         ImageView thumbnailImageView;
+
         TextView titleTextView;
         TextView publisherTextView;
+        TextView uploadDateTextView;
+
         ImageView profilePic;
+        Button editButton;
+
 
         public VideoViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -156,6 +176,9 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
             titleTextView = itemView.findViewById(R.id.titleTextView);
             publisherTextView = itemView.findViewById(R.id.publisherTextView);
             profilePic = itemView.findViewById(R.id.publisherPicInList);
+            uploadDateTextView = itemView.findViewById(R.id.uploadDateTextView);
+            editButton = itemView.findViewById(R.id.editVidButton);
+
         }
     }
 

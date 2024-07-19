@@ -1,5 +1,6 @@
 package com.example.project_android;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.AssetManager;
@@ -76,6 +77,10 @@ public class VideoActivity extends AppCompatActivity {
     ImageView profileImageView;
 
     private static final String TAG = "VideoActivity";
+
+
+    //DELETE IT LATER
+    private int pp=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -169,6 +174,34 @@ public class VideoActivity extends AppCompatActivity {
             videoAdapter = new VideoAdapter(this, MainActivity.videoList, "Video");
             videoRecyclerView.setAdapter(videoAdapter);
         }
+
+
+//        if (profileImageView != null && MainActivity.userDataList != null) {
+//            for (UserData user : MainActivity.userDataList) {
+//                if (user.getUsername().equals(currentVideo.getPublisher())) {
+//                    profileImageView.setImageBitmap(user.getImage());
+//                    profileImageView.setOnClickListener(v -> {
+//                        Intent intent = new Intent(VideoActivity.this, UserPageActivity.class);
+//                        intent.putExtra("username", user.getUsername());
+//                        startActivity(intent);
+//                    });
+//                    break;
+//                }
+//            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 
     private void fetchCommentsForCurrentVideo(String vidId) {
@@ -360,7 +393,8 @@ public class VideoActivity extends AppCompatActivity {
             saveButton.setVisibility(View.GONE);
         }
 
-        if (MainActivity.currentUser == null) {
+//        if (MainActivity.currentUser == null) {
+        if (pp==1) {
             if (addComment != null) {
                 addComment.setVisibility(View.GONE);
             }
