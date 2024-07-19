@@ -8,6 +8,7 @@
     <string name="profilePicRequired">Profile picture is required</string>
     <string name="usernameRequired">Username is required</string>
     <string name="videoAdded">Video Added Successfully</string>
+    <string name="videoUpdated">Video Updated Successfully</string>
     <string name="username_hint">Username</string>
     <string name="password_hint">Password</string>
     <string name="confirm_password_hint">Confirm Password</string>
@@ -16,6 +17,7 @@
     <string name="profile_picture_description">Profile Picture</string>
     <string name="register_button">Register</string>
     <string name="add_video_button">Add Video</string>
+    <string name="edit_video_button">Edit Video</string>
     <string name="loginButton">Button</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
