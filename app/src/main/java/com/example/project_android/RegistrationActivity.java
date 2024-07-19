@@ -21,12 +21,23 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
+import com.example.project_android.model.ApiResponse;
 import com.example.project_android.model.UserData;
+import com.example.project_android.viewModel.UsersViewModel;
+import com.example.project_android.viewModel.VideosViewModel;
 
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class RegistrationActivity extends AppCompatActivity {
+
+    private UsersViewModel viewModel;
 
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final int PICK_CAMERA_REQUEST = 2;
@@ -43,6 +54,7 @@ public class RegistrationActivity extends AppCompatActivity {
     private Uri imgURI;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        viewModel = new ViewModelProvider(this).get(UsersViewModel.class);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
         // Bind views
@@ -165,17 +177,49 @@ public class RegistrationActivity extends AppCompatActivity {
             usernameEditText.setError(getString(R.string.usernameRequired));
             return;
         }
-        if (!usernameAvaliable(username)){
-            usernameEditText.setError(getString(R.string.usernameExists));
-            return;
+//        if (!usernameAvaliable(username)){
+//            usernameEditText.setError(getString(R.string.usernameExists));
+//            return;
+//        }
+
+        UserData newUser = new UserData(username, password, channelName, selectedProfilePicture);
+
+        try {
+            File imageFile = bitmapToFile(selectedProfilePicture);
+            newUser.setImageFile(imageFile);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
-        UserData user = new UserData(username, password, channelName, selectedProfilePicture);
-        user.setImageURI(imgURI);
-        MainActivity.userDataList.add(user);
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
-        finish();
+
+        viewModel.add(newUser).observe(this, apiResponse -> {
+            if (apiResponse.isSuccessful()) {
+                Toast.makeText(RegistrationActivity.this, "User added successfully! Code: " + apiResponse.getCode(), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(RegistrationActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+            } else {
+                switch (apiResponse.getCode()) {
+                    case 400:
+                        Toast.makeText(RegistrationActivity.this, "Bad Request", Toast.LENGTH_SHORT).show();
+                        break;
+                    case 401:
+                        Toast.makeText(RegistrationActivity.this, "Unauthorized", Toast.LENGTH_SHORT).show();
+                        break;
+                    case 500:
+                        Toast.makeText(RegistrationActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+                        break;
+                    default:
+                        Toast.makeText(RegistrationActivity.this, "Unknown Error", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            }
+        });
+        //user.setImageURI(imgURI);
+        MainActivity.userDataList.add(newUser);
+//        Intent intent = new Intent(this, LoginActivity.class);
+//        startActivity(intent);
+//        finish();
     }
     private void validatePasswordsMatch() {
         String password = passwordEditText.getText().toString();
@@ -206,6 +250,36 @@ public class RegistrationActivity extends AppCompatActivity {
             }
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+    private File bitmapToFile(Bitmap bitmap) throws IOException {
+        // Create a file in the cache directory
+        File file = new File(getCacheDir(), "profile_picture.jpg");
+        file.createNewFile();
+
+        // Convert bitmap to byte array
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+        byte[] bitmapData = bos.toByteArray();
+
+        // Write the bytes in file
+        FileOutputStream fos = new FileOutputStream(file);
+        fos.write(bitmapData);
+        fos.flush();
+        fos.close();
+
+        return file;
+    }
+
 
 
 }

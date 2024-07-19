@@ -12,6 +12,7 @@ import java.util.List;
 public class VideosViewModel extends ViewModel {
     private VideoRepository repository;
     private LiveData<List<Video>> videos;
+
     private LiveData<Video> video;
 
     public VideosViewModel() {
