@@ -1,42 +1,21 @@
-package com.example.project_android.model;
+package com.example.project_android;
 
-
-import com.google.gson.annotations.SerializedName;
 import android.graphics.Bitmap;
-
-import androidx.room.Entity;
-
-import com.google.gson.annotations.SerializedName;
-
-import java.util.Date;
 import java.util.List;
-@Entity
-public class Video {
 
+public class Video {
     private String base64Video;
     private Bitmap thumbnailPicture;
 
     private String title;
     private String description;
-
-    @SerializedName("userId")
     private String publisher;
-
-    @SerializedName("_id")
     private String vidID;
     private String url;
     private String thumbnailUrl;
-
-    private String thumbnail;
     private String upload_date;
-
-    @SerializedName("createdAt")
-    private Date createdAt;
-
-
     private List<String> whoLikedList;
     private List<Comment> comments;
-    private int views;
     public String getBase64Video() {
         return base64Video;
     }
@@ -123,31 +102,6 @@ public class Video {
 
     public void setThumbnailPicture(Bitmap thumbnailPicture) {
         this.thumbnailPicture = thumbnailPicture;
-    }
-
-    public int getViews() {
-        return views;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-
-    public void setViews(int views) {
-        this.views = views;
-    }
-
-    public String getThumbnail() {
-        return thumbnail;
-    }
-
-    public void setThumbnail(String thumbnail) {
-        this.thumbnail = thumbnail;
     }
 
     // Nested Comment class
