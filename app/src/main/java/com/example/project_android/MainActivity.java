@@ -21,8 +21,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 import androidx.appcompat.widget.SearchView;
-import androidx.room.Room;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,8 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView youtubeLogo;
     private Toolbar topMenu;
     private Toolbar bottomToolbar;
-    private AppDB db;
-    private PostDao postDao;
+
     private VideoAdapter adapter;
     private androidx.coordinatorlayout.widget.CoordinatorLayout mainLayout;
     public static boolean isDarkMode = false;
@@ -50,11 +47,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         videoList = loadVideoData();
         setContentView(R.layout.activity_main);
-
-        db = Room.databaseBuilder(getApplicationContext(), AppDB.class, "appDB")
-                .allowMainThreadQueries().build();
-        postDao= db.postDao();
-
 
         // Initialize views
         searchView = findViewById(R.id.searchView);
@@ -122,7 +114,6 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "You must be logged in to add a video.", Toast.LENGTH_SHORT).show();
             }
         });
-
         // Click Listener for publisherProfilePic
         profilePic.setOnClickListener(v -> {
             if (currentUser != null) {
@@ -156,7 +147,6 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-
     }
     @Override
     protected void onResume() {
@@ -202,7 +192,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void showPopupMenu(View view) {
         PopupMenu popupMenu = new PopupMenu(this, view);
-        popupMenu.getMenu().add("My Channel"); // Add "My Channel" menu item
+        popupMenu.getMenu().add(currentUser.getUsername());
+        popupMenu.getMenu().add(currentUser.getChannelName());
         popupMenu.getMenu().add(Menu.NONE, R.id.menu_logout, Menu.NONE, "Sign out");
 
         popupMenu.setOnMenuItemClickListener(item -> {
@@ -211,12 +202,6 @@ public class MainActivity extends AppCompatActivity {
                     // Handle logout action
                     currentUser = null; // Logout the user
                     loggedVisibilityLogic(); // Update UI visibility
-                    return true;
-                case "My Channel":
-                    // Navigate to UserPageActivity
-                    Intent intent = new Intent(MainActivity.this, UserPageActivity.class);
-                    intent.putExtra("username", currentUser.getUsername());
-                    startActivity(intent);
                     return true;
                 // Handle other menu items as needed
                 default:
@@ -233,7 +218,6 @@ public class MainActivity extends AppCompatActivity {
             userDataList.clear();
         }
     }
-
 
     private void performSearch(String query) {
         List<Video> filteredList = filter(videoList, query);
