@@ -32,6 +32,8 @@ import java.util.UUID;
 
 import android.media.ThumbnailUtils;
 
+import com.example.project_android.model.Video;
+
 public class AddVideo extends AppCompatActivity {
     private EditText editVideoTitle;
     private EditText editVideoDescription;

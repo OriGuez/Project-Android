@@ -3,16 +3,28 @@ package com.example.project_android;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import android.graphics.PorterDuff;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.project_android.adapters.VideoAdapter;
+import com.example.project_android.model.NewVideoModel;
+import com.example.project_android.model.UserData;
+import com.example.project_android.model.Video;
+import com.example.project_android.viewModel.VideosViewModel;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -25,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+    private VideosViewModel viewModel;
     public static UserData currentUser;
     public static List<UserData> userDataList;
     public static List<Video> videoList;
@@ -70,7 +83,20 @@ public class MainActivity extends AppCompatActivity {
         bottomToolbar = findViewById(R.id.bottomToolbar);
         recyclerView = findViewById(R.id.recyclerViewVideos);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 1));
+        viewModel = new ViewModelProvider(this).get(VideosViewModel.class);
+
+        //LiveData<List<Video>> newList = viewModel.get();
+        // Observe LiveData from ViewModel
         adapter = new VideoAdapter(this, videoList, "Main");
+        // Observe LiveData from ViewModel
+        viewModel.get().observe(this, videos -> {
+            // Update the UI with the new video list
+            if (videos != null) {
+                adapter.updateVideoList(videos);
+            } else {
+                Log.e("MainActivity", "Video list is null");
+            }
+        });
         recyclerView.setAdapter(adapter);
 
         // Set up profile picture
@@ -103,7 +129,8 @@ public class MainActivity extends AppCompatActivity {
             // Change SearchView colors based on the current mode
             applySearchViewColors(searchView, isDarkMode);
             // Notify adapter
-            adapter.notifyDataSetChanged();
+            //.............................change because its reloading the dataset..............................
+            //adapter.notifyDataSetChanged();
         });
         // Set OnClickListener for add video button
         addVideoButton.setOnClickListener(v -> {
@@ -152,9 +179,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         loggedVisibilityLogic();
-        if (adapter != null) {
-            adapter.updateVideoList(videoList);
-        }
+//        if (adapter != null) {
+//            adapter.updateVideoList(videoList);
+//        }
         searchView.clearFocus();
     }
     // Method to load video data

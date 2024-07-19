@@ -1,14 +1,24 @@
-package com.example.project_android;
+package com.example.project_android.model;
 
 import android.graphics.Bitmap;
 import android.net.Uri;
 
+import com.google.gson.annotations.SerializedName;
+
+import java.io.File;
+
 public class UserData {
+    @SerializedName("_id")
+    private String id;
     private String username;
     private String password;
+    @SerializedName("displayName")
     private String channelName;
     private Bitmap image;
-    private Uri imageURI;
+    @SerializedName("profilePic")
+    private String imageURI;
+
+    private File imageFile;
 
     public UserData(String username, String password, String channelName,Bitmap image) {
         this.username = username;
@@ -50,11 +60,19 @@ public class UserData {
         this.image = image;
     }
 
-    public Uri getImageURI() {
+    public String getImageURI() {
         return imageURI;
     }
 
-    public void setImageURI(Uri imageURI) {
+    public void setImageURI(String imageURI) {
         this.imageURI = imageURI;
+    }
+
+    public File getImageFile() {
+        return imageFile;
+    }
+
+    public void setImageFile(File imageFile) {
+        this.imageFile = imageFile;
     }
 }
