@@ -30,7 +30,15 @@
             android:exported="false"
             android:theme="@style/Theme.MyApp" />
         <activity
+            android:name=".EditVideo"
+            android:exported="false"
+            android:theme="@style/Theme.MyApp" />
+        <activity
             android:name=".VideoActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MyApp" />
+        <activity
+            android:name=".UserPageActivity"
             android:exported="false"
             android:theme="@style/Theme.MyApp" />
         <activity

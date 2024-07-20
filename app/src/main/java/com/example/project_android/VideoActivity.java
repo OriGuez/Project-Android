@@ -76,9 +76,13 @@ public class VideoActivity extends AppCompatActivity {
     ImageView profileImageView;
 
     private static final String TAG = "VideoActivity";
+    //DELETE IT LATER
+     private int pp=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         assetManager = getAssets();
         vidViewModel = new ViewModelProvider(this).get(VideosViewModel.class);
@@ -115,7 +119,6 @@ public class VideoActivity extends AppCompatActivity {
         });
 
 
-
         setContentView(R.layout.activity_video);
         InitializeUiComponents();
 
@@ -124,15 +127,17 @@ public class VideoActivity extends AppCompatActivity {
             for (UserData user : MainActivity.userDataList) {
                 if (user.getUsername().equals(currentVideo.getPublisher())) {
                     profileImageView.setImageBitmap(user.getImage());
+                    profileImageView.setOnClickListener(v -> {
+                        Intent intent = new Intent(VideoActivity.this, UserPageActivity.class);
+                        intent.putExtra("username", user.getUsername());
+                        startActivity(intent);
+                    });
                     break;
+                    //comment
                 }
             }
         }
         videoPageDarkMode();
-
-
-
-
 
 
         // Set up video playback
@@ -169,7 +174,22 @@ public class VideoActivity extends AppCompatActivity {
             videoAdapter = new VideoAdapter(this, MainActivity.videoList, "Video");
             videoRecyclerView.setAdapter(videoAdapter);
         }
+        if (profileImageView != null && MainActivity.userDataList != null) {
+            for (UserData user : MainActivity.userDataList) {
+                if (user.getUsername().equals(currentVideo.getPublisher())) {
+                    profileImageView.setImageBitmap(user.getImage());
+                    profileImageView.setOnClickListener(v -> {
+                        Intent intent = new Intent(VideoActivity.this, UserPageActivity.class);
+                        intent.putExtra("username", user.getUsername());
+                        startActivity(intent);
+                    });
+                    break;
+                    //comment
+                }
+            }
+        }
     }
+
 
     private void fetchCommentsForCurrentVideo(String vidId) {
         commentsViewModel.get(vidId).observe(this, new Observer<List<Comment>>() {
@@ -360,7 +380,9 @@ public class VideoActivity extends AppCompatActivity {
             saveButton.setVisibility(View.GONE);
         }
 
-        if (MainActivity.currentUser == null) {
+//        if (MainActivity.currentUser == null) {
+        if (pp==1) {
+
             if (addComment != null) {
                 addComment.setVisibility(View.GONE);
             }
@@ -390,7 +412,8 @@ public class VideoActivity extends AppCompatActivity {
                 if (!commentText.isEmpty()) {
                     if (MainActivity.currentUser != null) {
                         currentVideo.getComments().add(new Video.Comment("User", MainActivity.currentUser.getUsername(), commentText));
-                    } else {
+                    }
+                    else {
                         currentVideo.getComments().add(new Video.Comment("User", "Anon", commentText));
                     }
                     recycleAdapter.notifyDataSetChanged();
@@ -445,6 +468,13 @@ public class VideoActivity extends AppCompatActivity {
                 if (!isEditMode) {
                     enterEditMode();
                 }
+            });
+        }
+        if (editVideoButton != null) {
+            editVideoButton.setOnClickListener(v -> {
+                Intent intent = new Intent(VideoActivity.this, EditVideo.class);
+                intent.putExtra("videoID", currentVideo.getVidID());
+                startActivity(intent);
             });
         }
 
