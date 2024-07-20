@@ -22,6 +22,9 @@ public interface UserApiService {
     @GET("/api/users/{id}")
     Call<UserData> getUserById(@Path("id") String userId);
 
+    @GET("/api/users/getID/{username}")
+    Call<UserData> getIdByUsername(@Path("username") String username);
+
     @POST("/api/tokens")
     Call<TokenResponse> createToken(@Body TokenRequest tokenRequest);
 

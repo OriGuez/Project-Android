@@ -9,6 +9,7 @@ import com.example.project_android.model.ApiResponse;
 import com.example.project_android.model.UserData;
 import com.example.project_android.model.TokenRequest;
 import com.example.project_android.model.TokenResponse;
+import com.example.project_android.model.UserID;
 import com.example.project_android.model.Video;
 import com.google.gson.Gson;
 
@@ -50,6 +51,38 @@ public class UserActions {
         });
         return user;
     }
+
+
+//    public MutableLiveData<UserID> getIdByUsername(String username) {
+//        MutableLiveData<UserData> user = new MutableLiveData<>();
+//        api.getIdByUsername(username).enqueue(new Callback<UserData>() {
+//            @Override
+//            public void onResponse(Call<UserData> call, Response<UserData> response) {
+//                if (response.isSuccessful() && response.body() != null) {
+//                    user.postValue(response.body());
+//                    // Handle single video response
+//                } else {
+//                    user.postValue(null);
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<UserData> call, Throwable t) {
+//                // Handle failure
+//                user.postValue(null);
+//            }
+//        });
+//        return user;
+//    }
+
+
+
+
+
+
+
+
+
     public LiveData<ApiResponse> addUser(UserData userData) {
         MutableLiveData<ApiResponse> liveData = new MutableLiveData<>();
         File imageFile = userData.getImageFile(); // Assuming getImage() returns the image file
@@ -86,25 +119,28 @@ public class UserActions {
         return liveData;
     }
 
-//    public LiveData<TokenResponse> createToken(TokenRequest tokenRequest) {
-//        MutableLiveData<TokenResponse> liveData = new MutableLiveData<>();
-//        Call<TokenResponse> call = api.createToken(tokenRequest);
-//        call.enqueue(new Callback<TokenResponse>() {
-//            @Override
-//            public void onResponse(Call<TokenResponse> call, Response<TokenResponse> response) {
-//                if (response.isSuccessful()) {
-//                    //callback.onResponse(call, response);
-//                } else {
-//                    //callback.onFailure(call, new Throwable("Failed to create token"));
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<TokenResponse> call, Throwable t) {
-//                //callback.onFailure(call, t);
-//            }
-//        });
-//    }
+    public LiveData<TokenResponse> createToken(TokenRequest tokenRequest) {
+        MutableLiveData<TokenResponse> liveData = new MutableLiveData<>();
+        Call<TokenResponse> call = api.createToken(tokenRequest);
+
+        call.enqueue(new Callback<TokenResponse>() {
+            @Override
+            public void onResponse(Call<TokenResponse> call, Response<TokenResponse> response) {
+                if (response.isSuccessful()) {
+                    liveData.setValue(response.body());
+                } else {
+                    liveData.setValue(null); // or handle the error case as per your need
+                }
+            }
+
+            @Override
+            public void onFailure(Call<TokenResponse> call, Throwable t) {
+                liveData.setValue(null); // or handle the failure as per your need
+            }
+        });
+
+        return liveData;
+    }
 
 
 

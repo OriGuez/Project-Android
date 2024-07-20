@@ -54,8 +54,8 @@ public class RegistrationActivity extends AppCompatActivity {
     private Uri imgURI;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        viewModel = new ViewModelProvider(this).get(UsersViewModel.class);
         super.onCreate(savedInstanceState);
+        viewModel = new ViewModelProvider(this).get(UsersViewModel.class);
         setContentView(R.layout.activity_registration);
         // Bind views
         usernameEditText = findViewById(R.id.username);
