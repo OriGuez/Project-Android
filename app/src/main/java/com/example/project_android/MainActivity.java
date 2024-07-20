@@ -219,8 +219,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void showPopupMenu(View view) {
         PopupMenu popupMenu = new PopupMenu(this, view);
-        popupMenu.getMenu().add(currentUser.getUsername());
-        popupMenu.getMenu().add(currentUser.getChannelName());
+        popupMenu.getMenu().add("My Channel"); // Add "My Channel" menu item
         popupMenu.getMenu().add(Menu.NONE, R.id.menu_logout, Menu.NONE, "Sign out");
 
         popupMenu.setOnMenuItemClickListener(item -> {
@@ -229,6 +228,12 @@ public class MainActivity extends AppCompatActivity {
                     // Handle logout action
                     currentUser = null; // Logout the user
                     loggedVisibilityLogic(); // Update UI visibility
+                    return true;
+                case "My Channel":
+                    // Navigate to UserPageActivity
+                    Intent intent = new Intent(MainActivity.this, UserPageActivity.class);
+                    intent.putExtra("username", currentUser.getUsername());
+                    startActivity(intent);
                     return true;
                 // Handle other menu items as needed
                 default:
