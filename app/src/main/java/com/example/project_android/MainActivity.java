@@ -190,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
 //        if (adapter != null) {
 //            adapter.updateVideoList(videoList);
 //        }
-        searchView.clearFocus();
+//        searchView.clearFocus();
     }
 
     // Method to load video data

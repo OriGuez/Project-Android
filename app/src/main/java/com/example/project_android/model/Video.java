@@ -3,11 +3,7 @@ package com.example.project_android.model;
 
 import com.google.gson.annotations.SerializedName;
 import android.graphics.Bitmap;
-
 import androidx.room.Entity;
-
-import com.google.gson.annotations.SerializedName;
-
 import java.io.File;
 import java.util.Date;
 import java.util.List;

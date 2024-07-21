@@ -91,6 +91,14 @@
                 android:text="@string/date"
                 android:textSize="16sp" />
 
+            <TextView
+                android:id="@+id/viewsTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="Views"
+                android:textSize="16sp" />
+
             <!-- Share and Like Buttons -->
             <LinearLayout
                 android:layout_width="match_parent"

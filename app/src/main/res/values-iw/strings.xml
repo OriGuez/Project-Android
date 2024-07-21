@@ -31,6 +31,8 @@
     <string name="comments">תגובות</string>
     <string name="publisher">הועלה על ידי</string>
     <string name="date">תאריך</string>
+    <string name="views">צפיות</string>
+    <string name="views_format">%s צפיות</string>
     <string name="description">תיאור</string>
     <string name="title">כותרת</string>
     <string name="delete">מחק</string>
