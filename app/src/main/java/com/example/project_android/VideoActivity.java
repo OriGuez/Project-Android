@@ -2,7 +2,6 @@ package com.example.project_android;
 
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.content.res.AssetManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -48,7 +47,6 @@ public class VideoActivity extends AppCompatActivity {
     List<Comment> vidCommentList = new ArrayList<>();
     private CommentsViewModel commentsViewModel;
 
-
     private CommentRecyclerViewAdapter recycleAdapter;
     private RecyclerView commentsRecycleView;
     private VideoAdapter videoAdapter;
@@ -56,6 +54,7 @@ public class VideoActivity extends AppCompatActivity {
     private TextView titleTextView;
     private TextView CommentSectionTitle;
     private TextView dateTextView;
+    private TextView viewsTextView;
     private TextView descriptionTextView;
     private TextView publisherTextView;
     private Button addComment;
@@ -72,22 +71,20 @@ public class VideoActivity extends AppCompatActivity {
     private RecyclerView videoRecyclerView;
     private Video currentVideo;
     private LinearLayout vidScreenLayout;
-    AssetManager assetManager;
     ImageView profileImageView;
 
     private static final String TAG = "VideoActivity";
-    //DELETE IT LATER
-     private int pp=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
         super.onCreate(savedInstanceState);
-        assetManager = getAssets();
+        setContentView(R.layout.activity_video);
+
+        InitializeUiComponents();
+
         vidViewModel = new ViewModelProvider(this).get(VideosViewModel.class);
         commentsViewModel = new ViewModelProvider(this).get(CommentsViewModel.class);
-        // Retrieve the ID from the intent's extras
+
         String videoID = getIntent().getStringExtra("videoID");
         if (currentVideo == null)
             currentVideo = MainActivity.videoList.get(0);
@@ -95,33 +92,25 @@ public class VideoActivity extends AppCompatActivity {
         vidViewModel.get(videoID).observe(this, new Observer<Video>() {
             @Override
             public void onChanged(@Nullable Video video) {
-                // Update the UI with the new video list
                 if (video != null) {
                     currentVideo = video;
                     fetchCommentsForCurrentVideo(video.getVidID());
                     updateVideoDetails();
+                    incrementViewCount(video);
                 } else {
                     currentVideo = MainActivity.videoList.get(0);
-                    //currentVideo = null;
                     Log.e("ac", "Video list is null");
                 }
             }
         });
 
-        // Observe LiveData from ViewModel
         vidViewModel.get().observe(this, videos -> {
-            // Update the UI with the new video list
             if (videos != null) {
                 videoAdapter.updateVideoList(videos);
             } else {
                 Log.e("ac", "Video list is null");
             }
         });
-
-
-        setContentView(R.layout.activity_video);
-        InitializeUiComponents();
-
 
         if (profileImageView != null && MainActivity.userDataList != null) {
             for (UserData user : MainActivity.userDataList) {
@@ -133,19 +122,15 @@ public class VideoActivity extends AppCompatActivity {
                         startActivity(intent);
                     });
                     break;
-                    //comment
                 }
             }
         }
         videoPageDarkMode();
 
-
-        // Set up video playback
         if (currentVideo.getUrl() != null) {
             Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + getRawResourceIdByName(currentVideo.getUrl()));
             videoView.setVideoURI(videoUri);
         } else {
-            // Decode Base64 video and play it
             try {
                 Uri vUri = decodeBase64ToVideoUri(currentVideo.getBase64Video());
                 videoView.setVideoURI(vUri);
@@ -166,7 +151,6 @@ public class VideoActivity extends AppCompatActivity {
             recycleAdapter = new CommentRecyclerViewAdapter(this, vidCommentList, commentsRecycleView);
             commentsRecycleView.setLayoutManager(new LinearLayoutManager(this));
             commentsRecycleView.setAdapter(recycleAdapter);
-            //commentsRecycleView.post(() -> RecyclerViewUtils.setRecyclerViewHeightBasedOnItems(commentsRecycleView));
         }
 
         if (videoRecyclerView != null) {
@@ -174,22 +158,7 @@ public class VideoActivity extends AppCompatActivity {
             videoAdapter = new VideoAdapter(this, MainActivity.videoList, "Video");
             videoRecyclerView.setAdapter(videoAdapter);
         }
-        if (profileImageView != null && MainActivity.userDataList != null) {
-            for (UserData user : MainActivity.userDataList) {
-                if (user.getUsername().equals(currentVideo.getPublisher())) {
-                    profileImageView.setImageBitmap(user.getImage());
-                    profileImageView.setOnClickListener(v -> {
-                        Intent intent = new Intent(VideoActivity.this, UserPageActivity.class);
-                        intent.putExtra("username", user.getUsername());
-                        startActivity(intent);
-                    });
-                    break;
-                    //comment
-                }
-            }
-        }
     }
-
 
     private void fetchCommentsForCurrentVideo(String vidId) {
         commentsViewModel.get(vidId).observe(this, new Observer<List<Comment>>() {
@@ -199,12 +168,15 @@ public class VideoActivity extends AppCompatActivity {
                     vidCommentList = comments;
                     updateComments(vidCommentList);
                 }
-
-                //commentsLiveData.postValue(comments);
             }
         });
     }
 
+    private void incrementViewCount(Video video) {
+        video.setViews((video.getViews() + 1)) ;
+        updateVideoDetails();
+//        vidViewModel.update(video);
+    }
 
     private void showDeleteConfirmationDialog() {
         new AlertDialog.Builder(this, R.style.MyDialogTheme)
@@ -238,7 +210,6 @@ public class VideoActivity extends AppCompatActivity {
     }
 
     private void updateVideoDetails() {
-        // Set video details
         if (titleTextView != null) {
             titleTextView.setText(currentVideo.getTitle());
         }
@@ -249,8 +220,12 @@ public class VideoActivity extends AppCompatActivity {
             Date d = currentVideo.getCreatedAt();
             if (d != null) {
                 dateTextView.setText(d.toString());
-            } else
+            } else {
                 dateTextView.setText(currentVideo.getUpload_date());
+            }
+        }
+        if (viewsTextView != null) {
+            viewsTextView.setText(formatNum(currentVideo.getViews()) + " views");
         }
         if (publisherTextView != null) {
             publisherTextView.setText(currentVideo.getPublisher());
@@ -277,19 +252,16 @@ public class VideoActivity extends AppCompatActivity {
                 titleTextView == null || descriptionTextView == null || editVideoButton == null)
             return;
 
-        // Show edit fields and save button
         editTitleEditText.setVisibility(View.VISIBLE);
         editDescriptionEditText.setVisibility(View.VISIBLE);
         saveButton.setVisibility(View.VISIBLE);
-        // Hide non-editable fields
+
         titleTextView.setVisibility(View.GONE);
         descriptionTextView.setVisibility(View.GONE);
-        // Populate edit fields with current video details
+
         editTitleEditText.setText(currentVideo.getTitle());
         editDescriptionEditText.setText(currentVideo.getDescription());
-        // Change edit button text to "Cancel"
         editVideoButton.setVisibility(View.GONE);
-        // Set edit mode flag
         isEditMode = true;
     }
 
@@ -298,32 +270,31 @@ public class VideoActivity extends AppCompatActivity {
                 titleTextView == null || descriptionTextView == null || editVideoButton == null)
             return;
 
-        // Hide edit fields and save button
         editTitleEditText.setVisibility(View.GONE);
         editDescriptionEditText.setVisibility(View.GONE);
         saveButton.setVisibility(View.GONE);
-        // Show non-editable fields
+
         titleTextView.setVisibility(View.VISIBLE);
         descriptionTextView.setVisibility(View.VISIBLE);
-        // Change edit button text back to "Edit"
+
         editVideoButton.setVisibility(View.VISIBLE);
-        // Reset edit mode flag
         isEditMode = false;
     }
 
     private void saveChanges() {
         if (editTitleEditText == null || editDescriptionEditText == null) return;
 
-        // Save changes to currentVideo object
         currentVideo.setTitle(editTitleEditText.getText().toString());
         currentVideo.setDescription(editDescriptionEditText.getText().toString());
-        // Update UI with new details
+
         if (titleTextView != null) {
             titleTextView.setText(currentVideo.getTitle());
         }
         if (descriptionTextView != null) {
             descriptionTextView.setText(currentVideo.getDescription());
         }
+        updateVideoDetails();
+//        vidViewModel.updateVideoDetails(currentVideo);
     }
 
     private int getRawResourceIdByName(String resourceName) {
@@ -341,11 +312,11 @@ public class VideoActivity extends AppCompatActivity {
     }
 
     private void InitializeUiComponents() {
-        // Initialize views
         videoView = findViewById(R.id.videoView);
         titleTextView = findViewById(R.id.titleTextView);
         descriptionTextView = findViewById(R.id.descriptionTextView);
         dateTextView = findViewById(R.id.dateTextView);
+        viewsTextView = findViewById(R.id.viewsTextView);
         publisherTextView = findViewById(R.id.publisherTextView);
         commentAddText = findViewById(R.id.commentAddText);
         addComment = findViewById(R.id.addCommentButton);
@@ -362,6 +333,7 @@ public class VideoActivity extends AppCompatActivity {
         profileImageView = findViewById(R.id.publisherProfilePic);
         CommentSectionTitle = findViewById(R.id.commentsTitleTextView);
         vidScreenLayout = findViewById(R.id.vidLO);
+
         if (commentsRecycleView != null) {
             commentsRecycleView.setNestedScrollingEnabled(false);
         }
@@ -369,7 +341,6 @@ public class VideoActivity extends AppCompatActivity {
             videoRecyclerView.setNestedScrollingEnabled(false);
         }
 
-        // Check if the view exists before interacting with it
         if (editTitleEditText != null) {
             editTitleEditText.setVisibility(View.GONE);
         }
@@ -380,9 +351,7 @@ public class VideoActivity extends AppCompatActivity {
             saveButton.setVisibility(View.GONE);
         }
 
-//        if (MainActivity.currentUser == null) {
-        if (pp==1) {
-
+        if (MainActivity.currentUser == null) {
             if (addComment != null) {
                 addComment.setVisibility(View.GONE);
             }
@@ -405,19 +374,13 @@ public class VideoActivity extends AppCompatActivity {
             updateLikeButton(likeButton, likeText);
         }
 
-
         if (addComment != null) {
             addComment.setOnClickListener(v -> {
                 String commentText = commentAddText.getText().toString().trim();
                 if (!commentText.isEmpty()) {
-                    if (MainActivity.currentUser != null) {
-                        currentVideo.getComments().add(new Video.Comment("User", MainActivity.currentUser.getUsername(), commentText));
-                    }
-                    else {
-                        currentVideo.getComments().add(new Video.Comment("User", "Anon", commentText));
-                    }
+                    String username = (MainActivity.currentUser != null) ? MainActivity.currentUser.getUsername() : "Anon";
+                    currentVideo.getComments().add(new Video.Comment("User", username, commentText));
                     recycleAdapter.notifyDataSetChanged();
-                    //RecyclerViewUtils.setRecyclerViewHeightBasedOnItems(commentsRecycleView);
                     commentAddText.getText().clear();
                 }
             });
@@ -426,8 +389,9 @@ public class VideoActivity extends AppCompatActivity {
         if (likeButton != null) {
             likeButton.setOnClickListener(v -> {
                 boolean isFound = false;
+                String currentUserUsername = (MainActivity.currentUser != null) ? MainActivity.currentUser.getUsername() : "Anon";
                 for (String user : currentVideo.getWhoLikedList()) {
-                    if (user.equals(MainActivity.currentUser.getUsername())) {
+                    if (user.equals(currentUserUsername)) {
                         likeButton.setImageDrawable(getResources().getDrawable(R.drawable.like));
                         likeText.setText(R.string.like);
                         isFound = true;
@@ -436,7 +400,7 @@ public class VideoActivity extends AppCompatActivity {
                     }
                 }
                 if (!isFound) {
-                    currentVideo.getWhoLikedList().add(MainActivity.currentUser.getUsername());
+                    currentVideo.getWhoLikedList().add(currentUserUsername);
                     likeButton.setImageDrawable(getResources().getDrawable(R.drawable.likebuttonpressed));
                     likeText.setText(R.string.liked);
                 }
@@ -498,6 +462,8 @@ public class VideoActivity extends AppCompatActivity {
                 publisherTextView.setTextColor(Color.WHITE);
             if (dateTextView != null)
                 dateTextView.setTextColor(Color.WHITE);
+            if (viewsTextView != null)
+                viewsTextView.setTextColor(Color.WHITE);
             if (CommentSectionTitle != null)
                 CommentSectionTitle.setTextColor(Color.WHITE);
             if (likeText != null)
@@ -523,6 +489,8 @@ public class VideoActivity extends AppCompatActivity {
                 publisherTextView.setTextColor(Color.BLACK);
             if (dateTextView != null)
                 dateTextView.setTextColor(Color.BLACK);
+            if (viewsTextView != null)
+                viewsTextView.setTextColor(Color.BLACK);
             if (CommentSectionTitle != null)
                 CommentSectionTitle.setTextColor(Color.BLACK);
             if (likeText != null)
@@ -539,4 +507,22 @@ public class VideoActivity extends AppCompatActivity {
                 vidScreenLayout.setBackgroundColor(Color.WHITE);
         }
     }
+
+    private String formatNum(int num) {
+        if (num < 1000) {
+            return String.valueOf(num);
+        } else if (num >= 1000 && num < 10000) {
+            return String.format("%.1fk", num / 1000.0);
+        } else if (num >= 10000 && num < 1000000) {
+            return String.format("%dk", num / 1000);
+        } else if (num >= 1000000 && num < 10000000) {
+            return String.format("%.1fM", num / 1000000.0);
+        } else if (num >= 10000000 && num < 1000000000) {
+            return String.format("%dM", num / 1000000);
+        } else if (num >= 1000000000) {
+            return String.format("%.1fB", num / 1000000000.0);
+        }
+        return String.valueOf(num);
+    }
+
 }

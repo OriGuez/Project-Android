@@ -83,12 +83,17 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         holder.titleTextView.setText(video.getTitle());
         holder.publisherTextView.setText(video.getPublisher());
         holder.uploadDateTextView.setText(video.getUpload_date());
+        int viewsCount = Integer.parseInt(String.valueOf(video.getViews()));
+        String viewsText = formatNum(viewsCount);
+        holder.viewsTextView.setText(viewsText);
 
         // Set text color based on dark mode
         int textColor = MainActivity.isDarkMode ? Color.WHITE : Color.BLACK;
         holder.publisherTextView.setTextColor(textColor);
         holder.titleTextView.setTextColor(textColor);
         holder.uploadDateTextView.setTextColor(textColor);
+        holder.viewsTextView.setTextColor(textColor);
+
 
 
         // Set profile picture if available
@@ -165,6 +170,9 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         TextView titleTextView;
         TextView publisherTextView;
         TextView uploadDateTextView;
+
+        TextView viewsTextView;
+
         Button editButton;
 
 
@@ -176,6 +184,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
             titleTextView = itemView.findViewById(R.id.titleTextView);
             publisherTextView = itemView.findViewById(R.id.publisherTextView);
             uploadDateTextView = itemView.findViewById(R.id.uploadDateTextView);
+            viewsTextView = itemView.findViewById(R.id.viewsTextView);
             profilePic = itemView.findViewById(R.id.publisherPicInList);
             editButton = itemView.findViewById(R.id.editVidButton);
 
@@ -230,6 +239,22 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         protected void onPostExecute(Bitmap result) {
             imageView.setImageBitmap(result);
         }
+    }
+    private String formatNum(int num) {
+        if (num < 1000) {
+            return num + " views";
+        } else if (num >= 1000 && num < 10000) {
+            return String.format("%.1fk views", num / 1000.0);
+        } else if (num >= 10000 && num < 1000000) {
+            return (num / 1000) + "k views";
+        } else if (num >= 1000000 && num < 10000000) {
+            return String.format("%.1fM views", num / 1000000.0);
+        } else if (num >= 10000000 && num < 1000000000) {
+            return (num / 1000000) + "M views";
+        } else if (num >= 1000000000) {
+            return String.format("%.1fB views", num / 1000000000.0);
+        }
+        return num + " views";
     }
 
 }

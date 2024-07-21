@@ -33,6 +33,8 @@
     <string name="comments">Comments</string>
     <string name="publisher">Publisher</string>
     <string name="date">Date</string>
+    <string name="views_format">%s views</string>
+    <string name="views">Views</string>
     <string name="description">Description</string>
     <string name="title">Title</string>
     <string name="delete">Delete</string>
