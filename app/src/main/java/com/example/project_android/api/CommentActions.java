@@ -4,6 +4,7 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.project_android.model.ApiResponse;
 import com.example.project_android.model.Comment;
 import com.example.project_android.model.Video;
 
@@ -43,6 +44,30 @@ public class CommentActions {
             }
         });
         return commentsData;
+    }
+
+
+    public MutableLiveData<ApiResponse> addComment(String videoId, Comment comment) {
+        MutableLiveData<ApiResponse> resp = new MutableLiveData<>();
+        api.addComment(videoId, comment).enqueue(new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Log.d("success", "Added comment successfully");
+                    resp.setValue(new ApiResponse(true, response.code()));
+                } else {
+                    resp.setValue(new ApiResponse(false, response.code()));
+                    Log.d("failure", "Failed to add comment");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse> call, Throwable t) {
+                resp.setValue(new ApiResponse(false, -1));
+                Log.d("failure", "Error adding comment", t);
+            }
+        });
+        return resp;
     }
 
 }

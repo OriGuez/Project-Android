@@ -1,31 +1,32 @@
 package com.example.project_android;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.content.res.AssetManager;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.project_android.adapters.VideoAdapter;
 import com.example.project_android.model.UserData;
 import com.example.project_android.model.Video;
+import com.example.project_android.utils.ImageLoader;
+import com.example.project_android.viewModel.UsersViewModel;
+import com.example.project_android.viewModel.VideosViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class UserPageActivity extends AppCompatActivity {
+    private UsersViewModel usersViewModel;
+    private VideosViewModel videosViewModel;
     private RecyclerView videoRecyclerView;
     private VideoAdapter videoAdapter;
     private ImageView profileImageView;
@@ -35,43 +36,34 @@ public class UserPageActivity extends AppCompatActivity {
     private EditText editChannelNameEditText;
     private Button editProfileButton;
     private Button saveProfileButton;
-    private UserData currentUser;
-    private List<Video> userVideos;
+    private UserData pageUser;
+    private List<Video> userVideos = new ArrayList<>();
 
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_page);
-
-        profileImageView = findViewById(R.id.publisherProfilePic);
-        usernameTextView = findViewById(R.id.usernameTextView);
-        channelNameTextView = findViewById(R.id.channelNameTextView);
-        editUsernameEditText = findViewById(R.id.editUsernameEditText);
-        editChannelNameEditText = findViewById(R.id.editChannelNameEditText);
-        editProfileButton = findViewById(R.id.editProfileButton);
-        saveProfileButton = findViewById(R.id.saveProfileButton);
-        videoRecyclerView = findViewById(R.id.recyclerView);
-
+        usersViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
+        videosViewModel = new ViewModelProvider(this).get(VideosViewModel.class);
+        initViews();
         // Retrieve the current user data
-        String username = getIntent().getStringExtra("username");
-        for (UserData user : MainActivity.userDataList) {
-            if (user.getUsername().equals(username)) {
-                currentUser = user;
-                break;
+        String userID = getIntent().getStringExtra("userID");
+        usersViewModel.get(userID).observe(this, user -> {
+            if (user != null) {
+                pageUser = user;
+                updatePageUser();
+
+                videosViewModel.getUserVideos(userID).observe(this, videos -> {
+                    if (videos != null) {
+                        videoAdapter.updateVideoList(videos);
+                    }
+
+                });
             }
-        }
+        });
 
-        if (currentUser != null) {
-            // Populate the UI with the current user data
-            profileImageView.setImageBitmap(currentUser.getImage());
-            usernameTextView.setText(currentUser.getUsername());
-            channelNameTextView.setText(currentUser.getChannelName());
-
-            // Retrieve user's videos
-            userVideos = getUserVideos(currentUser.getUsername());
-        }
-
+        //updatePageUser();
         videoRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         videoAdapter = new VideoAdapter(this, userVideos, "User");
         videoRecyclerView.setAdapter(videoAdapter);
@@ -91,6 +83,41 @@ public class UserPageActivity extends AppCompatActivity {
         editProfileButton.setVisibility(View.GONE);
     }
 
+
+    private void updatePageUser() {
+        if (pageUser != null) {
+            // Populate the UI with the current user data
+            //profileImageView.setImageBitmap(pageUser.getImage());
+            String username="@"+ pageUser.getUsername();
+            usernameTextView.setText(username);
+            channelNameTextView.setText(pageUser.getChannelName());
+            if (profileImageView != null){
+                    String baseUrl = MyApplication.getContext().getString(R.string.BaseUrl);
+                    String profilePicPath = pageUser.getImageURI();
+                    if (profilePicPath != null)
+                        profilePicPath = profilePicPath.substring(1);
+                    String profileImageUrl = baseUrl + profilePicPath;
+                    ImageLoader.loadImage(profileImageUrl, profileImageView);
+            }
+
+            // Retrieve user's videos
+            //userVideos = getUserVideos(pageUser.getUsername());
+        }
+
+
+    }
+
+    private void initViews() {
+        profileImageView = findViewById(R.id.publisherProfilePic);
+        usernameTextView = findViewById(R.id.usernameTextView);
+        channelNameTextView = findViewById(R.id.channelNameTextView);
+        editUsernameEditText = findViewById(R.id.editUsernameEditText);
+        editChannelNameEditText = findViewById(R.id.editChannelNameEditText);
+        editProfileButton = findViewById(R.id.editProfileButton);
+        saveProfileButton = findViewById(R.id.saveProfileButton);
+        videoRecyclerView = findViewById(R.id.recyclerView);
+    }
+
     private void saveChanges() {
         String newUsername = editUsernameEditText.getText().toString().trim();
         String newChannelName = editChannelNameEditText.getText().toString().trim();
@@ -100,8 +127,8 @@ public class UserPageActivity extends AppCompatActivity {
             return;
         }
 
-        currentUser.setUsername(newUsername);
-        currentUser.setChannelName(newChannelName);
+        pageUser.setUsername(newUsername);
+        pageUser.setChannelName(newChannelName);
 
         usernameTextView.setText(newUsername);
         channelNameTextView.setText(newChannelName);
@@ -114,16 +141,5 @@ public class UserPageActivity extends AppCompatActivity {
         editProfileButton.setVisibility(View.VISIBLE);
 
         Toast.makeText(this, "Profile updated", Toast.LENGTH_SHORT).show();
-    }
-
-    private List<Video> getUserVideos(String username) {
-        // Retrieve videos uploaded by the user
-        List<Video> videos = new ArrayList<>();
-        for (Video video : MainActivity.videoList) {
-//            if (video.getPublisher().equals(username)) {
-                videos.add(video);
-//            }
-        }
-        return videos;
     }
 }

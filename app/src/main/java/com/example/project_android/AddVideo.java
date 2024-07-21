@@ -21,8 +21,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProvider;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -33,8 +35,11 @@ import java.util.UUID;
 import android.media.ThumbnailUtils;
 
 import com.example.project_android.model.Video;
+import com.example.project_android.utils.FileUtils;
+import com.example.project_android.viewModel.VideosViewModel;
 
 public class AddVideo extends AppCompatActivity {
+    private VideosViewModel vidViewModel;
     private EditText editVideoTitle;
     private EditText editVideoDescription;
     private ImageButton uploadVidFromGallery;
@@ -71,6 +76,7 @@ public class AddVideo extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_video);
+        vidViewModel = new ViewModelProvider(this).get(VideosViewModel.class);
         editVideoTitle = findViewById(R.id.editVideoTitle);
         editVideoDescription = findViewById(R.id.editVideoDescription);
         buttonUploadThumbnail = findViewById(R.id.buttonUploadThumbnail);
@@ -117,34 +123,60 @@ public class AddVideo extends AppCompatActivity {
             Toast.makeText(this, getString(R.string.fillAll), Toast.LENGTH_LONG).show();
             return;
         }
+        // Encode video to Base64
+        //String base64Video = encodeVideoToBase64(videoUri);
+        // Create a new Video object
+        Video newVideo = new Video();
+        newVideo.setWhoLikedList(new ArrayList<>());
+        newVideo.setComments(new ArrayList<>());
+        newVideo.setTitle(title);
+        newVideo.setVidID(generateUniqueID());
+        newVideo.setDescription(description);
+        //newVideo.setBase64Video(base64Video);
+        newVideo.setThumbnailUrl(thumbnailUri.toString());
+        newVideo.setPublisher(MainActivity.currentUser.getUsername()); // Replace with actual user
+        if (videoUri != null) {
+            File videoFile = FileUtils.getFileFromUri(this, videoUri, "video.mp4");
+            newVideo.setVideoFile(videoFile);
 
-        try {
-            // Encode video to Base64
-            String base64Video = encodeVideoToBase64(videoUri);
+            if (thumbPic != null) {
+                try {
+                    newVideo.setImageFile(FileUtils.bitmapToFile(this, thumbPic));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
 
-            // Create a new Video object
-            Video newVideo = new Video();
-            newVideo.setWhoLikedList(new ArrayList<>());
-            newVideo.setComments(new ArrayList<>());
-            newVideo.setTitle(title);
-            newVideo.setVidID(generateUniqueID());
-            newVideo.setDescription(description);
-            newVideo.setBase64Video(base64Video);
-            newVideo.setThumbnailUrl(thumbnailUri.toString());
-            newVideo.setPublisher(MainActivity.currentUser.getUsername()); // Replace with actual user
-            newVideo.setUpload_date("Now"); // Replace with current date
-            // Add new video to video list
-            MainActivity.videoList.add(newVideo);
-            if (thumbPic != null)
-                newVideo.setThumbnailPicture(thumbPic);
-            // Inform user and finish activity
-            Toast.makeText(this, getString(R.string.videoAdded), Toast.LENGTH_SHORT).show();
+                //newVideo.setThumbnailPicture(thumbPic);
 
-            finish();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Failed to encode video", Toast.LENGTH_SHORT).show();
+            }
         }
+        vidViewModel.add(MainActivity.currentUser.getId(), newVideo).observe(this, apiResponse -> {
+            if (apiResponse.isSuccessful()) {
+                Toast.makeText(this, getString(R.string.videoAdded), Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
+                // add here specific data............................................
+                switch (apiResponse.getCode()) {
+                    case 400:
+                        Toast.makeText(this, "Bad Request", Toast.LENGTH_SHORT).show();
+                        break;
+                    case 401:
+                        Toast.makeText(this, "Unauthorized", Toast.LENGTH_SHORT).show();
+                        break;
+                    case 500:
+                        Toast.makeText(this, "Server Error", Toast.LENGTH_SHORT).show();
+                        break;
+                    default:
+                        Toast.makeText(this, "Unknown Error", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            }
+
+        });
+        // Add new video to video list
+        //MainActivity.videoList.add(newVideo);
+        // Inform user and finish activity
+
     }
 
     private String encodeVideoToBase64(Uri videoUri) throws IOException {

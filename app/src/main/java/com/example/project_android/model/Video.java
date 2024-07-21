@@ -3,13 +3,14 @@ package com.example.project_android.model;
 
 import com.google.gson.annotations.SerializedName;
 import android.graphics.Bitmap;
-
 import androidx.room.Entity;
-
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 @Entity
 public class Video {
+    private File videoFile;
+    private File imageFile;
 
     private String base64Video;
     private Bitmap thumbnailPicture;
@@ -146,6 +147,22 @@ public class Video {
 
     public void setThumbnail(String thumbnail) {
         this.thumbnail = thumbnail;
+    }
+
+    public File getVideoFile() {
+        return videoFile;
+    }
+
+    public void setVideoFile(File videoFile) {
+        this.videoFile = videoFile;
+    }
+
+    public File getImageFile() {
+        return imageFile;
+    }
+
+    public void setImageFile(File imageFile) {
+        this.imageFile = imageFile;
     }
 
     // Nested Comment class

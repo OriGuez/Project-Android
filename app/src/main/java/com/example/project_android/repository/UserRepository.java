@@ -7,6 +7,7 @@ import com.example.project_android.model.ApiResponse;
 import com.example.project_android.model.TokenRequest;
 import com.example.project_android.model.TokenResponse;
 import com.example.project_android.model.UserData;
+import com.example.project_android.model.UserID;
 
 
 public class UserRepository {
@@ -25,4 +26,7 @@ public class UserRepository {
     public LiveData<TokenResponse> login(TokenRequest request){
         return api.createToken(request);
     };
+    public LiveData<UserID> getUserID(String username){
+        return  api.getIdByUsername(username);
+    }
 }

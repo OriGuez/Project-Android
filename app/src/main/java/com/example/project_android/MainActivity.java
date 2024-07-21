@@ -1,6 +1,8 @@
 package com.example.project_android;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,34 +12,39 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+
 import android.graphics.PorterDuff;
+
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.project_android.adapters.VideoAdapter;
-import com.example.project_android.model.NewVideoModel;
 import com.example.project_android.model.UserData;
 import com.example.project_android.model.Video;
+import com.example.project_android.utils.ImageLoader;
+import com.example.project_android.viewModel.UsersViewModel;
 import com.example.project_android.viewModel.VideosViewModel;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import android.graphics.Bitmap;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.view.View;
 import android.widget.Toast;
+
 import androidx.appcompat.widget.SearchView;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+    private SharedPreferences sharedPreferences;
     private VideosViewModel viewModel;
+    private UsersViewModel usersViewModel;
     public static UserData currentUser;
     public static List<UserData> userDataList;
     public static List<Video> videoList;
@@ -60,7 +67,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         videoList = loadVideoData();
         setContentView(R.layout.activity_main);
-
+        viewModel = new ViewModelProvider(this).get(VideosViewModel.class);
+        usersViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
+        sharedPreferences = getApplicationContext().getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE);
         // Initialize views
         searchView = findViewById(R.id.searchView);
         searchView.clearFocus();
@@ -83,9 +92,6 @@ public class MainActivity extends AppCompatActivity {
         bottomToolbar = findViewById(R.id.bottomToolbar);
         recyclerView = findViewById(R.id.recyclerViewVideos);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 1));
-        viewModel = new ViewModelProvider(this).get(VideosViewModel.class);
-
-        //LiveData<List<Video>> newList = viewModel.get();
         // Observe LiveData from ViewModel
         adapter = new VideoAdapter(this, videoList, "Main");
         // Observe LiveData from ViewModel
@@ -131,6 +137,10 @@ public class MainActivity extends AppCompatActivity {
             // Notify adapter
             //.............................change because its reloading the dataset..............................
             //adapter.notifyDataSetChanged();
+
+
+
+
         });
         // Set OnClickListener for add video button
         addVideoButton.setOnClickListener(v -> {
@@ -143,11 +153,8 @@ public class MainActivity extends AppCompatActivity {
         });
         // Click Listener for publisherProfilePic
         profilePic.setOnClickListener(v -> {
-            if (currentUser != null) {
-                showPopupMenu(v);
-            }
+            showPopupMenu(v);
         });
-
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -161,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-              searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 performSearch(query);
@@ -175,6 +182,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -184,35 +192,58 @@ public class MainActivity extends AppCompatActivity {
 //        }
 //        searchView.clearFocus();
     }
+
     // Method to load video data
     private List<Video> loadVideoData() {
         List<Video> videos = new ArrayList<>();
         String jsonString = JsonUtils.loadJSONFromAsset(this, "vidDB.json");
         if (jsonString != null) {
             Gson gson = new Gson();
-            java.lang.reflect.Type videoListType = new TypeToken<List<Video>>() {}.getType();
+            java.lang.reflect.Type videoListType = new TypeToken<List<Video>>() {
+            }.getType();
             videos = gson.fromJson(jsonString, videoListType);
         }
         return videos;
     }
+
     private void loggedVisibilityLogic() {
+        String value = sharedPreferences.getString("token", "none");
         // Check if the user is logged in and adjust visibility of buttons
-        if (currentUser != null) {
-            loginButton.setVisibility(View.GONE);
-            addVideoButton.setVisibility(View.VISIBLE);
-            if (profilePic != null) {
-                Bitmap userImage = currentUser.getImage();
-                if (userImage != null) {
-                    profilePic.setImageBitmap(userImage);
-                } else {
-                    profilePic.setImageResource(R.drawable.ic_def_user);
-                }
-            }
-        } else {
+        if (value.equals("none")) {
+            profilePic.setEnabled(false);
+            //no logged User
             loginButton.setVisibility(View.VISIBLE);
             addVideoButton.setVisibility(View.GONE);
             if (profilePic != null) {
                 profilePic.setImageResource(R.drawable.ic_def_user);
+            }
+        }
+        else {
+            profilePic.setEnabled(true);
+            loginButton.setVisibility(View.GONE);
+            addVideoButton.setVisibility(View.VISIBLE);
+            String username = sharedPreferences.getString("username", "none");
+            if (!username.equals("none")){
+                usersViewModel.getUserID(username).observe(this,id ->{
+                    if (id != null) {
+                        usersViewModel.get(id.getUserID()).observe(this,user ->{
+                            if (user != null){
+                                currentUser = user;
+                                String baseUrl = MyApplication.getContext().getString(R.string.BaseUrl);
+                                String profilePicPath = user.getImageURI();
+                                if (profilePicPath != null)
+                                    profilePicPath = profilePicPath.substring(1);
+                                String profileImageUrl = baseUrl + profilePicPath;
+                                ImageLoader.loadImage(profileImageUrl, profilePic);
+                            }
+                        });
+                    } else {
+                        Log.e("MainActivity", "id is null");
+                    }
+
+
+                });
+
             }
         }
     }
@@ -226,13 +257,17 @@ public class MainActivity extends AppCompatActivity {
             switch (item.getTitle().toString()) {
                 case "Sign out":
                     // Handle logout action
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.remove("token");
+                    editor.remove("username");
+                    editor.apply(); // Use commit() if you need synchronous removal
                     currentUser = null; // Logout the user
                     loggedVisibilityLogic(); // Update UI visibility
                     return true;
                 case "My Channel":
                     // Navigate to UserPageActivity
                     Intent intent = new Intent(MainActivity.this, UserPageActivity.class);
-                    intent.putExtra("username", currentUser.getUsername());
+                    intent.putExtra("userID", currentUser.getId());
                     startActivity(intent);
                     return true;
                 // Handle other menu items as needed

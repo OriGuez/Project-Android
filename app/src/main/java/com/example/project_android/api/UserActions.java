@@ -53,27 +53,25 @@ public class UserActions {
     }
 
 
-//    public MutableLiveData<UserID> getIdByUsername(String username) {
-//        MutableLiveData<UserData> user = new MutableLiveData<>();
-//        api.getIdByUsername(username).enqueue(new Callback<UserData>() {
-//            @Override
-//            public void onResponse(Call<UserData> call, Response<UserData> response) {
-//                if (response.isSuccessful() && response.body() != null) {
-//                    user.postValue(response.body());
-//                    // Handle single video response
-//                } else {
-//                    user.postValue(null);
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<UserData> call, Throwable t) {
-//                // Handle failure
-//                user.postValue(null);
-//            }
-//        });
-//        return user;
-//    }
+    public MutableLiveData<UserID> getIdByUsername(String username) {
+        MutableLiveData<UserID> user = new MutableLiveData<>();
+        api.getIdByUsername(username).enqueue(new Callback<UserID>() {
+            @Override
+            public void onResponse(Call<UserID> call, Response<UserID> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    user.postValue(response.body());
+                } else {
+                    user.postValue(null);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserID> call, Throwable t) {
+                user.postValue(null);
+            }
+        });
+        return user;
+    }
 
 
 
@@ -88,8 +86,8 @@ public class UserActions {
         File imageFile = userData.getImageFile(); // Assuming getImage() returns the image file
         RequestBody imageRequestBody = RequestBody.create(MediaType.parse("image/jpeg"), imageFile);
         MultipartBody.Part imagePart = MultipartBody.Part.createFormData("image", imageFile.getName(), imageRequestBody);
-        Gson gson = new Gson();
-        String userDataJson = gson.toJson(userData);
+        //Gson gson = new Gson();
+        //String userDataJson = gson.toJson(userData);
         //RequestBody userDataRequestBody = RequestBody.create(MediaType.parse("application/json"), userDataJson);
         RequestBody username = RequestBody.create(MediaType.parse("text/plain"), userData.getUsername());
         RequestBody password = RequestBody.create(MediaType.parse("text/plain"), userData.getPassword());

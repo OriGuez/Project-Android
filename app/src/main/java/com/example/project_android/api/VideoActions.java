@@ -5,12 +5,17 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.project_android.model.ApiResponse;
 import com.example.project_android.model.NewVideoModel;
 import com.example.project_android.model.Video;
 
 import java.io.Console;
+import java.io.File;
 import java.util.List;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -27,37 +32,38 @@ public class VideoActions {
     }
     //methods:
 
-//    public LiveData<List<Video>> fetchUserVideos(int userId) {
-//        api.getUserVideos(userId).enqueue(new Callback<List<Video>>() {
-//            @Override
-//            public void onResponse(Call<List<Video>> call, Response<List<Video>> response) {
-//                if (response.isSuccessful() && response.body() != null) {
-//                    videosListData.postValue(response.body());
-//                    // Optionally, save the data to local database using dao (Room)
-//                } else {
-//                    int statusCode = response.code();
-//                    // Handle different status codes
-//                    switch (statusCode) {
-//                        case 404:
-//                            // Not found
-//                            break;
-//                        case 500:
-//                            // Server error
-//                            break;
-//                        default:
-//                            // Other status codes
-//                            break;
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<List<Video>> call, Throwable t) {
-//                // Handle failure
-//            }
-//        });
-//        return videosListData;
-//    }
+    public MutableLiveData<List<Video>> fetchUserVideos(String userId) {
+        MutableLiveData<List<Video>> videosListData = new MutableLiveData<>();
+        api.getUserVideos(userId).enqueue(new Callback<List<Video>>() {
+            @Override
+            public void onResponse(Call<List<Video>> call, Response<List<Video>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    videosListData.postValue(response.body());
+                    // Optionally, save the data to local database using dao (Room)
+                } else {
+                    int statusCode = response.code();
+                    // Handle different status codes
+                    switch (statusCode) {
+                        case 404:
+                            // Not found
+                            break;
+                        case 500:
+                            // Server error
+                            break;
+                        default:
+                            // Other status codes
+                            break;
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Video>> call, Throwable t) {
+                // Handle failure
+            }
+        });
+        return videosListData;
+    }
 
 
 //    public void fetchUserVideosByUsername(String username) {
@@ -75,28 +81,6 @@ public class VideoActions {
 //                // Handle failure
 //            }
 //        });
-//    }
-
-//    public MutableLiveData<Video> fetchVideo(String userId, String videoId) {
-//        MutableLiveData<Video> videoData = new MutableLiveData<>();
-//        api.getVideo(userId, videoId).enqueue(new Callback<Video>() {
-//            @Override
-//            public void onResponse(Call<Video> call, Response<Video> response) {
-//                if (response.isSuccessful()) {
-//                    videoData.setValue(response.body());
-//                }
-//                else {
-//                    //handle
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<Video> call, Throwable t) {
-//                //Log.e(TAG, "Error: " + response.message());
-//                // Handle failure
-//            }
-//        });
-//        return videoData;
 //    }
 
     public MutableLiveData<Video> fetchVideo(String videoId) {
@@ -167,21 +151,39 @@ public class VideoActions {
 //    }
 
 
-//    public void createVideo(String userId, Video video) {
-//        api.createVideo(userId, video).enqueue(new Callback<Video>() {
-//            @Override
-//            public void onResponse(Call<Video> call, Response<Video> response) {
-//                if (response.isSuccessful() && response.body() != null) {
-//                    // Handle video creation response
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<Video> call, Throwable t) {
-//                // Handle failure
-//            }
-//        });
-//    }
+    public MutableLiveData<ApiResponse> createVideo(String userId, Video video) {
+        MutableLiveData<ApiResponse> resp = new MutableLiveData<>();
+        File imageFile = video.getImageFile();
+        RequestBody imageRequestBody = RequestBody.create(MediaType.parse("image/jpeg"), imageFile);
+        MultipartBody.Part imagePart = MultipartBody.Part.createFormData("image", imageFile.getName(), imageRequestBody);
+
+        File videoFile = video.getVideoFile();
+        RequestBody videoRequestBody = RequestBody.create(MediaType.parse("video/mp4"), videoFile);
+        MultipartBody.Part videoPart = MultipartBody.Part.createFormData("video", videoFile.getName(), videoRequestBody);
+
+        RequestBody title = RequestBody.create(MediaType.parse("text/plain"), video.getTitle());
+        RequestBody description = RequestBody.create(MediaType.parse("text/plain"), video.getDescription());
+        api.createVideo(userId,imagePart ,videoPart,title,description).enqueue(new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    resp.setValue(new ApiResponse(true, response.code()));
+                    // Handle video creation response
+                }
+                else {
+                    // Handle response error
+                    resp.setValue(new ApiResponse(false, response.code()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse> call, Throwable t) {
+                resp.setValue(new ApiResponse(false, 500));
+                // Handle failure
+            }
+        });
+        return resp;
+    }
 
 
 //    public void updateVideo(String userId, String videoId, Video video) {
