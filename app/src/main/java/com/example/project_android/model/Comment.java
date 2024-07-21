@@ -19,6 +19,11 @@ public class Comment {
         this.userId = userId;
         this.videoId = videoId;
     }
+    public Comment(String content, String userId, String videoId) {
+        this.content = content;
+        this.userId = userId;
+        this.videoId = videoId;
+    }
 
     public String getId() {
         return id;

@@ -18,9 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -33,7 +31,9 @@ import com.example.project_android.adapters.VideoAdapter;
 import com.example.project_android.model.Comment;
 import com.example.project_android.model.UserData;
 import com.example.project_android.model.Video;
+import com.example.project_android.utils.ImageLoader;
 import com.example.project_android.viewModel.CommentsViewModel;
+import com.example.project_android.viewModel.UsersViewModel;
 import com.example.project_android.viewModel.VideosViewModel;
 
 import java.io.File;
@@ -47,7 +47,9 @@ public class VideoActivity extends AppCompatActivity {
     private VideosViewModel vidViewModel;
     List<Comment> vidCommentList = new ArrayList<>();
     private CommentsViewModel commentsViewModel;
-
+    private UsersViewModel usersViewModel;
+    private UserData uploader = null;
+    private String videoID;
 
     private CommentRecyclerViewAdapter recycleAdapter;
     private RecyclerView commentsRecycleView;
@@ -77,38 +79,48 @@ public class VideoActivity extends AppCompatActivity {
 
     private static final String TAG = "VideoActivity";
     //DELETE IT LATER
-     private int pp=0;
+    private int pp = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
         super.onCreate(savedInstanceState);
         assetManager = getAssets();
         vidViewModel = new ViewModelProvider(this).get(VideosViewModel.class);
         commentsViewModel = new ViewModelProvider(this).get(CommentsViewModel.class);
+        usersViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
         // Retrieve the ID from the intent's extras
-        String videoID = getIntent().getStringExtra("videoID");
+        videoID = getIntent().getStringExtra("videoID");
         if (currentVideo == null)
             currentVideo = MainActivity.videoList.get(0);
         Log.d(TAG, "Received videoID: " + videoID);
-        vidViewModel.get(videoID).observe(this, new Observer<Video>() {
-            @Override
-            public void onChanged(@Nullable Video video) {
-                // Update the UI with the new video list
-                if (video != null) {
-                    currentVideo = video;
-                    fetchCommentsForCurrentVideo(video.getVidID());
-                    updateVideoDetails();
-                } else {
-                    currentVideo = MainActivity.videoList.get(0);
-                    //currentVideo = null;
-                    Log.e("ac", "Video list is null");
-                }
+
+        vidViewModel.get(videoID).observe(this, video -> {
+            // Update the UI with the new video list
+            if (video != null) {
+                currentVideo = video;
+
+                usersViewModel.get(currentVideo.getPublisher()).observe(this, user -> {
+                    if (user != null) {
+                        uploader = user;
+                        updateVideoDetails();
+                    } else {
+                        Log.d(TAG, "no user");
+                    }
+                });
+            } else {
+                currentVideo = MainActivity.videoList.get(0);
+                //currentVideo = null;
+                Log.e("ac", "Video list is null");
             }
         });
 
-        // Observe LiveData from ViewModel
+        commentsViewModel.get(videoID).observe(this, comments -> {
+            if (comments != null) {
+                recycleAdapter.updateCommentsList(comments);
+            }
+        });
+
+        // Observe LiveData from ViewModel (videos for the recycler below)
         vidViewModel.get().observe(this, videos -> {
             // Update the UI with the new video list
             if (videos != null) {
@@ -118,10 +130,8 @@ public class VideoActivity extends AppCompatActivity {
             }
         });
 
-
         setContentView(R.layout.activity_video);
         InitializeUiComponents();
-
 
         if (profileImageView != null && MainActivity.userDataList != null) {
             for (UserData user : MainActivity.userDataList) {
@@ -129,7 +139,7 @@ public class VideoActivity extends AppCompatActivity {
                     profileImageView.setImageBitmap(user.getImage());
                     profileImageView.setOnClickListener(v -> {
                         Intent intent = new Intent(VideoActivity.this, UserPageActivity.class);
-                        intent.putExtra("username", user.getUsername());
+                        intent.putExtra("UserID", user.getId());
                         startActivity(intent);
                     });
                     break;
@@ -138,27 +148,6 @@ public class VideoActivity extends AppCompatActivity {
             }
         }
         videoPageDarkMode();
-
-
-        // Set up video playback
-        if (currentVideo.getUrl() != null) {
-            Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + getRawResourceIdByName(currentVideo.getUrl()));
-            videoView.setVideoURI(videoUri);
-        } else {
-            // Decode Base64 video and play it
-            try {
-                Uri vUri = decodeBase64ToVideoUri(currentVideo.getBase64Video());
-                videoView.setVideoURI(vUri);
-            } catch (IOException e) {
-                e.printStackTrace();
-                Toast.makeText(this, "Failed to decode video", Toast.LENGTH_SHORT).show();
-            }
-        }
-        videoView.setVideoPath("http://10.0.2.2:8080/uploads/videos/video-1720542407846.mp4");
-        MediaController mediaController = new MediaController(this);
-        mediaController.setAnchorView(videoView);
-        videoView.setMediaController(mediaController);
-        videoView.start();
 
         updateVideoDetails();
 
@@ -174,37 +163,7 @@ public class VideoActivity extends AppCompatActivity {
             videoAdapter = new VideoAdapter(this, MainActivity.videoList, "Video");
             videoRecyclerView.setAdapter(videoAdapter);
         }
-        if (profileImageView != null && MainActivity.userDataList != null) {
-            for (UserData user : MainActivity.userDataList) {
-                if (user.getUsername().equals(currentVideo.getPublisher())) {
-                    profileImageView.setImageBitmap(user.getImage());
-                    profileImageView.setOnClickListener(v -> {
-                        Intent intent = new Intent(VideoActivity.this, UserPageActivity.class);
-                        intent.putExtra("username", user.getUsername());
-                        startActivity(intent);
-                    });
-                    break;
-                    //comment
-                }
-            }
-        }
     }
-
-
-    private void fetchCommentsForCurrentVideo(String vidId) {
-        commentsViewModel.get(vidId).observe(this, new Observer<List<Comment>>() {
-            @Override
-            public void onChanged(@Nullable List<Comment> comments) {
-                if (comments != null) {
-                    vidCommentList = comments;
-                    updateComments(vidCommentList);
-                }
-
-                //commentsLiveData.postValue(comments);
-            }
-        });
-    }
-
 
     private void showDeleteConfirmationDialog() {
         new AlertDialog.Builder(this, R.style.MyDialogTheme)
@@ -250,10 +209,24 @@ public class VideoActivity extends AppCompatActivity {
             if (d != null) {
                 dateTextView.setText(d.toString());
             } else
-                dateTextView.setText(currentVideo.getUpload_date());
+                dateTextView.setText("");
         }
         if (publisherTextView != null) {
-            publisherTextView.setText(currentVideo.getPublisher());
+            if (uploader != null)
+                publisherTextView.setText(uploader.getChannelName());
+            else
+                publisherTextView.setText("");
+        }
+        if (profileImageView != null) {
+            if (uploader != null) {
+                String baseUrl = MyApplication.getContext().getString(R.string.BaseUrl);
+                String profilePicPath = uploader.getImageURI();
+                if (profilePicPath != null)
+                    profilePicPath = profilePicPath.substring(1);
+                String profileImageUrl = baseUrl + profilePicPath;
+                ImageLoader.loadImage(profileImageUrl, profileImageView);
+            }
+
         }
         String baseUrl = MyApplication.getContext().getString(R.string.BaseUrl);
         String path = currentVideo.getUrl();
@@ -266,10 +239,6 @@ public class VideoActivity extends AppCompatActivity {
         mediaController.setAnchorView(videoView);
         videoView.setMediaController(mediaController);
         videoView.start();
-    }
-
-    private void updateComments(List<Comment> newList) {
-        recycleAdapter.updateCommentsList(newList);
     }
 
     private void enterEditMode() {
@@ -326,20 +295,6 @@ public class VideoActivity extends AppCompatActivity {
         }
     }
 
-    private int getRawResourceIdByName(String resourceName) {
-        String formattedResourceName = resourceName.replace("/videos/", "").replace(".mp4", "");
-        return getResources().getIdentifier(formattedResourceName, "raw", getPackageName());
-    }
-
-    private Uri decodeBase64ToVideoUri(String base64Video) throws IOException {
-        byte[] decodedBytes = Base64.decode(base64Video, Base64.DEFAULT);
-        File tempFile = File.createTempFile("decoded_video", ".mp4", getCacheDir());
-        try (FileOutputStream fos = new FileOutputStream(tempFile)) {
-            fos.write(decodedBytes);
-        }
-        return Uri.fromFile(tempFile);
-    }
-
     private void InitializeUiComponents() {
         // Initialize views
         videoView = findViewById(R.id.videoView);
@@ -369,6 +324,30 @@ public class VideoActivity extends AppCompatActivity {
             videoRecyclerView.setNestedScrollingEnabled(false);
         }
 
+        profileImageView.setOnClickListener(v -> {
+            if (uploader != null) {
+                Intent intent = new Intent(VideoActivity.this, UserPageActivity.class);
+                intent.putExtra("userID", uploader.getId());
+                startActivity(intent);
+                finish();
+            }
+        });
+
+
+        if (shareButton != null) {
+            shareButton.setOnClickListener(v -> {
+                String textToShare = currentVideo.getUrl();
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                shareIntent.putExtra(Intent.EXTRA_TEXT, textToShare);
+                String title = getResources().getString(R.string.share_via);
+                Intent chooser = Intent.createChooser(shareIntent, title);
+                if (shareIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(chooser);
+                }
+            });
+        }
+
         // Check if the view exists before interacting with it
         if (editTitleEditText != null) {
             editTitleEditText.setVisibility(View.GONE);
@@ -381,7 +360,7 @@ public class VideoActivity extends AppCompatActivity {
         }
 
 //        if (MainActivity.currentUser == null) {
-        if (pp==1) {
+        if (pp == 1) {
 
             if (addComment != null) {
                 addComment.setVisibility(View.GONE);
@@ -407,16 +386,27 @@ public class VideoActivity extends AppCompatActivity {
 
 
         if (addComment != null) {
+
+
             addComment.setOnClickListener(v -> {
                 String commentText = commentAddText.getText().toString().trim();
                 if (!commentText.isEmpty()) {
-                    if (MainActivity.currentUser != null) {
-                        currentVideo.getComments().add(new Video.Comment("User", MainActivity.currentUser.getUsername(), commentText));
-                    }
-                    else {
-                        currentVideo.getComments().add(new Video.Comment("User", "Anon", commentText));
-                    }
-                    recycleAdapter.notifyDataSetChanged();
+                    Comment newComment = new Comment(commentText,videoID,MainActivity.currentUser.getId());
+
+                    commentsViewModel.add(videoID,newComment).observe(this,resp->{
+                        if (resp != null && resp.isSuccessful()){
+                            recycleAdapter.addComment(newComment);
+                        }
+
+                    });
+//
+//
+//                    if (MainActivity.currentUser != null) {
+//                        currentVideo.getComments().add(new Video.Comment("User", MainActivity.currentUser.getUsername(), commentText));
+//                    } else {
+//                        currentVideo.getComments().add(new Video.Comment("User", "Anon", commentText));
+//                    }
+//                    recycleAdapter.notifyDataSetChanged();
                     //RecyclerViewUtils.setRecyclerViewHeightBasedOnItems(commentsRecycleView);
                     commentAddText.getText().clear();
                 }
@@ -439,20 +429,6 @@ public class VideoActivity extends AppCompatActivity {
                     currentVideo.getWhoLikedList().add(MainActivity.currentUser.getUsername());
                     likeButton.setImageDrawable(getResources().getDrawable(R.drawable.likebuttonpressed));
                     likeText.setText(R.string.liked);
-                }
-            });
-        }
-
-        if (shareButton != null) {
-            shareButton.setOnClickListener(v -> {
-                String textToShare = currentVideo.getUrl();
-                Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                shareIntent.setType("text/plain");
-                shareIntent.putExtra(Intent.EXTRA_TEXT, textToShare);
-                String title = getResources().getString(R.string.share_via);
-                Intent chooser = Intent.createChooser(shareIntent, title);
-                if (shareIntent.resolveActivity(getPackageManager()) != null) {
-                    startActivity(chooser);
                 }
             });
         }

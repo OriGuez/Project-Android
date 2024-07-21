@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.project_android.api.VideoActions;
 import com.example.project_android.dao.VideosDao;
+import com.example.project_android.model.ApiResponse;
 import com.example.project_android.model.NewVideoModel;
 import com.example.project_android.model.Video;
 
@@ -47,7 +48,15 @@ public class VideoRepository {
         return api.fetch20Videos();
     }
 
+    public LiveData<List<Video>> getUserVideos(String userID) {
+        return api.fetchUserVideos(userID);
+    }
+
     public LiveData<Video> get(String videoId) {
         return api.fetchVideo(videoId);
+    }
+
+    public LiveData<ApiResponse>add(String userID,Video video){
+        return api.createVideo(userID,video);
     }
 }

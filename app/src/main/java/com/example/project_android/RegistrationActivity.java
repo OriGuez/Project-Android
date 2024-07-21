@@ -26,6 +26,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.project_android.model.ApiResponse;
 import com.example.project_android.model.UserData;
+import com.example.project_android.utils.FileUtils;
 import com.example.project_android.viewModel.UsersViewModel;
 import com.example.project_android.viewModel.VideosViewModel;
 
@@ -185,7 +186,7 @@ public class RegistrationActivity extends AppCompatActivity {
         UserData newUser = new UserData(username, password, channelName, selectedProfilePicture);
 
         try {
-            File imageFile = bitmapToFile(selectedProfilePicture);
+            File imageFile = FileUtils.bitmapToFile(this,selectedProfilePicture);
             newUser.setImageFile(imageFile);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -261,24 +262,24 @@ public class RegistrationActivity extends AppCompatActivity {
 
 
 
-    private File bitmapToFile(Bitmap bitmap) throws IOException {
-        // Create a file in the cache directory
-        File file = new File(getCacheDir(), "profile_picture.jpg");
-        file.createNewFile();
-
-        // Convert bitmap to byte array
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
-        byte[] bitmapData = bos.toByteArray();
-
-        // Write the bytes in file
-        FileOutputStream fos = new FileOutputStream(file);
-        fos.write(bitmapData);
-        fos.flush();
-        fos.close();
-
-        return file;
-    }
+//    private File bitmapToFile(Bitmap bitmap) throws IOException {
+//        // Create a file in the cache directory
+//        File file = new File(getCacheDir(), "profile_picture.jpg");
+//        file.createNewFile();
+//
+//        // Convert bitmap to byte array
+//        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+//        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+//        byte[] bitmapData = bos.toByteArray();
+//
+//        // Write the bytes in file
+//        FileOutputStream fos = new FileOutputStream(file);
+//        fos.write(bitmapData);
+//        fos.flush();
+//        fos.close();
+//
+//        return file;
+//    }
 
 
 

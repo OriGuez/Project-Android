@@ -5,11 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.view.LayoutInflater;
-import androidx.appcompat.widget.AppCompatImageButton;
 import android.widget.Button;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,18 +17,20 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.project_android.EditVideo;
+import com.example.project_android.utils.ImageLoader;
 import com.example.project_android.MainActivity;
 import com.example.project_android.MyApplication;
 import com.example.project_android.R;
 import com.example.project_android.VideoActivity;
 import com.example.project_android.model.UserData;
 import com.example.project_android.model.Video;
+import com.example.project_android.viewModel.UsersViewModel;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHolder> {
+    private UsersViewModel usersViewModel;
     private String source;
     private List<Video> videoList;
     private List<Video> videoListFull;
@@ -110,7 +109,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         String thumbURL = baseUrl + thumbPath;
 
         if (thumbURL != null && !thumbURL.isEmpty()) {
-            new LoadImageTask(holder.thumbnailImageView).execute(thumbURL);
+            ImageLoader.loadImage(thumbURL, holder.thumbnailImageView);
         } else {
             Bitmap defaultThumbnail = video.getThumbnailPicture();
             if (defaultThumbnail != null) {
@@ -203,33 +202,6 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
             }
         }
         notifyDataSetChanged();
-    }
-
-
-    private class LoadImageTask extends AsyncTask<String, Void, Bitmap> {
-        private ImageView imageView;
-
-        public LoadImageTask(ImageView imageView) {
-            this.imageView = imageView;
-        }
-
-        @Override
-        protected Bitmap doInBackground(String... urls) {
-            String urlDisplay = urls[0];
-            Bitmap bitmap = null;
-            try {
-                InputStream in = new java.net.URL(urlDisplay).openStream();
-                bitmap = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return bitmap;
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap result) {
-            imageView.setImageBitmap(result);
-        }
     }
 
 }

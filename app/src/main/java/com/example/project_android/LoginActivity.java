@@ -55,6 +55,7 @@ public class LoginActivity extends AppCompatActivity {
                     SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString("token", tokenResponse.getToken()); // Assuming getToken() returns the token string
+                    editor.putString("username",enteredUsername);
                     editor.apply();
                     Log.d("ADDED", "ADDED TOKEN TO MEMORY");
                     // Handle successful token creation

@@ -3,6 +3,7 @@ package com.example.project_android.viewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.project_android.model.ApiResponse;
 import com.example.project_android.model.NewVideoModel;
 import com.example.project_android.model.Video;
 import com.example.project_android.repository.VideoRepository;
@@ -26,7 +27,13 @@ public class VideosViewModel extends ViewModel {
     public LiveData<Video> get(String videoID) {
         return repository.get(videoID);
     }
+    public LiveData<ApiResponse>add(String userID, Video video){
+        return repository.add(userID,video);
+    }
 
+    public LiveData<List<Video>> getUserVideos(String userID) {
+        return repository.getUserVideos(userID);
+    }
 //    public void add(Video video) { repository.add(video); }
 //
 //    public void delete(Video video) { repository.delete(video); }

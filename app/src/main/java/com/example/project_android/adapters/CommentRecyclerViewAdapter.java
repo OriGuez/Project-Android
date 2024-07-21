@@ -64,14 +64,17 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
 
         String uploader = comment.getUserId();
         Bitmap profilePic = null;
-        if (MainActivity.userDataList != null) {
-            for (UserData user : MainActivity.userDataList) {
-                if (user.getUsername().equals(uploader)) {
-                    profilePic = user.getImage();
-                    break;
-                }
-            }
-        }
+
+
+
+//        if (MainActivity.userDataList != null) {
+//            for (UserData user : MainActivity.userDataList) {
+//                if (user.getUsername().equals(uploader)) {
+//                    profilePic = user.getImage();
+//                    break;
+//                }
+//            }
+//        }
 
         if (profilePic != null) {
             holder.profileImageView.setImageBitmap(profilePic);
@@ -118,6 +121,11 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
     public void updateCommentsList(List<Comment> newCommentsList) {
         comments.clear();
         comments.addAll(newCommentsList);
+        notifyDataSetChanged();
+    }
+
+    public void addComment(Comment newComment) {
+        comments.add(newComment);
         notifyDataSetChanged();
     }
 

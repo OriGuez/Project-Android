@@ -1,10 +1,10 @@
 package com.example.project_android.api;
 
-import androidx.compose.ui.graphics.Path;
 
 import com.example.project_android.model.TokenRequest;
 import com.example.project_android.model.TokenResponse;
 import com.example.project_android.model.UserData;
+import com.example.project_android.model.UserID;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -18,14 +18,14 @@ import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Part;
-//import retrofit2.http.Path;
+import retrofit2.http.Path;
 
 public interface UserApiService {
     @GET("/api/users/{id}")
-    Call<UserData> getUserById( @retrofit2.http.Path("id") String userId);
+    Call<UserData> getUserById( @Path("id") String userId);
 
     @GET("/api/users/getID/{username}")
-    Call<UserData> getIdByUsername(@Path("username") String username);
+    Call<UserID> getIdByUsername(@Path("username") String username);
 
     @POST("/api/tokens")
     Call<TokenResponse> createToken(@Body TokenRequest tokenRequest);
