@@ -1,7 +1,5 @@
 package com.example.project_android.api;
 
-import androidx.compose.ui.graphics.Path;
-
 import com.example.project_android.model.TokenRequest;
 import com.example.project_android.model.TokenResponse;
 import com.example.project_android.model.UserData;
@@ -18,7 +16,8 @@ import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Part;
-//import retrofit2.http.Path;
+import retrofit2.http.Path;
+
 
 public interface UserApiService {
     @GET("/api/users/{id}")
