@@ -173,7 +173,7 @@ public class VideoActivity extends AppCompatActivity {
     }
 
     private void incrementViewCount(Video video) {
-        video.setViews( Integer.valueOf (video.getViews() + 1)) ;
+        video.setViews((video.getViews() + 1)) ;
         updateVideoDetails();
 //        vidViewModel.update(video);
     }
