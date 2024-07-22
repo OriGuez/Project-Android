@@ -1,5 +1,7 @@
 package com.example.project_android;
 
+//import static com.example.project_android.MainActivity.videoList;
+
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -16,6 +18,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -49,8 +54,6 @@ public class VideoActivity extends AppCompatActivity {
     private UsersViewModel usersViewModel;
     private UserData uploader = null;
     private String videoID;
-
-
     private CommentRecyclerViewAdapter recycleAdapter;
     private RecyclerView commentsRecycleView;
     private VideoAdapter videoAdapter;
@@ -66,8 +69,6 @@ public class VideoActivity extends AppCompatActivity {
     private ImageButton likeButton;
     private TextView likeText;
     private ImageButton shareButton;
-    private ImageButton deleteVideoButton;
-    private ImageButton editVideoButton;
     private EditText editTitleEditText;
     private EditText editDescriptionEditText;
     private Button saveButton;
@@ -78,13 +79,10 @@ public class VideoActivity extends AppCompatActivity {
     ImageView profileImageView;
 
     private static final String TAG = "VideoActivity";
-    //DELETE IT LATER
-    private int pp = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        assetManager = getAssets();
         vidViewModel = new ViewModelProvider(this).get(VideosViewModel.class);
         commentsViewModel = new ViewModelProvider(this).get(CommentsViewModel.class);
         usersViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
@@ -124,6 +122,7 @@ public class VideoActivity extends AppCompatActivity {
 
         vidViewModel.get().observe(this, videos -> {
             if (videos != null) {
+                MainActivity.videoList = videos;
                 videoAdapter.updateVideoList(videos);
             } else {
                 Log.e("ac", "Video list is null");
@@ -148,6 +147,13 @@ public class VideoActivity extends AppCompatActivity {
         }
     }
 
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        if (currentVideo==null){
+//            currentVideo= MainActivity.videoList.get(0);
+//        }
+//    }
 
     private void incrementViewCount(Video video) {
         video.setViews((video.getViews() + 1)) ;
@@ -155,22 +161,22 @@ public class VideoActivity extends AppCompatActivity {
 //        vidViewModel.update(video);
     }
 
-    private void showDeleteConfirmationDialog() {
-        new AlertDialog.Builder(this, R.style.MyDialogTheme)
-                .setTitle(getString(R.string.delete_video))
-                .setMessage(getString(R.string.sure_delete_video))
-                .setPositiveButton(R.string.yes, (dialog, which) -> {
-                    deleteCurrentVideo();
-                })
-                .setNegativeButton(R.string.no, null)
-                .setIcon(android.R.drawable.ic_menu_delete)
-                .show();
-    }
+//    private void showDeleteConfirmationDialog() {
+//        new AlertDialog.Builder(this, R.style.MyDialogTheme)
+//                .setTitle(getString(R.string.delete_video))
+//                .setMessage(getString(R.string.sure_delete_video))
+//                .setPositiveButton(R.string.yes, (dialog, which) -> {
+//                    deleteCurrentVideo();
+//                })
+//                .setNegativeButton(R.string.no, null)
+//                .setIcon(android.R.drawable.ic_menu_delete)
+//                .show();
+//    }
 
-    private void deleteCurrentVideo() {
-        MainActivity.videoList.remove(currentVideo);
-        finish();
-    }
+//    private void deleteCurrentVideo() {
+//        MainActivity.videoList.remove(currentVideo);
+//        finish();
+//    }
 
     private void updateLikeButton(ImageButton likeButton, TextView isLiked) {
         if (likeButton == null || isLiked == null) return;
@@ -196,9 +202,11 @@ public class VideoActivity extends AppCompatActivity {
         if (dateTextView != null) {
             Date d = currentVideo.getCreatedAt();
             if (d != null) {
-                dateTextView.setText(d.toString());
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                String formattedDate = formatter.format(d);
+                dateTextView.setText(formattedDate);
             } else {
-                dateTextView.setText(");
+                dateTextView.setText("");
             }
         }
         if (viewsTextView != null) {
@@ -236,7 +244,7 @@ public class VideoActivity extends AppCompatActivity {
 
     private void enterEditMode() {
         if (editTitleEditText == null || editDescriptionEditText == null || saveButton == null ||
-                titleTextView == null || descriptionTextView == null || editVideoButton == null)
+                titleTextView == null || descriptionTextView == null )
             return;
 
         editTitleEditText.setVisibility(View.VISIBLE);
@@ -248,13 +256,13 @@ public class VideoActivity extends AppCompatActivity {
 
         editTitleEditText.setText(currentVideo.getTitle());
         editDescriptionEditText.setText(currentVideo.getDescription());
-        editVideoButton.setVisibility(View.GONE);
+
         isEditMode = true;
     }
 
     private void exitEditMode() {
         if (editTitleEditText == null || editDescriptionEditText == null || saveButton == null ||
-                titleTextView == null || descriptionTextView == null || editVideoButton == null)
+                titleTextView == null || descriptionTextView == null)
             return;
 
         editTitleEditText.setVisibility(View.GONE);
@@ -264,7 +272,6 @@ public class VideoActivity extends AppCompatActivity {
         titleTextView.setVisibility(View.VISIBLE);
         descriptionTextView.setVisibility(View.VISIBLE);
 
-        editVideoButton.setVisibility(View.VISIBLE);
         isEditMode = false;
     }
 
@@ -296,8 +303,7 @@ public class VideoActivity extends AppCompatActivity {
         likeButton = findViewById(R.id.likeButton);
         likeText = findViewById(R.id.likeText);
         shareButton = findViewById(R.id.shareButton);
-        deleteVideoButton = findViewById(R.id.deleteVideoButton);
-        editVideoButton = findViewById(R.id.editVideoButton);
+
         editTitleEditText = findViewById(R.id.editTitleEditText);
         editDescriptionEditText = findViewById(R.id.editDescriptionEditText);
         saveButton = findViewById(R.id.saveEditVidButton);
@@ -363,12 +369,7 @@ public class VideoActivity extends AppCompatActivity {
             if (likeText != null) {
                 likeText.setVisibility(View.GONE);
             }
-            if (deleteVideoButton != null) {
-                deleteVideoButton.setVisibility(View.GONE);
-            }
-            if (editVideoButton != null) {
-                editVideoButton.setVisibility(View.GONE);
-            }
+
         } else {
             updateLikeButton(likeButton, likeText);
         }
@@ -406,27 +407,6 @@ public class VideoActivity extends AppCompatActivity {
                     likeButton.setImageDrawable(getResources().getDrawable(R.drawable.likebuttonpressed));
                     likeText.setText(R.string.liked);
                 }
-            });
-        }
-
-        if (deleteVideoButton != null) {
-            deleteVideoButton.setOnClickListener(v -> {
-                showDeleteConfirmationDialog();
-            });
-        }
-
-        if (editVideoButton != null) {
-            editVideoButton.setOnClickListener(v -> {
-                if (!isEditMode) {
-                    enterEditMode();
-                }
-            });
-        }
-        if (editVideoButton != null) {
-            editVideoButton.setOnClickListener(v -> {
-                Intent intent = new Intent(VideoActivity.this, EditVideo.class);
-                intent.putExtra("videoID", currentVideo.getVidID());
-                startActivity(intent);
             });
         }
 
