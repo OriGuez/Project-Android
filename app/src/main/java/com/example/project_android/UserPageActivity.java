@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -88,9 +89,10 @@ public class UserPageActivity extends AppCompatActivity {
         if (pageUser != null) {
             // Populate the UI with the current user data
             //profileImageView.setImageBitmap(pageUser.getImage());
-            String username="@"+ pageUser.getUsername();
-            usernameTextView.setText(username);
             channelNameTextView.setText(pageUser.getChannelName());
+            String username= pageUser.getUsername();
+            channelNameTextView.setText(pageUser.getChannelName());
+            usernameTextView.setText("@" + username);
             if (profileImageView != null){
                     String baseUrl = MyApplication.getContext().getString(R.string.BaseUrl);
                     String profilePicPath = pageUser.getImageURI();

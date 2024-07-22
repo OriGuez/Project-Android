@@ -12,13 +12,6 @@
         android:layout_height="200dp"
         android:scaleType="centerCrop" />
 
-    <Button
-        android:id="@+id/editVidButton"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:adjustViewBounds="true"
-        android:scaleType="fitCenter"
-        app:srcCompat="@drawable/editvid" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -44,6 +37,14 @@
             android:layout_weight="1"
             android:textSize="16sp"
             android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/editVidButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/editvid" />
     </LinearLayout>
 
     <LinearLayout

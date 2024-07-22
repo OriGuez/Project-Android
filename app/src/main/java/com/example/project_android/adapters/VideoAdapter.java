@@ -7,15 +7,13 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.view.LayoutInflater;
-import android.widget.Button;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import android.widget.ImageButton;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.project_android.EditVideo;
 import com.example.project_android.utils.ImageLoader;
 import com.example.project_android.MainActivity;
@@ -25,6 +23,8 @@ import com.example.project_android.VideoActivity;
 import com.example.project_android.model.UserData;
 import com.example.project_android.model.Video;
 import com.example.project_android.viewModel.UsersViewModel;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,9 +79,16 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
     @Override
     public void onBindViewHolder(@NonNull VideoViewHolder holder, int position) {
         Video video = videoList.get(position);
+        Date createdAt = video.getCreatedAt();
+        if (createdAt != null) {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            String formattedDate = formatter.format(createdAt);
+            holder.uploadDateTextView.setText(formattedDate);
+        } else {
+            holder.uploadDateTextView.setText("Unknown Date");
+        }
         holder.titleTextView.setText(video.getTitle());
         holder.publisherTextView.setText(video.getPublisher());
-        holder.uploadDateTextView.setText(video.getUpload_date());
         int viewsCount = Integer.parseInt(String.valueOf(video.getViews()));
         String viewsText = formatNum(viewsCount);
         holder.viewsTextView.setText(viewsText);
@@ -160,7 +167,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
 
         TextView viewsTextView;
 
-        Button editButton;
+        ImageButton editButton;
 
 
         ImageView profilePic;

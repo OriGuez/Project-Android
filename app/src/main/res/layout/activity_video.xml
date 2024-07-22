@@ -113,21 +113,6 @@
                     android:layout_weight="1"
                     app:srcCompat="?attr/actionModeShareDrawable" />
 
-                <ImageButton
-                    android:id="@+id/deleteVideoButton"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:adjustViewBounds="true"
-                    android:scaleType="fitCenter"
-                    app:srcCompat="@drawable/removevid" />
-
-                <ImageButton
-                    android:id="@+id/editVideoButton"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:adjustViewBounds="true"
-                    android:scaleType="fitCenter"
-                    app:srcCompat="@drawable/editvid" />
 
                 <ImageButton
                     android:id="@+id/likeButton"
