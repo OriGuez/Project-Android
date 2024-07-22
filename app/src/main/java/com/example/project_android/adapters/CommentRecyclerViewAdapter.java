@@ -1,4 +1,5 @@
 package com.example.project_android.adapters;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -9,18 +10,22 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.project_android.MainActivity;
 import com.example.project_android.R;
 import com.example.project_android.model.Comment;
-import com.example.project_android.model.UserData;
-import com.example.project_android.model.Video;
+import com.example.project_android.viewModel.CommentsViewModel;
 
 import java.util.List;
 
 public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecyclerViewAdapter.ViewHolder> {
+    private CommentsViewModel commentsViewModel;
 
     private List<Comment> comments;
     private RecyclerView recyclerView;
@@ -33,6 +38,13 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
         this.comments = comments;
         this.recyclerView = recyclerView;
         this.inflater = LayoutInflater.from(context);
+
+        if (context instanceof ViewModelStoreOwner) {
+            ViewModelStoreOwner owner = (ViewModelStoreOwner) context;
+            this.commentsViewModel = new ViewModelProvider(owner).get(CommentsViewModel.class);
+        } else {
+            throw new IllegalArgumentException("Context must implement ViewModelStoreOwner");
+        }
     }
 
     @NonNull
@@ -52,8 +64,7 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
             holder.publisherTextView.setTextColor(Color.WHITE);
             holder.commentContentTextView.setTextColor(Color.WHITE);
             holder.editCommentEditText.setTextColor(Color.WHITE);
-        }
-        else {
+        } else {
             holder.publisherTextView.setTextColor(Color.BLACK);
             holder.commentContentTextView.setTextColor(Color.BLACK);
             holder.editCommentEditText.setTextColor(Color.BLACK);
@@ -64,17 +75,6 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
 
         String uploader = comment.getUserId();
         Bitmap profilePic = null;
-
-
-
-//        if (MainActivity.userDataList != null) {
-//            for (UserData user : MainActivity.userDataList) {
-//                if (user.getUsername().equals(uploader)) {
-//                    profilePic = user.getImage();
-//                    break;
-//                }
-//            }
-//        }
 
         if (profilePic != null) {
             holder.profileImageView.setImageBitmap(profilePic);
@@ -103,16 +103,22 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
         });
 
         holder.deleteCommentButton.setOnClickListener(v -> {
-            comments.remove(position);
-            notifyItemRemoved(position);
-            notifyItemRangeChanged(position, comments.size());
-            //RecyclerViewUtils.setRecyclerViewHeightBasedOnItems(recyclerView);
-        });
 
+            commentsViewModel.delete(comments.get(position).getId()).observe((LifecycleOwner) context, resp -> {
+                if (resp.isSuccessful()) {
+                    comments.remove(position);
+                    notifyItemRemoved(position);
+                    notifyItemRangeChanged(position, comments.size());
+                }
+            });
+        });
+        // if not logged User
         if (MainActivity.currentUser == null) {
             holder.deleteCommentButton.setVisibility(View.GONE);
             holder.editCommentButton.setVisibility(View.GONE);
-        } else {
+        }
+        //else show the edit-delete buttons.
+        else {
             holder.deleteCommentButton.setVisibility(View.VISIBLE);
             holder.editCommentButton.setVisibility(View.VISIBLE);
         }

@@ -210,7 +210,7 @@ public class VideoActivity extends AppCompatActivity {
             }
         }
         if (viewsTextView != null) {
-            viewsTextView.setText(formatNum(currentVideo.getViews()) + " views");
+            viewsTextView.setText(currentVideo.getViews() + " " + MyApplication.getContext().getString(R.string.views));
         }
         if (publisherTextView != null) {
             if (uploader != null)
@@ -288,7 +288,6 @@ public class VideoActivity extends AppCompatActivity {
             descriptionTextView.setText(currentVideo.getDescription());
         }
         updateVideoDetails();
-//        vidViewModel.updateVideoDetails(currentVideo);
     }
 
     private void InitializeUiComponents() {

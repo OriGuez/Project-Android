@@ -22,4 +22,7 @@ public class CommentRepository {
     public LiveData<ApiResponse> add(String videoID,Comment comment){
         return api.addComment(videoID,comment);
     }
+    public LiveData<ApiResponse> delete(String commentID){
+        return api.deleteComment(commentID);
+    }
 }
