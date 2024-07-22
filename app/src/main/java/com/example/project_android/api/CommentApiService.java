@@ -27,5 +27,5 @@ public interface CommentApiService {
 
     // Delete a comment
     @DELETE("/api/comments/{cid}")
-    Call<Void> deleteComment(@Path("cid") String commentId);
+    Call<ApiResponse> deleteComment(@Path("cid") String commentId);
 }

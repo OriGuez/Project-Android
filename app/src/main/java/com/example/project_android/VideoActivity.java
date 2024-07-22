@@ -84,7 +84,7 @@ public class VideoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        assetManager = getAssets();
+        //assetManager = getAssets();
         vidViewModel = new ViewModelProvider(this).get(VideosViewModel.class);
         commentsViewModel = new ViewModelProvider(this).get(CommentsViewModel.class);
         usersViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
@@ -198,11 +198,11 @@ public class VideoActivity extends AppCompatActivity {
             if (d != null) {
                 dateTextView.setText(d.toString());
             } else {
-                dateTextView.setText(");
+                dateTextView.setText("");
             }
         }
         if (viewsTextView != null) {
-            viewsTextView.setText(formatNum(currentVideo.getViews()) + " views");
+            viewsTextView.setText(currentVideo.getViews() + " " + MyApplication.getContext().getString(R.string.views));
         }
         if (publisherTextView != null) {
             if (uploader != null)
@@ -281,7 +281,6 @@ public class VideoActivity extends AppCompatActivity {
             descriptionTextView.setText(currentVideo.getDescription());
         }
         updateVideoDetails();
-//        vidViewModel.updateVideoDetails(currentVideo);
     }
 
     private void InitializeUiComponents() {

@@ -70,4 +70,28 @@ public class CommentActions {
         return resp;
     }
 
+
+    public MutableLiveData<ApiResponse> deleteComment(String commentID) {
+        MutableLiveData<ApiResponse> resp = new MutableLiveData<>();
+        api.deleteComment(commentID).enqueue(new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Log.d("success", "deleted comment successfully");
+                    resp.setValue(new ApiResponse(true, response.code()));
+                } else {
+                    resp.setValue(new ApiResponse(false, response.code()));
+                    Log.d("failure", "Failed to deleted comment");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse> call, Throwable t) {
+                resp.setValue(new ApiResponse(false, -1));
+                Log.d("failure", "Error deleting comment", t);
+            }
+        });
+        return resp;
+    }
+
 }

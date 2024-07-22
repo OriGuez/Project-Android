@@ -203,18 +203,19 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
 
 
     private String formatNum(int num) {
+        String viewsWord = MyApplication.getContext().getString(R.string.views);
         if (num < 1000) {
-            return num + " views";
+            return num +" " + viewsWord;
         } else if (num >= 1000 && num < 10000) {
-            return String.format("%.1fk views", num / 1000.0);
+            return String.format("%.1fk " + viewsWord, num / 1000.0);
         } else if (num >= 10000 && num < 1000000) {
-            return (num / 1000) + "k views";
+            return (num / 1000) + "k " + viewsWord;
         } else if (num >= 1000000 && num < 10000000) {
-            return String.format("%.1fM views", num / 1000000.0);
+            return String.format("%.1fM " + viewsWord, num / 1000000.0);
         } else if (num >= 10000000 && num < 1000000000) {
-            return (num / 1000000) + "M views";
+            return (num / 1000000) + "M " + viewsWord;
         } else if (num >= 1000000000) {
-            return String.format("%.1fB views", num / 1000000000.0);
+            return String.format("%.1fB " + viewsWord, num / 1000000000.0);
         }
         return num + " views";
     }

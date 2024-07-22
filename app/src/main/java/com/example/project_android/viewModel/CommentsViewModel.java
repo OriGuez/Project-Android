@@ -26,4 +26,8 @@ public class CommentsViewModel extends ViewModel {
     public LiveData<ApiResponse> add(String videoID, Comment comment){
         return repository.add(videoID,comment);
     }
+
+    public LiveData<ApiResponse> delete(String commentID){
+        return repository.delete(commentID);
+    }
 }
