@@ -1,5 +1,6 @@
 package com.example.project_android.api;
 
+import com.example.project_android.model.ApiResponse;
 import com.example.project_android.model.TokenRequest;
 import com.example.project_android.model.TokenResponse;
 import com.example.project_android.model.UserData;
@@ -35,6 +36,13 @@ public interface UserApiService {
                            @Part("username") RequestBody username,
                            @Part("password") RequestBody password,
                            @Part("displayName") RequestBody displayName);
+    @Multipart
+    @PATCH("/api/users/{id}")
+    Call<ApiResponse> updateUser(@Path("id") String userId,
+                                 @Part MultipartBody.Part image,
+                                 @Part("username") RequestBody username,
+                                 @Part("password") RequestBody password,
+                                 @Part("displayName") RequestBody displayName);
 
     @Multipart
     @PATCH("/api/users/{id}")
