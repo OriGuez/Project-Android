@@ -27,7 +27,7 @@ public class VideoRepository {
 //    }
 
 
-//    static class VideosListData extends MutableLiveData<List<Video>> {
+    //    static class VideosListData extends MutableLiveData<List<Video>> {
 //        public VideosListData() {
 //            super();
 //            setValue(new LinkedList<Video>());
@@ -56,7 +56,18 @@ public class VideoRepository {
         return api.fetchVideo(videoId);
     }
 
-    public LiveData<ApiResponse>add(String userID,Video video){
-        return api.createVideo(userID,video);
+    public LiveData<List<Video>> search(String query) {
+        return api.searchVideos(query);
+    }
+    public LiveData<ApiResponse> add(String userID, Video video) {
+        return api.createVideo(userID, video);
+    }
+
+    public LiveData<ApiResponse> like(String likingUserID, String videoID) {
+        return api.likeVideo(likingUserID, videoID);
+    }
+
+    public LiveData<ApiResponse> unlike(String unlikingUserID, String videoID) {
+        return api.unlikeVideo(unlikingUserID, videoID);
     }
 }

@@ -137,10 +137,6 @@ public class MainActivity extends AppCompatActivity {
             // Notify adapter
             //.............................change because its reloading the dataset..............................
             //adapter.notifyDataSetChanged();
-
-
-
-
         });
         // Set OnClickListener for add video button
         addVideoButton.setOnClickListener(v -> {
@@ -158,27 +154,17 @@ public class MainActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                performSearch(query);
+                searchView.clearFocus();
+                Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+                intent.putExtra("search_query", query);
+                startActivity(intent);
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                performSearch(newText);
-                return true;
-            }
-        });
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                performSearch(query);
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                performSearch(newText);
-                return true;
+//                performSearch(newText);
+                return false;
             }
         });
     }
@@ -187,6 +173,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         loggedVisibilityLogic();
+        if (searchView !=null) {
+            searchView.clearFocus();
+            searchView.setQuery("", false);
+        }
 //        if (adapter != null) {
 //            adapter.updateVideoList(videoList);
 //        }
@@ -240,10 +230,7 @@ public class MainActivity extends AppCompatActivity {
                     } else {
                         Log.e("MainActivity", "id is null");
                     }
-
-
                 });
-
             }
         }
     }

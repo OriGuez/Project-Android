@@ -61,9 +61,9 @@ public interface VideoApiService {
 
     // Likes
     @POST("/api/users/{id}/videos/{pid}/likes")
-    Call<Void> likeVideo(@Path("id") String userId, @Path("pid") String videoId);
+    Call<ApiResponse> likeVideo(@Path("id") String likingUserId, @Path("pid") String videoId);
 
     @DELETE("/api/users/{id}/videos/{pid}/likes")
-    Call<Void> unlikeVideo(@Path("id") String userId, @Path("pid") String videoId);
+    Call<ApiResponse> unlikeVideo(@Path("id") String unlikingUserId, @Path("pid") String videoId);
 
 }

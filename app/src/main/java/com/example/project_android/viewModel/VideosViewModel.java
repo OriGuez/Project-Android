@@ -34,6 +34,17 @@ public class VideosViewModel extends ViewModel {
     public LiveData<List<Video>> getUserVideos(String userID) {
         return repository.getUserVideos(userID);
     }
+    public LiveData<List<Video>> search(String query) {
+        return repository.search(query);
+    }
+
+    public LiveData<ApiResponse> like(String likingUserID, String videoID) {
+        return repository.like(likingUserID, videoID);
+    }
+
+    public LiveData<ApiResponse> unlike(String unlikingUserID, String videoID) {
+        return repository.unlike(unlikingUserID, videoID);
+    }
 //    public void add(Video video) { repository.add(video); }
 //
 //    public void delete(Video video) { repository.delete(video); }

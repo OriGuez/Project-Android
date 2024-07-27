@@ -12,8 +12,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ImageButton;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.project_android.EditVideo;
 import com.example.project_android.utils.ImageLoader;
 import com.example.project_android.MainActivity;
@@ -23,6 +25,7 @@ import com.example.project_android.VideoActivity;
 import com.example.project_android.model.UserData;
 import com.example.project_android.model.Video;
 import com.example.project_android.viewModel.UsersViewModel;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -44,25 +47,25 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         this.source = source;
     }
 
-    public void filterList(String query) {
-        List<Video> filteredList = new ArrayList<>();
-
-        if (query.isEmpty()) {
-            filteredList.addAll(videoListFull); // Display all videos if query is empty
-        } else {
-            String lowerCaseQuery = query.toLowerCase();
-
-            for (Video video : videoListFull) {
-                if (video.getTitle().toLowerCase().contains(lowerCaseQuery)) {
-                    filteredList.add(video);
-                }
-            }
-        }
-
-        videoList.clear();
-        videoList.addAll(filteredList);
-        notifyDataSetChanged();
-    }
+//    public void filterList(String query) {
+//        List<Video> filteredList = new ArrayList<>();
+//
+//        if (query.isEmpty()) {
+//            filteredList.addAll(videoListFull); // Display all videos if query is empty
+//        } else {
+//            String lowerCaseQuery = query.toLowerCase();
+//
+//            for (Video video : videoListFull) {
+//                if (video.getTitle().toLowerCase().contains(lowerCaseQuery)) {
+//                    filteredList.add(video);
+//                }
+//            }
+//        }
+//
+//        videoList.clear();
+//        videoList.addAll(filteredList);
+//        notifyDataSetChanged();
+//    }
 
     @NonNull
     @Override
@@ -74,6 +77,9 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
     public void updateVideoList(List<Video> newVideoList) {
         this.videoList = newVideoList;
         notifyDataSetChanged();
+    }
+    public void clearList(){
+        this.videoList.clear();
     }
 
     @Override
@@ -99,8 +105,6 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         holder.titleTextView.setTextColor(textColor);
         holder.uploadDateTextView.setTextColor(textColor);
         holder.viewsTextView.setTextColor(textColor);
-
-
 
         // Set profile picture if available
         if (holder.profilePic != null && MainActivity.userDataList != null) {
@@ -129,8 +133,6 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
             } else {
                 holder.thumbnailImageView.setImageResource(R.drawable.logo);
             }
-
-
         }
 
         // Set click listener to open video details activity
@@ -164,12 +166,8 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         TextView titleTextView;
         TextView publisherTextView;
         TextView uploadDateTextView;
-
         TextView viewsTextView;
-
         ImageButton editButton;
-
-
         ImageView profilePic;
 
         public VideoViewHolder(@NonNull View itemView) {
@@ -181,38 +179,37 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
             viewsTextView = itemView.findViewById(R.id.viewsTextView);
             profilePic = itemView.findViewById(R.id.publisherPicInList);
             editButton = itemView.findViewById(R.id.editVidButton);
-
         }
     }
 
-    // Helper method to get resource ID of thumbnail
-    private int getThumbnailResourceId(String thumbnailName) {
-        String resourceName = "thumbnail" + thumbnailName.trim();
-        Resources resources = context.getResources();
-        return resources.getIdentifier(resourceName, "raw", context.getPackageName());
-    }
+//    // Helper method to get resource ID of thumbnail
+//    private int getThumbnailResourceId(String thumbnailName) {
+//        String resourceName = "thumbnail" + thumbnailName.trim();
+//        Resources resources = context.getResources();
+//        return resources.getIdentifier(resourceName, "raw", context.getPackageName());
+//    }
 
-    // Method to filter adapter's dataset based on query
-    public void filter(String query) {
-        videoList.clear();
-        if (query.isEmpty()) {
-            videoList.addAll(videoListFull);
-        } else {
-            query = query.toLowerCase().trim();
-            for (Video video : videoListFull) {
-                if (video.getTitle().toLowerCase().contains(query)) {
-                    videoList.add(video);
-                }
-            }
-        }
-        notifyDataSetChanged();
-    }
+//    // Method to filter adapter's dataset based on query
+//    public void filter(String query) {
+//        videoList.clear();
+//        if (query.isEmpty()) {
+//            videoList.addAll(videoListFull);
+//        } else {
+//            query = query.toLowerCase().trim();
+//            for (Video video : videoListFull) {
+//                if (video.getTitle().toLowerCase().contains(query)) {
+//                    videoList.add(video);
+//                }
+//            }
+//        }
+//        notifyDataSetChanged();
+//    }
 
 
     private String formatNum(int num) {
         String viewsWord = MyApplication.getContext().getString(R.string.views);
         if (num < 1000) {
-            return num +" " + viewsWord;
+            return num + " " + viewsWord;
         } else if (num >= 1000 && num < 10000) {
             return String.format("%.1fk " + viewsWord, num / 1000.0);
         } else if (num >= 10000 && num < 1000000) {
