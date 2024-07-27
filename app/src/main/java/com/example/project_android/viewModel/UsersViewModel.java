@@ -24,11 +24,13 @@ public class UsersViewModel extends ViewModel {
     public LiveData<TokenResponse> login(TokenRequest request){
         return repository.login(request);
     };
-
     public LiveData<UserData>get(String userID){
         return repository.get(userID);
     }
     public LiveData<UserID>getUserID(String username){
         return repository.getUserID(username);
+    }
+    public LiveData<ApiResponse> update(UserData user) {
+        return repository.update(user);
     }
 }

@@ -1,8 +1,8 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="16dp"
     tools:context=".UserPageActivity">
 
@@ -11,15 +11,60 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/publisherProfilePic"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="center"
-            android:layout_margin="8dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_def_user"
-            app:shapeAppearanceOverlay="@style/roundedImageView"/>
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/publisherProfilePic"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_def_user"
+                app:shapeAppearanceOverlay="@style/roundedImageView" />
+
+            <ImageButton
+                android:id="@+id/toggleImageButtons"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="4dp"
+                android:src="@android:drawable/ic_menu_camera"
+                android:background="@android:color/transparent"
+                android:visibility="invisible" />
+        </FrameLayout>
+
+        <ImageButton
+            android:id="@+id/uploadProfilePicImageButton"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/purple_500"
+            android:src="@android:drawable/ic_menu_gallery"
+            android:visibility="gone" />
+
+        <ImageButton
+            android:id="@+id/takePicture"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/purple_500"
+            android:src="@android:drawable/ic_menu_camera"
+            android:visibility="gone" />
+
+        <EditText
+            android:id="@+id/editChannelNameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Edit Channel Name"
+            android:visibility="gone" />
+
+        <EditText
+            android:id="@+id/editUsernameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Edit Username"
+            android:visibility="gone" />
+
 
         <TextView
             android:id="@+id/channelNameTextView"
@@ -29,7 +74,7 @@
             android:gravity="center"
             android:text="Channel Name"
             android:textSize="18sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/usernameTextView"
@@ -39,22 +84,6 @@
             android:gravity="center"
             android:text="Username"
             android:textSize="16sp" />
-
-        <EditText
-            android:id="@+id/editUsernameEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="Edit Username"
-            android:visibility="gone" />
-
-        <EditText
-            android:id="@+id/editChannelNameEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:hint="Edit Channel Name"
-            android:visibility="gone" />
 
         <Button
             android:id="@+id/editProfileButton"
@@ -77,6 +106,5 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:clipToPadding="false" />
-
     </LinearLayout>
 </ScrollView>

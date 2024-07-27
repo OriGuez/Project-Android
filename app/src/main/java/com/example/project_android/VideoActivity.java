@@ -370,7 +370,7 @@ public class VideoActivity extends AppCompatActivity {
             }
 
         } else {
-            updateLikeButton(likeButton, likeText);
+//            updateLikeButton(likeButton, likeText);
         }
 
         if (addComment != null) {

@@ -29,4 +29,9 @@ public class UserRepository {
     public LiveData<UserID> getUserID(String username){
         return  api.getIdByUsername(username);
     }
+
+    public LiveData<ApiResponse> update(UserData user) {
+        return api.updateUser(user);
+    }
+
 }
