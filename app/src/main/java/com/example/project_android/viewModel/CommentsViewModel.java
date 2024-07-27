@@ -30,4 +30,7 @@ public class CommentsViewModel extends ViewModel {
     public LiveData<ApiResponse> delete(String commentID){
         return repository.delete(commentID);
     }
+    public LiveData<ApiResponse> update(String commentID,Comment updatedComment){
+        return repository.update(commentID,updatedComment);
+    }
 }

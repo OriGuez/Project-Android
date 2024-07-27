@@ -23,7 +23,7 @@ public interface CommentApiService {
 
     // Update a comment
     @PATCH("/api/comments/{cid}")
-    Call<Comment> updateComment(@Path("cid") String commentId, @Body Comment comment);
+    Call<ApiResponse> updateComment(@Path("cid") String commentId, @Body Comment comment);
 
     // Delete a comment
     @DELETE("/api/comments/{cid}")

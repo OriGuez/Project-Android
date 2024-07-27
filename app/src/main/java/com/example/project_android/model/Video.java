@@ -32,7 +32,7 @@ public class Video {
     @SerializedName("createdAt")
     private Date createdAt;
 
-
+    @SerializedName("likes")
     private List<String> whoLikedList;
     private List<Comment> comments;
     private int views;

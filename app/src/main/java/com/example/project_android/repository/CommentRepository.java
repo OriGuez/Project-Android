@@ -25,4 +25,8 @@ public class CommentRepository {
     public LiveData<ApiResponse> delete(String commentID){
         return api.deleteComment(commentID);
     }
+
+    public LiveData<ApiResponse> update(String commentID,Comment updatedComment){
+        return api.updateComment(commentID,updatedComment);
+    }
 }

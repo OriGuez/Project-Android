@@ -94,4 +94,28 @@ public class CommentActions {
         return resp;
     }
 
+
+    public MutableLiveData<ApiResponse> updateComment(String commentID,Comment updatedComment) {
+        MutableLiveData<ApiResponse> resp = new MutableLiveData<>();
+        api.updateComment(commentID,updatedComment).enqueue(new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Log.d("success", "edited comment successfully");
+                    resp.setValue(new ApiResponse(true, response.code()));
+                } else {
+                    resp.setValue(new ApiResponse(false, response.code()));
+                    Log.d("failure", "Failed to edited comment");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse> call, Throwable t) {
+                resp.setValue(new ApiResponse(false, -1));
+                Log.d("failure", "Error editing comment", t);
+            }
+        });
+        return resp;
+    }
+
 }

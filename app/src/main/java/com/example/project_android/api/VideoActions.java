@@ -2,6 +2,9 @@ package com.example.project_android.api;
 
 import android.util.Log;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -25,7 +28,7 @@ public class VideoActions {
     //private VideosDao dao;
     VideoApiService api;
 
-    public VideoActions(){
+    public VideoActions() {
         //this.videosListData = list;
         //this.dao=dao;
         this.api = RetrofitClient.getClient().create(VideoApiService.class);
@@ -34,6 +37,10 @@ public class VideoActions {
 
     public MutableLiveData<List<Video>> fetchUserVideos(String userId) {
         MutableLiveData<List<Video>> videosListData = new MutableLiveData<>();
+        if (userId == null || userId.isEmpty()) {
+            videosListData.postValue(null); // Return empty list if query is null or empty
+            return videosListData;
+        }
         api.getUserVideos(userId).enqueue(new Callback<List<Video>>() {
             @Override
             public void onResponse(Call<List<Video>> call, Response<List<Video>> response) {
@@ -65,34 +72,19 @@ public class VideoActions {
         return videosListData;
     }
 
-
-//    public void fetchUserVideosByUsername(String username) {
-//        api.getUserVideosByUsername(username).enqueue(new Callback<List<Video>>() {
-//            @Override
-//            public void onResponse(Call<List<Video>> call, Response<List<Video>> response) {
-//                if (response.isSuccessful() && response.body() != null) {
-//                    videosListData.postValue(response.body());
-//                    // Optionally, save the data to local database using dao
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<List<Video>> call, Throwable t) {
-//                // Handle failure
-//            }
-//        });
-//    }
-
     public MutableLiveData<Video> fetchVideo(String videoId) {
         MutableLiveData<Video> video = new MutableLiveData<>();
+        if (videoId == null || videoId.isEmpty()) {
+            video.postValue(null); // Return empty list if query is null or empty
+            return video;
+        }
         api.getVideo(videoId).enqueue(new Callback<Video>() {
             @Override
             public void onResponse(Call<Video> call, Response<Video> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     video.postValue(response.body());
                     // Handle single video response
-                }
-                else {
+                } else {
                     video.postValue(null);
                 }
             }
@@ -112,43 +104,60 @@ public class VideoActions {
             @Override
             public void onResponse(Call<List<Video>> call, Response<List<Video>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    Log.d("success","a");
+                    Log.d("success", "a");
                     videosData.postValue(response.body());
                     //videosListData.postValue(response.body());
                     // Optionally, save the data to local database using dao
-                }
-                else {
+                } else {
                     videosData.postValue(null);
-                    Log.d("f","a");
+                    Log.d("f", "a");
                 }
             }
 
             @Override
             public void onFailure(Call<List<Video>> call, Throwable t) {
                 videosData.postValue(null);
-                Log.d("f","a");
+                Log.d("f", "a");
                 // Handle failure
             }
         });
         return videosData;
     }
 
-//    public void searchVideos(String query) {
-//        api.searchVideos(query).enqueue(new Callback<List<Video>>() {
-//            @Override
-//            public void onResponse(Call<List<Video>> call, Response<List<Video>> response) {
-//                if (response.isSuccessful() && response.body() != null) {
-//                    videosListData.postValue(response.body());
-//                    // Optionally, save the data to local database using dao
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<List<Video>> call, Throwable t) {
-//                // Handle failure
-//            }
-//        });
-//    }
+    public MutableLiveData<List<Video>> searchVideos(String query) {
+        MutableLiveData<List<Video>> videosData = new MutableLiveData<>();
+        if (query == null || query.isEmpty()) {
+            videosData.postValue(null); // Return empty list if query is null or empty
+            return videosData;
+        }
+        String encodedQuery = null;
+        try {
+            encodedQuery = URLEncoder.encode(query, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            videosData.postValue(null);
+            return videosData;
+        }
+        api.searchVideos(encodedQuery).enqueue(new Callback<List<Video>>() {
+            @Override
+            public void onResponse(Call<List<Video>> call, Response<List<Video>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    videosData.postValue(response.body());
+                    // Optionally, save the data to local database using dao
+                }
+                else {
+                    videosData.postValue(null);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Video>> call, Throwable t) {
+                videosData.postValue(null);
+                // Handle failure
+            }
+        });
+        return videosData;
+    }
 
 
     public MutableLiveData<ApiResponse> createVideo(String userId, Video video) {
@@ -163,14 +172,13 @@ public class VideoActions {
 
         RequestBody title = RequestBody.create(MediaType.parse("text/plain"), video.getTitle());
         RequestBody description = RequestBody.create(MediaType.parse("text/plain"), video.getDescription());
-        api.createVideo(userId,imagePart ,videoPart,title,description).enqueue(new Callback<ApiResponse>() {
+        api.createVideo(userId, imagePart, videoPart, title, description).enqueue(new Callback<ApiResponse>() {
             @Override
             public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     resp.setValue(new ApiResponse(true, response.code()));
                     // Handle video creation response
-                }
-                else {
+                } else {
                     // Handle response error
                     resp.setValue(new ApiResponse(false, response.code()));
                 }
@@ -235,37 +243,48 @@ public class VideoActions {
 //        });
 //    }
 
-//    public void likeVideo(String userId, String videoId) {
-//        api.likeVideo(userId, videoId).enqueue(new Callback<Void>() {
-//            @Override
-//            public void onResponse(Call<Void> call, Response<Void> response) {
-//                if (response.isSuccessful()) {
-//                    // Handle like video response
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<Void> call, Throwable t) {
-//                // Handle failure
-//            }
-//        });
-//    }
+    public MutableLiveData<ApiResponse> likeVideo(String likingUserId, String videoId) {
+        MutableLiveData<ApiResponse> resp = new MutableLiveData<>();
 
-//    public void unlikeVideo(String userId, String videoId) {
-//        api.unlikeVideo(userId, videoId).enqueue(new Callback<Void>() {
-//            @Override
-//            public void onResponse(Call<Void> call, Response<Void> response) {
-//                if (response.isSuccessful()) {
-//                    // Handle unlike video response
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<Void> call, Throwable t) {
-//                // Handle failure
-//            }
-//        });
-//    }
+        api.likeVideo(likingUserId, videoId).enqueue(new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    resp.setValue(new ApiResponse(true, response.code()));
+                } else {
+                    resp.setValue(new ApiResponse(false, response.code()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse> call, Throwable t) {
+                resp.setValue(new ApiResponse(false, 500));
+                // Handle failure
+            }
+        });
+        return resp;
+    }
+
+    public MutableLiveData<ApiResponse> unlikeVideo(String unlikingUserId, String videoId) {
+        MutableLiveData<ApiResponse> resp = new MutableLiveData<>();
+
+        api.unlikeVideo(unlikingUserId, videoId).enqueue(new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    resp.setValue(new ApiResponse(true, response.code()));
+                } else {
+                    resp.setValue(new ApiResponse(false, response.code()));
+                }
+            }
+            @Override
+            public void onFailure(Call<ApiResponse> call, Throwable t) {
+                resp.setValue(new ApiResponse(false, 500));
+                // Handle failure
+            }
+        });
+        return resp;
+    }
 
 
 }

@@ -26,10 +26,8 @@ import java.util.List;
 
 public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecyclerViewAdapter.ViewHolder> {
     private CommentsViewModel commentsViewModel;
-
     private List<Comment> comments;
     private RecyclerView recyclerView;
-
     private LayoutInflater inflater;
     private Context context;
 
@@ -51,77 +49,18 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = inflater.inflate(R.layout.comment_item, parent, false);
-        return new ViewHolder(view);
+        return new ViewHolder(view, this, commentsViewModel, comments, recyclerView, context);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Comment comment = comments.get(position);
+        holder.bind(comment);
+    }
 
-        holder.publisherTextView.setText(comment.getUserId());
-        holder.commentContentTextView.setText(comment.getContent());
-        if (MainActivity.isDarkMode) {
-            holder.publisherTextView.setTextColor(Color.WHITE);
-            holder.commentContentTextView.setTextColor(Color.WHITE);
-            holder.editCommentEditText.setTextColor(Color.WHITE);
-        } else {
-            holder.publisherTextView.setTextColor(Color.BLACK);
-            holder.commentContentTextView.setTextColor(Color.BLACK);
-            holder.editCommentEditText.setTextColor(Color.BLACK);
-
-        }
-        // Reset the profile image to a default image or clear it before setting a new one
-        holder.profileImageView.setImageResource(R.drawable.ic_def_user);
-
-        String uploader = comment.getUserId();
-        Bitmap profilePic = null;
-
-        if (profilePic != null) {
-            holder.profileImageView.setImageBitmap(profilePic);
-        } else {
-            holder.profileImageView.setImageResource(R.drawable.ic_def_user);
-        }
-
-        holder.editCommentButton.setOnClickListener(v -> {
-            holder.commentContentTextView.setVisibility(View.GONE);
-            holder.editCommentEditText.setVisibility(View.VISIBLE);
-            holder.saveCommentButton.setVisibility(View.VISIBLE);
-            holder.editCommentButton.setVisibility(View.GONE);
-            holder.editCommentEditText.setText(comment.getContent());
-        });
-
-        holder.saveCommentButton.setOnClickListener(v -> {
-            String newCommentText = holder.editCommentEditText.getText().toString().trim();
-            if (!newCommentText.isEmpty()) {
-                comment.setContent(newCommentText);
-                notifyItemChanged(position);
-                holder.editCommentEditText.setVisibility(View.GONE);
-                holder.saveCommentButton.setVisibility(View.GONE);
-                holder.commentContentTextView.setVisibility(View.VISIBLE);
-                holder.editCommentButton.setVisibility(View.VISIBLE);
-            }
-        });
-
-        holder.deleteCommentButton.setOnClickListener(v -> {
-
-            commentsViewModel.delete(comments.get(position).getId()).observe((LifecycleOwner) context, resp -> {
-                if (resp.isSuccessful()) {
-                    comments.remove(position);
-                    notifyItemRemoved(position);
-                    notifyItemRangeChanged(position, comments.size());
-                }
-            });
-        });
-        // if not logged User
-        if (MainActivity.currentUser == null) {
-            holder.deleteCommentButton.setVisibility(View.GONE);
-            holder.editCommentButton.setVisibility(View.GONE);
-        }
-        //else show the edit-delete buttons.
-        else {
-            holder.deleteCommentButton.setVisibility(View.VISIBLE);
-            holder.editCommentButton.setVisibility(View.VISIBLE);
-        }
+    @Override
+    public int getItemCount() {
+        return comments.size();
     }
 
     public void updateCommentsList(List<Comment> newCommentsList) {
@@ -132,12 +71,8 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
 
     public void addComment(Comment newComment) {
         comments.add(newComment);
-        notifyDataSetChanged();
-    }
-
-    @Override
-    public int getItemCount() {
-        return comments.size();
+        notifyItemInserted(comments.size() - 1);
+        recyclerView.scrollToPosition(comments.size() - 1);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -149,8 +84,20 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
         Button saveCommentButton;
         Button deleteCommentButton;
 
-        public ViewHolder(@NonNull View itemView) {
+        private CommentRecyclerViewAdapter adapter;
+        private CommentsViewModel commentsViewModel;
+        private List<Comment> comments;
+        private RecyclerView recyclerView;
+        private Context context;
+
+        public ViewHolder(@NonNull View itemView, CommentRecyclerViewAdapter adapter, CommentsViewModel commentsViewModel, List<Comment> comments, RecyclerView recyclerView, Context context) {
             super(itemView);
+            this.adapter = adapter;
+            this.commentsViewModel = commentsViewModel;
+            this.comments = comments;
+            this.recyclerView = recyclerView;
+            this.context = context;
+
             profileImageView = itemView.findViewById(R.id.commentProfilePic);
             publisherTextView = itemView.findViewById(R.id.publisherTextView);
             commentContentTextView = itemView.findViewById(R.id.commentContentTextView);
@@ -158,7 +105,84 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
             editCommentButton = itemView.findViewById(R.id.EditCommentButton);
             saveCommentButton = itemView.findViewById(R.id.SaveCommentButton);
             deleteCommentButton = itemView.findViewById(R.id.DeleteCommentButton);
+
+            editCommentButton.setOnClickListener(v -> {
+                int position = getBindingAdapterPosition();
+                if (position != RecyclerView.NO_POSITION) {
+                    Comment comment = comments.get(position);
+                    commentContentTextView.setVisibility(View.GONE);
+                    editCommentEditText.setVisibility(View.VISIBLE);
+                    saveCommentButton.setVisibility(View.VISIBLE);
+                    editCommentButton.setVisibility(View.GONE);
+                    editCommentEditText.setText(comment.getContent());
+                }
+            });
+
+            saveCommentButton.setOnClickListener(v -> {
+                int position = getBindingAdapterPosition();
+                if (position != RecyclerView.NO_POSITION) {
+                    Comment comment = comments.get(position);
+                    String newCommentText = editCommentEditText.getText().toString().trim();
+                    if (!newCommentText.isEmpty()) {
+                        commentsViewModel.update(comment.getId(),new Comment(newCommentText,comment.getUserId(),comment.getVideoId())).observe((LifecycleOwner) context, resp -> {
+                            if (resp.isSuccessful()) {
+                                comment.setContent(newCommentText);
+                                adapter.notifyItemChanged(position);
+                                editCommentEditText.setVisibility(View.GONE);
+                                saveCommentButton.setVisibility(View.GONE);
+                                commentContentTextView.setVisibility(View.VISIBLE);
+                                editCommentButton.setVisibility(View.VISIBLE);
+                            }
+                        });
+
+                    }
+                }
+            });
+
+            deleteCommentButton.setOnClickListener(v -> {
+                int position = getBindingAdapterPosition();
+                if (position != RecyclerView.NO_POSITION) {
+                    commentsViewModel.delete(comments.get(position).getId()).observe((LifecycleOwner) context, resp -> {
+                        if (resp.isSuccessful()) {
+                            comments.remove(position);
+                            adapter.notifyItemRemoved(position);
+                            adapter.notifyItemRangeChanged(position, comments.size());
+                        }
+                    });
+                }
+            });
+        }
+
+        public void bind(Comment comment) {
+            publisherTextView.setText(comment.getUserId());
+            commentContentTextView.setText(comment.getContent());
+            if (MainActivity.isDarkMode) {
+                publisherTextView.setTextColor(Color.WHITE);
+                commentContentTextView.setTextColor(Color.WHITE);
+                editCommentEditText.setTextColor(Color.WHITE);
+            } else {
+                publisherTextView.setTextColor(Color.BLACK);
+                commentContentTextView.setTextColor(Color.BLACK);
+                editCommentEditText.setTextColor(Color.BLACK);
+            }
+            profileImageView.setImageResource(R.drawable.ic_def_user);
+
+            String uploaderID = comment.getUserId();
+            Bitmap profilePic = null;
+
+            if (profilePic != null) {
+                profileImageView.setImageBitmap(profilePic);
+            } else {
+                profileImageView.setImageResource(R.drawable.ic_def_user);
+            }
+
+            if (MainActivity.currentUser == null || !MainActivity.currentUser.getId().equals(uploaderID)) {
+                deleteCommentButton.setVisibility(View.GONE);
+                editCommentButton.setVisibility(View.GONE);
+            } else {
+                deleteCommentButton.setVisibility(View.VISIBLE);
+                editCommentButton.setVisibility(View.VISIBLE);
+            }
         }
     }
 }
-
