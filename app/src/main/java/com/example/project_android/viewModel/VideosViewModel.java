@@ -18,11 +18,12 @@ public class VideosViewModel extends ViewModel {
 
     public VideosViewModel() {
         repository = new VideoRepository();
-        videos = repository.getAll();
+        //videos = repository.getAll();
     }
 
     public LiveData<List<Video>> get() {
-        return videos;
+        return repository.getAll();
+        //return videos;
     }
     public LiveData<Video> get(String videoID) {
         return repository.get(videoID);
@@ -45,11 +46,19 @@ public class VideosViewModel extends ViewModel {
     public LiveData<ApiResponse> unlike(String unlikingUserID, String videoID) {
         return repository.unlike(unlikingUserID, videoID);
     }
+
+    public LiveData<ApiResponse> update(String UserID, String videoID,Video updatedVideo) {
+        return repository.update(UserID, videoID,updatedVideo);
+    }
+
+    public LiveData<ApiResponse> delete(String UserID, String videoID) {
+        return repository.delete(UserID, videoID);
+    }
 //    public void add(Video video) { repository.add(video); }
 //
 //    public void delete(Video video) { repository.delete(video); }
 //
-//    public void reload() { repository.reload(); }
+    //public void reload() { this.videos = repository.getAll(); }
 
 
 }

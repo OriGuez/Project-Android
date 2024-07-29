@@ -66,7 +66,7 @@ public class LoginActivity extends AppCompatActivity {
                     finish(); // close the LoginActivity
 
                 } else {
-                    Toast.makeText(getApplicationContext(), "Failed To Add User", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Failed To Login", Toast.LENGTH_SHORT).show();
                     //Toast.makeText(this, R.string.invalidLogin, Toast.LENGTH_SHORT).show();
 
                     // Handle the error case

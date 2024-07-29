@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserPageActivity extends AppCompatActivity {
+    public static boolean shouldRefresh = false;
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final int PICK_CAMERA_REQUEST = 2;
     private static final int REQUEST_PERMISSION = 100;
@@ -58,6 +59,8 @@ public class UserPageActivity extends AppCompatActivity {
     private UserData pageUser;
     private Uri imgURI;
     private Bitmap selectedProfilePicture;
+    private boolean isLoggedUsersPage = false;
+    private String userID;
 
     private List<Video> userVideos = new ArrayList<>();
 
@@ -69,31 +72,44 @@ public class UserPageActivity extends AppCompatActivity {
         usersViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
         videosViewModel = new ViewModelProvider(this).get(VideosViewModel.class);
         initViews();
-
         // Retrieve the current user data
-        String userID = getIntent().getStringExtra("userID");
+        userID = getIntent().getStringExtra("userID");
+        if (MainActivity.currentUser != null && userID.equals(MainActivity.currentUser.getId()))
+            isLoggedUsersPage = true;
         usersViewModel.get(userID).observe(this, user -> {
             if (user != null) {
                 pageUser = user;
                 updatePageUser();
-
-                videosViewModel.getUserVideos(userID).observe(this, videos -> {
-                    if (videos != null) {
-                        videoAdapter.updateVideoList(videos);
-                    }
-                });
+                getUserVideos(userID);
             }
         });
 
         videoRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-        videoAdapter = new VideoAdapter(this, userVideos, "User");
+        if (isLoggedUsersPage) {
+            videoAdapter = new VideoAdapter(this, userVideos, "User");
+        } else {
+            videoAdapter = new VideoAdapter(this, userVideos, "Video");
+            //remove buttons of owner
+            editProfileButton.setVisibility(View.GONE);
+            saveProfileButton.setVisibility(View.GONE);
+            editProfileButton.setVisibility(View.GONE);
+        }
         videoRecyclerView.setAdapter(videoAdapter);
-
         editProfileButton.setOnClickListener(v -> enterEditMode());
         saveProfileButton.setOnClickListener(v -> saveChanges());
         uploadFromGalleryButton.setOnClickListener(v -> openImagePicker());
         takePictureCameraButton.setOnClickListener(v -> openCamera());
         toggleImageButtons.setOnClickListener(v -> toggleButtonsVisibility());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // update videoList after the edit if changed.
+        if (shouldRefresh) {
+            getUserVideos(userID);
+            shouldRefresh = false;
+        }
     }
 
     @Override
@@ -187,30 +203,34 @@ public class UserPageActivity extends AppCompatActivity {
     private void saveChanges() {
         String newUsername = editUsernameEditText.getText().toString().trim();
         String newChannelName = editChannelNameEditText.getText().toString().trim();
-
+        File imageFile = null;
         if (newUsername.isEmpty() || newChannelName.isEmpty()) {
             Toast.makeText(this, "Fields cannot be empty", Toast.LENGTH_SHORT).show();
             return;
         }
-
-        pageUser.setUsername(newUsername);
-        pageUser.setChannelName(newChannelName);
-
+        UserData editedUser = new UserData(newUsername, null, newChannelName, null);
+        editedUser.setId(pageUser.getId());
         if (selectedProfilePicture != null) {
             try {
-                File imageFile = FileUtils.bitmapToFile(this, selectedProfilePicture);
-                pageUser.setImageFile(imageFile);
+                imageFile = FileUtils.bitmapToFile(this, selectedProfilePicture);
+                editedUser.setImageFile(imageFile);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
-        usersViewModel.update(pageUser).observe(this, response -> {
+        File finalImageFile = imageFile;
+        usersViewModel.update(editedUser).observe(this, response -> {
             if (response != null && response.isSuccessful()) {
                 usernameTextView.setText(newUsername);
                 channelNameTextView.setText(newChannelName);
-                updatePageUser();
 
+                pageUser.setUsername(newUsername);
+                pageUser.setChannelName(newChannelName);
+                if (finalImageFile != null) {
+                    pageUser.setImageFile(finalImageFile);
+                }
+                updatePageUser();
                 Toast.makeText(this, "Profile updated", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, "Failed to update profile", Toast.LENGTH_SHORT).show();
@@ -226,6 +246,14 @@ public class UserPageActivity extends AppCompatActivity {
         channelNameTextView.setVisibility(View.VISIBLE);
         editProfileButton.setVisibility(View.VISIBLE);
         toggleImageButtons.setVisibility(View.GONE);
+    }
+
+    private void getUserVideos(String userID) {
+        videosViewModel.getUserVideos(userID).observe(this, videos -> {
+            if (videos != null) {
+                videoAdapter.updateVideoList(videos);
+            }
+        });
     }
 
 }

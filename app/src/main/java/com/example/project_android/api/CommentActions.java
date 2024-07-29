@@ -8,6 +8,9 @@ import com.example.project_android.model.ApiResponse;
 import com.example.project_android.model.Comment;
 import com.example.project_android.model.Video;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.List;
 
 import retrofit2.Call;
@@ -54,7 +57,10 @@ public class CommentActions {
             public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     Log.d("success", "Added comment successfully");
-                    resp.setValue(new ApiResponse(true, response.code()));
+                    ApiResponse resSuccess = response.body();
+                    resSuccess.setSuccessful(true);
+                    resSuccess.setCode(response.code());
+                    resp.setValue(resSuccess);
                 } else {
                     resp.setValue(new ApiResponse(false, response.code()));
                     Log.d("failure", "Failed to add comment");

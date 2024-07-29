@@ -69,5 +69,8 @@
     <string name="fillAll">בבקשה מלא את כל השדות הנחוצים והעלה תמונת נושא וסרטון</string>
     <string name="usernameExists">שם המשתמש כבר קיים</string>
     <string name="no_videos">אין סרטונים</string>
-
+    <string name="videoUpdateFailed">עדכון הסרטון נכשל</string>
+    <string name="videoDeleted">הסרטון נמחק בהצלחה</string>
+    <string name="videoDeletedFailed">מחיקת הסרטון נכשלה</string>
+    <string name="MissingVideoID">זיהוי הסרטון חסר</string>
 </resources>

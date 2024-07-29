@@ -216,11 +216,6 @@ public class RegistrationActivity extends AppCompatActivity {
                 }
             }
         });
-        //user.setImageURI(imgURI);
-        MainActivity.userDataList.add(newUser);
-//        Intent intent = new Intent(this, LoginActivity.class);
-//        startActivity(intent);
-//        finish();
     }
     private void validatePasswordsMatch() {
         String password = passwordEditText.getText().toString();
@@ -230,14 +225,6 @@ public class RegistrationActivity extends AppCompatActivity {
         } else {
             confirmPasswordEditText.setError(null);
         }
-    }
-    private boolean usernameAvaliable(String username){
-        for (UserData user:MainActivity.userDataList)
-        {
-            if (user.getUsername().equals(username))
-                return false;
-        }
-        return true;
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -251,36 +238,4 @@ public class RegistrationActivity extends AppCompatActivity {
             }
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-//    private File bitmapToFile(Bitmap bitmap) throws IOException {
-//        // Create a file in the cache directory
-//        File file = new File(getCacheDir(), "profile_picture.jpg");
-//        file.createNewFile();
-//
-//        // Convert bitmap to byte array
-//        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-//        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
-//        byte[] bitmapData = bos.toByteArray();
-//
-//        // Write the bytes in file
-//        FileOutputStream fos = new FileOutputStream(file);
-//        fos.write(bitmapData);
-//        fos.flush();
-//        fos.close();
-//
-//        return file;
-//    }
-
-
-
 }

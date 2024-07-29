@@ -1,14 +1,11 @@
 package com.example.project_android;
 
 import androidx.activity.OnBackPressedCallback;
-
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -167,23 +164,6 @@ public class VideoActivity extends AppCompatActivity {
 //        vidViewModel.update(video);
     }
 
-//    private void showDeleteConfirmationDialog() {
-//        new AlertDialog.Builder(this, R.style.MyDialogTheme)
-//                .setTitle(getString(R.string.delete_video))
-//                .setMessage(getString(R.string.sure_delete_video))
-//                .setPositiveButton(R.string.yes, (dialog, which) -> {
-//                    deleteCurrentVideo();
-//                })
-//                .setNegativeButton(R.string.no, null)
-//                .setIcon(android.R.drawable.ic_menu_delete)
-//                .show();
-//    }
-
-//    private void deleteCurrentVideo() {
-//        MainActivity.videoList.remove(currentVideo);
-//        finish();
-//    }
-
     private void updateLikeButtonState() {
         if (likeButton == null || likeText == null) return;
         if (isLiked) {
@@ -213,7 +193,8 @@ public class VideoActivity extends AppCompatActivity {
             }
         }
         if (viewsTextView != null) {
-            viewsTextView.setText(currentVideo.getViews() + " " + MyApplication.getContext().getString(R.string.views));
+            String views = currentVideo.getViews() + " " + MyApplication.getContext().getString(R.string.views);
+            viewsTextView.setText(views);
         }
         if (publisherTextView != null) {
             if (uploader != null)
@@ -246,54 +227,6 @@ public class VideoActivity extends AppCompatActivity {
         videoView.setMediaController(mediaController);
         videoView.start();
     }
-
-//    private void enterEditMode() {
-//        if (editTitleEditText == null || editDescriptionEditText == null || saveButton == null ||
-//                titleTextView == null || descriptionTextView == null)
-//            return;
-//
-//        editTitleEditText.setVisibility(View.VISIBLE);
-//        editDescriptionEditText.setVisibility(View.VISIBLE);
-//        saveButton.setVisibility(View.VISIBLE);
-//
-//        titleTextView.setVisibility(View.GONE);
-//        descriptionTextView.setVisibility(View.GONE);
-//
-//        editTitleEditText.setText(currentVideo.getTitle());
-//        editDescriptionEditText.setText(currentVideo.getDescription());
-//
-//        isEditMode = true;
-//    }
-
-//    private void exitEditMode() {
-//        if (editTitleEditText == null || editDescriptionEditText == null || saveButton == null ||
-//                titleTextView == null || descriptionTextView == null)
-//            return;
-//
-//        editTitleEditText.setVisibility(View.GONE);
-//        editDescriptionEditText.setVisibility(View.GONE);
-//        saveButton.setVisibility(View.GONE);
-//
-//        titleTextView.setVisibility(View.VISIBLE);
-//        descriptionTextView.setVisibility(View.VISIBLE);
-//
-//        isEditMode = false;
-//    }
-
-//    private void saveChanges() {
-//        if (editTitleEditText == null || editDescriptionEditText == null) return;
-//
-//        currentVideo.setTitle(editTitleEditText.getText().toString());
-//        currentVideo.setDescription(editDescriptionEditText.getText().toString());
-//
-//        if (titleTextView != null) {
-//            titleTextView.setText(currentVideo.getTitle());
-//        }
-//        if (descriptionTextView != null) {
-//            descriptionTextView.setText(currentVideo.getDescription());
-//        }
-//        updateVideoDetails();
-//    }
 
     private void InitializeUiComponents() {
         videoView = findViewById(R.id.videoView);
@@ -384,6 +317,7 @@ public class VideoActivity extends AppCompatActivity {
                     Comment newComment = new Comment(commentText, MainActivity.currentUser.getId(), videoID);
                     commentsViewModel.add(videoID, newComment).observe(this, resp -> {
                         if (resp != null && resp.isSuccessful()) {
+                            newComment.setId(resp.get_id());
                             recycleAdapter.addComment(newComment);
                         }
                     });
@@ -418,13 +352,6 @@ public class VideoActivity extends AppCompatActivity {
                 }
             });
         }
-
-//        if (saveButton != null) {
-//            saveButton.setOnClickListener(v -> {
-//                saveChanges();
-//                exitEditMode();
-//            });
-//        }
     }
 
     private void videoPageDarkMode() {
@@ -485,20 +412,17 @@ public class VideoActivity extends AppCompatActivity {
         }
     }
 
-    private String formatNum(int num) {
-        if (num < 1000) {
-            return String.valueOf(num);
-        } else if (num >= 1000 && num < 10000) {
-            return String.format("%.1fk", num / 1000.0);
-        } else if (num >= 10000 && num < 1000000) {
-            return String.format("%dk", num / 1000);
-        } else if (num >= 1000000 && num < 10000000) {
-            return String.format("%.1fM", num / 1000000.0);
-        } else if (num >= 10000000 && num < 1000000000) {
-            return String.format("%dM", num / 1000000);
-        } else if (num >= 1000000000) {
-            return String.format("%.1fB", num / 1000000000.0);
-        }
-        return String.valueOf(num);
-    }
+//    @Override
+//    public void onBackPressed() {
+//        if (mediaController != null) {
+//            videoView.setMediaController(null);
+//            mediaController.hide();
+//            mediaController.setEnabled(false);
+//            mediaController.setActivated(false);
+//            mediaController.setBackgroundColor(Color.TRANSPARENT);
+//            super.onBackPressed();
+//        } else {
+//            super.onBackPressed();
+//        }
+//    }
 }

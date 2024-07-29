@@ -11,8 +11,6 @@ import java.util.List;
 public class Video {
     private File videoFile;
     private File imageFile;
-
-    private String base64Video;
     private Bitmap thumbnailPicture;
 
     private String title;
@@ -27,7 +25,6 @@ public class Video {
     private String thumbnailUrl;
 
     private String thumbnail;
-    private String upload_date;
 
     @SerializedName("createdAt")
     private Date createdAt;
@@ -36,12 +33,10 @@ public class Video {
     private List<String> whoLikedList;
     private List<Comment> comments;
     private int views;
-    public String getBase64Video() {
-        return base64Video;
-    }
-
-    public void setBase64Video(String base64Video) {
-        this.base64Video = base64Video;
+    public Video(String title, String description, File thumbnail) {
+        this.title = title;
+        this.description = description;
+        this.imageFile = thumbnail;
     }
     // Add getters and setters
     public String getTitle() {
@@ -82,14 +77,6 @@ public class Video {
 
     public void setThumbnailUrl(String thumbnailUrl) {
         this.thumbnailUrl = thumbnailUrl;
-    }
-
-    public String getUpload_date() {
-        return upload_date;
-    }
-
-    public void setUpload_date(String upload_date) {
-        this.upload_date = upload_date;
     }
 
     public List<String> getWhoLikedList() {
