@@ -44,9 +44,9 @@ public interface UserApiService {
                                  @Part("password") RequestBody password,
                                  @Part("displayName") RequestBody displayName);
 
-    @Multipart
-    @PATCH("/api/users/{id}")
-    Call<UserData> updateUser(@Header("Authorization") String token, @retrofit2.http.Path("id") String userId, @Part MultipartBody.Part image, @Body UserData userData);
+//    @Multipart
+//    @PATCH("/api/users/{id}")
+//    Call<UserData> updateUser(@Header("Authorization") String token, @retrofit2.http.Path("id") String userId, @Part MultipartBody.Part image, @Body UserData userData);
 
     @DELETE("/api/users/{id}")
     Call<Void> deleteUser(@Header("Authorization") String token, @retrofit2.http.Path("id") String userId);

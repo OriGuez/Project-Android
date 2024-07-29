@@ -7,39 +7,34 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Base64;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 import android.widget.VideoView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
-
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-
 import android.media.ThumbnailUtils;
-
 import com.example.project_android.model.Video;
 import com.example.project_android.utils.FileUtils;
 import com.example.project_android.viewModel.VideosViewModel;
 
 public class AddVideo extends AppCompatActivity {
     private VideosViewModel vidViewModel;
+    private ProgressBar progressBar;
     private EditText editVideoTitle;
     private EditText editVideoDescription;
     private ImageButton uploadVidFromGallery;
@@ -53,7 +48,6 @@ public class AddVideo extends AppCompatActivity {
     private static final int REQUEST_CODE_PICK_VIDEO = 10;
     private static final int REQUEST_CODE_PICK_PICTURE = 11;
     private static final int PICK_CAMERA_REQUEST = 12;
-
     private static final int REQUEST_PERMISSION = 100;
 
     @Override
@@ -84,6 +78,7 @@ public class AddVideo extends AppCompatActivity {
         videoView = findViewById(R.id.videoView);
         thumbnailView = findViewById(R.id.thumbnailPrev);
         uploadVidFromGallery = findViewById(R.id.uploadVidFromGallery);
+        progressBar = findViewById(R.id.progressBar);
         // Set up the upload buttons
         uploadVidFromGallery.setOnClickListener(v -> openVideoPicker());
         buttonUploadThumbnail.setOnClickListener(v -> openThumbnailPicker());
@@ -117,42 +112,41 @@ public class AddVideo extends AppCompatActivity {
     }
 
     private void submitVideo() {
+        if (videoView.isPlaying()) {
+            videoView.pause();
+        }
+        progressBar.setVisibility(View.VISIBLE);
         String title = editVideoTitle.getText().toString().trim();
         String description = editVideoDescription.getText().toString().trim();
         if (title.isEmpty() || description.isEmpty() || videoUri == null || thumbnailUri == null) {
             Toast.makeText(this, getString(R.string.fillAll), Toast.LENGTH_LONG).show();
+            progressBar.setVisibility(View.GONE);
             return;
         }
-        // Encode video to Base64
-        //String base64Video = encodeVideoToBase64(videoUri);
         // Create a new Video object
-        Video newVideo = new Video();
+        Video newVideo = new Video(title,description,null);
         newVideo.setWhoLikedList(new ArrayList<>());
         newVideo.setComments(new ArrayList<>());
-        newVideo.setTitle(title);
-        newVideo.setVidID(generateUniqueID());
-        newVideo.setDescription(description);
-        //newVideo.setBase64Video(base64Video);
+        //newVideo.setTitle(title);
+        //newVideo.setVidID(generateUniqueID());
+        //newVideo.setDescription(description);
         newVideo.setThumbnailUrl(thumbnailUri.toString());
         newVideo.setPublisher(MainActivity.currentUser.getUsername()); // Replace with actual user
         if (videoUri != null) {
             File videoFile = FileUtils.getFileFromUri(this, videoUri, "video.mp4");
             newVideo.setVideoFile(videoFile);
-
             if (thumbPic != null) {
                 try {
                     newVideo.setImageFile(FileUtils.bitmapToFile(this, thumbPic));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-
-                //newVideo.setThumbnailPicture(thumbPic);
-
             }
         }
         vidViewModel.add(MainActivity.currentUser.getId(), newVideo).observe(this, apiResponse -> {
             if (apiResponse.isSuccessful()) {
                 Toast.makeText(this, getString(R.string.videoAdded), Toast.LENGTH_SHORT).show();
+                progressBar.setVisibility(View.GONE);
                 finish();
             } else {
                 // add here specific data............................................
@@ -170,6 +164,7 @@ public class AddVideo extends AppCompatActivity {
                         Toast.makeText(this, "Unknown Error", Toast.LENGTH_SHORT).show();
                         break;
                 }
+                progressBar.setVisibility(View.GONE);
             }
 
         });
@@ -177,36 +172,6 @@ public class AddVideo extends AppCompatActivity {
         //MainActivity.videoList.add(newVideo);
         // Inform user and finish activity
 
-    }
-
-    private String encodeVideoToBase64(Uri videoUri) throws IOException {
-        InputStream inputStream = getContentResolver().openInputStream(videoUri);
-        byte[] byteArray = getBytes(inputStream);
-        return Base64.encodeToString(byteArray, Base64.DEFAULT);
-    }
-
-    private byte[] getBytes(InputStream inputStream) throws IOException {
-        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
-        int bufferSize = 1024;
-        byte[] buffer = new byte[bufferSize];
-
-        int len;
-        while ((len = inputStream.read(buffer)) != -1) {
-            byteBuffer.write(buffer, 0, len);
-        }
-        return byteBuffer.toByteArray();
-    }
-
-    public String generateUniqueID() {
-        Set<String> existingIDs = new HashSet<>();
-        for (Video video : MainActivity.videoList) {
-            existingIDs.add(video.getVidID());
-        }
-        String newID;
-        do {
-            newID = UUID.randomUUID().toString();
-        } while (existingIDs.contains(newID));
-        return newID;
     }
 
     @Override

@@ -193,55 +193,61 @@ public class VideoActions {
         return resp;
     }
 
+    public MutableLiveData<ApiResponse> updateVideo(String userId, String videoId, Video video) {
+        MutableLiveData<ApiResponse> resp = new MutableLiveData<>();
 
-//    public void updateVideo(String userId, String videoId, Video video) {
-//        api.updateVideo(userId, videoId, video).enqueue(new Callback<Video>() {
-//            @Override
-//            public void onResponse(Call<Video> call, Response<Video> response) {
-//                if (response.isSuccessful() && response.body() != null) {
-//                    // Handle video update response
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<Video> call, Throwable t) {
-//                // Handle failure
-//            }
-//        });
-//    }
+        File imageFile = video.getImageFile();
+        MultipartBody.Part imagePart = null;
+        if (imageFile != null) {
+            RequestBody imageRequestBody = RequestBody.create(MediaType.parse("image/jpeg"), imageFile);
+            imagePart = MultipartBody.Part.createFormData("image", imageFile.getName(), imageRequestBody);
+        }
 
+        RequestBody title = RequestBody.create(MediaType.parse("text/plain"), video.getTitle());
+        RequestBody description = RequestBody.create(MediaType.parse("text/plain"), video.getDescription());
 
-//    public void updateVideoPartially(String userId, String videoId, Video video) {
-//        api.updateVideoPartially(userId, videoId, video).enqueue(new Callback<Video>() {
-//            @Override
-//            public void onResponse(Call<Video> call, Response<Video> response) {
-//                if (response.isSuccessful() && response.body() != null) {
-//                    // Handle partial video update response
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<Video> call, Throwable t) {
-//                // Handle failure
-//            }
-//        });
-//    }
+        api.updateVideo(userId, videoId, title, description, imagePart).enqueue(new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    resp.setValue(new ApiResponse(true, response.code()));
+                    // Handle video update response
+                } else {
+                    // Handle response error
+                    resp.setValue(new ApiResponse(false, response.code()));
+                }
+            }
 
-//    public void deleteVideo(String userId, String videoId) {
-//        api.deleteVideo(userId, videoId).enqueue(new Callback<Void>() {
-//            @Override
-//            public void onResponse(Call<Void> call, Response<Void> response) {
-//                if (response.isSuccessful()) {
-//                    // Handle video deletion response
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<Void> call, Throwable t) {
-//                // Handle failure
-//            }
-//        });
-//    }
+            @Override
+            public void onFailure(Call<ApiResponse> call, Throwable t) {
+                resp.setValue(new ApiResponse(false, 500));
+                // Handle failure
+            }
+        });
+        return resp;
+    }
+
+    public MutableLiveData<ApiResponse> deleteVideo(String userId, String videoId) {
+        MutableLiveData<ApiResponse> resp = new MutableLiveData<>();
+        api.deleteVideo(userId, videoId).enqueue(new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                if (response.isSuccessful()) {
+                    resp.setValue(new ApiResponse(true, response.code()));
+                    // Handle video deletion response
+                }
+                else {
+                    resp.setValue(new ApiResponse(false, response.code()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse> call, Throwable t) {
+                resp.setValue(new ApiResponse(false, 500));
+            }
+        });
+        return resp;
+    }
 
     public MutableLiveData<ApiResponse> likeVideo(String likingUserId, String videoId) {
         MutableLiveData<ApiResponse> resp = new MutableLiveData<>();

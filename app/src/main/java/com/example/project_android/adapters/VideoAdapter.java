@@ -14,6 +14,9 @@ import android.widget.TextView;
 import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.project_android.EditVideo;
@@ -45,27 +48,9 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         this.videoList = videoList;
         this.videoListFull = new ArrayList<>(videoList);
         this.source = source;
+        if (context != null)
+            usersViewModel = new ViewModelProvider((ViewModelStoreOwner) context).get(UsersViewModel.class);
     }
-
-//    public void filterList(String query) {
-//        List<Video> filteredList = new ArrayList<>();
-//
-//        if (query.isEmpty()) {
-//            filteredList.addAll(videoListFull); // Display all videos if query is empty
-//        } else {
-//            String lowerCaseQuery = query.toLowerCase();
-//
-//            for (Video video : videoListFull) {
-//                if (video.getTitle().toLowerCase().contains(lowerCaseQuery)) {
-//                    filteredList.add(video);
-//                }
-//            }
-//        }
-//
-//        videoList.clear();
-//        videoList.addAll(filteredList);
-//        notifyDataSetChanged();
-//    }
 
     @NonNull
     @Override
@@ -93,28 +78,31 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         } else {
             holder.uploadDateTextView.setText("Unknown Date");
         }
+        String publisherID = video.getPublisher();
+        usersViewModel.get(publisherID).observe((LifecycleOwner) context, user ->{
+            if (user != null){
+                holder.publisherTextView.setText(user.getChannelName());
+                //UserData videoPublisher = user;
+                String baseUrl = MyApplication.getContext().getString(R.string.BaseUrl);
+                String profilePicPath = user.getImageURI();
+                if (profilePicPath != null)
+                    profilePicPath = profilePicPath.substring(1);
+                String profileImageUrl = baseUrl + profilePicPath;
+                ImageLoader.loadImage(profileImageUrl, holder.profilePic);
+            }
+        });
+
         holder.titleTextView.setText(video.getTitle());
-        holder.publisherTextView.setText(video.getPublisher());
+        //holder.publisherTextView.setText(video.getPublisher());
         int viewsCount = Integer.parseInt(String.valueOf(video.getViews()));
         String viewsText = formatNum(viewsCount);
         holder.viewsTextView.setText(viewsText);
-
         // Set text color based on dark mode
         int textColor = MainActivity.isDarkMode ? Color.WHITE : Color.BLACK;
         holder.publisherTextView.setTextColor(textColor);
         holder.titleTextView.setTextColor(textColor);
         holder.uploadDateTextView.setTextColor(textColor);
         holder.viewsTextView.setTextColor(textColor);
-
-        // Set profile picture if available
-        if (holder.profilePic != null && MainActivity.userDataList != null) {
-            for (UserData user : MainActivity.userDataList) {
-                if (user.getUsername().equals(video.getPublisher())) {
-                    holder.profilePic.setImageBitmap(user.getImage());
-                    break;
-                }
-            }
-        }
 
         // Load thumbnail from resources or set default logo
         //String thumbURL = MyApplication.getContext().getString(R.string.BaseUrl);
@@ -181,30 +169,6 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
             editButton = itemView.findViewById(R.id.editVidButton);
         }
     }
-
-//    // Helper method to get resource ID of thumbnail
-//    private int getThumbnailResourceId(String thumbnailName) {
-//        String resourceName = "thumbnail" + thumbnailName.trim();
-//        Resources resources = context.getResources();
-//        return resources.getIdentifier(resourceName, "raw", context.getPackageName());
-//    }
-
-//    // Method to filter adapter's dataset based on query
-//    public void filter(String query) {
-//        videoList.clear();
-//        if (query.isEmpty()) {
-//            videoList.addAll(videoListFull);
-//        } else {
-//            query = query.toLowerCase().trim();
-//            for (Video video : videoListFull) {
-//                if (video.getTitle().toLowerCase().contains(query)) {
-//                    videoList.add(video);
-//                }
-//            }
-//        }
-//        notifyDataSetChanged();
-//    }
-
 
     private String formatNum(int num) {
         String viewsWord = MyApplication.getContext().getString(R.string.views);

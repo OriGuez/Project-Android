@@ -1,6 +1,5 @@
 package com.example.project_android;
 
-import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -9,32 +8,24 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.MediaController;
 import android.widget.Toast;
-import android.widget.VideoView;
-
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
-import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import android.media.ThumbnailUtils;
-
 import com.example.project_android.model.Video;
+import com.example.project_android.utils.FileUtils;
 import com.example.project_android.viewModel.VideosViewModel;
 
 public class EditVideo extends AppCompatActivity {
@@ -45,10 +36,7 @@ public class EditVideo extends AppCompatActivity {
     private Button buttonUploadThumbnail;
     private Button buttonSaveChanges;
     private ImageButton deleteVideoButton;
-
-    private Uri videoUri;
     private Uri thumbnailUri;
-    private VideoView videoView;
     private Bitmap thumbPic;
     private Video currentVideo;
 
@@ -71,7 +59,7 @@ public class EditVideo extends AppCompatActivity {
         // Retrieve the video data from intent
         String videoID = getIntent().getStringExtra("videoID");
         if (videoID == null) {
-            Toast.makeText(this, "Video ID is missing", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.MissingVideoID), Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -80,19 +68,10 @@ public class EditVideo extends AppCompatActivity {
             if (video != null) {
                 currentVideo = video;
                 updateFields();
-
             } else {
                 currentVideo = null;
             }
         });
-
-
-//        for (Video video : MainActivity.videoList) {
-////            if (video.getVidID().equals(videoID)) {
-//                currentVideo = video;
-////                break;
-////            }
-//        }
 
         updateFields();
 
@@ -120,12 +99,17 @@ public class EditVideo extends AppCompatActivity {
     }
 
     private void deleteCurrentVideo() {
-
-
-        //MainActivity.videoList.remove(currentVideo);
-        finish();
+        videosViewModel.delete(currentVideo.getPublisher(), currentVideo.getVidID()).observe(this, resp -> {
+            if (resp.isSuccessful()) {
+                Toast.makeText(this, getString(R.string.videoDeleted), Toast.LENGTH_SHORT).show();
+                UserPageActivity.shouldRefresh = true;
+                MainActivity.shouldRefresh = true;
+                finish();
+            } else {
+                Toast.makeText(this, getString(R.string.videoDeletedFailed), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
-
 
     private void openThumbnailPicker() {
         Intent intent = new Intent();
@@ -142,28 +126,32 @@ public class EditVideo extends AppCompatActivity {
             return;
         }
 
-        currentVideo.setTitle(title);
-        currentVideo.setDescription(description);
-
-
-        if (thumbnailUri != null) {
-            currentVideo.setThumbnailUrl(thumbnailUri.toString());
-            if (thumbPic != null) {
-                currentVideo.setThumbnailPicture(thumbPic);
+        File imageFile = null;
+        if (thumbPic != null) {
+            try {
+                imageFile = FileUtils.bitmapToFile(this, thumbPic);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         }
+        Video updatedVidData = new Video(title, description, imageFile);
 
-        Toast.makeText(this, getString(R.string.videoUpdated), Toast.LENGTH_SHORT).show();
-        finish();
+        videosViewModel.update(currentVideo.getPublisher(), currentVideo.getVidID(), updatedVidData).observe(this, resp -> {
+            if (resp.isSuccessful()) {
+                Toast.makeText(this, getString(R.string.videoUpdated), Toast.LENGTH_SHORT).show();
+                UserPageActivity.shouldRefresh = true;
+                MainActivity.shouldRefresh = true;
+                finish();
+            } else {
+                Toast.makeText(this, getString(R.string.videoUpdateFailed), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_PICK_VIDEO && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            videoUri = data.getData();
-        } else if (requestCode == REQUEST_CODE_PICK_PICTURE && resultCode == RESULT_OK && data != null && data.getData() != null) {
+        if (requestCode == REQUEST_CODE_PICK_PICTURE && resultCode == RESULT_OK && data != null && data.getData() != null) {
             thumbnailUri = data.getData();
             try {
                 thumbPic = MediaStore.Images.Media.getBitmap(getContentResolver(), thumbnailUri);
@@ -182,7 +170,6 @@ public class EditVideo extends AppCompatActivity {
         if (requestCode == REQUEST_PERMISSION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Camera permission approved", Toast.LENGTH_SHORT).show();
-
             } else {
                 Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show();
             }
@@ -191,21 +178,8 @@ public class EditVideo extends AppCompatActivity {
 
     public void updateFields() {
         if (currentVideo != null) {
-//            String baseUrl = MyApplication.getContext().getString(R.string.BaseUrl);
-//            String path = currentVideo.getUrl();
-//            if (path != null)
-//                path = path.substring(1);
-//            String vidPath = baseUrl + path;
-//
-//            videoView.setVideoPath(vidPath);
-//            MediaController mediaController = new MediaController(this);
-//            mediaController.setAnchorView(videoView);
-//            videoView.setMediaController(mediaController);
-//            videoView.start();
-
             editVideoTitle.setText(currentVideo.getTitle());
             editVideoDescription.setText(currentVideo.getDescription());
-
             String thumbnailUrl = currentVideo.getThumbnailUrl();
             if (thumbnailUrl != null) {
                 thumbnailUri = Uri.parse(thumbnailUrl);

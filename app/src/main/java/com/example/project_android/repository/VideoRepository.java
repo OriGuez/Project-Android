@@ -70,4 +70,11 @@ public class VideoRepository {
     public LiveData<ApiResponse> unlike(String unlikingUserID, String videoID) {
         return api.unlikeVideo(unlikingUserID, videoID);
     }
+
+    public LiveData<ApiResponse> update(String UserID, String videoID,Video updatedVideo) {
+        return api.updateVideo(UserID, videoID,updatedVideo);
+    }
+    public LiveData<ApiResponse> delete(String UserID, String videoID) {
+        return api.deleteVideo(UserID, videoID);
+    }
 }

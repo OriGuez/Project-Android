@@ -123,30 +123,35 @@ public class UserActions {
 
     public LiveData<ApiResponse> updateUser(UserData user) {
         MutableLiveData<ApiResponse> result = new MutableLiveData<>();
-        MultipartBody.Part imagePart = null;
         File imageFile = user.getImageFile();
-
+        String s_username = user.getUsername();
+        String s_password = user.getPassword();
+        String s_displayName = user.getChannelName();
+        MultipartBody.Part imagePart = null;
+        RequestBody username = null;
+        RequestBody password = null;
+        RequestBody displayName = null;
         if (imageFile != null) {
             RequestBody imageRequestBody = RequestBody.create(MediaType.parse("image/jpeg"), imageFile);
             imagePart = MultipartBody.Part.createFormData("image", imageFile.getName(), imageRequestBody);
         }
-
-        RequestBody username = RequestBody.create(MediaType.parse("text/plain"), user.getUsername() != null ? user.getUsername() : "");
-        RequestBody password = RequestBody.create(MediaType.parse("text/plain"), user.getPassword() != null ? user.getPassword() : "");
-        RequestBody displayName = RequestBody.create(MediaType.parse("text/plain"), user.getChannelName() != null ? user.getChannelName() : "");
-
-        Call<ApiResponse> call;
-        if (imagePart != null) {
-            call = api.updateUser(user.getId(), imagePart, username, password, displayName);
-        } else {
-            call = api.updateUser(user.getId(), null, username, password, displayName);
+        if (s_username != null){
+            username = RequestBody.create(MediaType.parse("text/plain"), s_username);
         }
-
+        if (s_password != null){
+            password = RequestBody.create(MediaType.parse("text/plain"), s_password);
+        }
+        if (s_displayName != null){
+            displayName = RequestBody.create(MediaType.parse("text/plain"), s_displayName);
+        }
+        Call<ApiResponse> call;
+        call = api.updateUser(user.getId(), imagePart, username, password, displayName);
         call.enqueue(new Callback<ApiResponse>() {
             @Override
             public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
                 if (response.isSuccessful()) {
-                    result.postValue(response.body());
+                    result.setValue(new ApiResponse(true, response.code()));
+                    //result.postValue(response.body());
                 } else {
                     result.postValue(new ApiResponse(false, response.message()));
                 }

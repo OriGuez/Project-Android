@@ -50,14 +50,19 @@ public interface VideoApiService {
                                   @Part("title") RequestBody title,
                                   @Part("description") RequestBody description);
 
+    @Multipart
     @PUT("/api/users/{id}/videos/{pid}")
-    Call<Video> updateVideo(@Path("id") String userId, @Path("pid") String videoId, @Body Video video);
+    Call<ApiResponse> updateVideo(@Path("id") String userId,
+                                  @Path("pid") String videoId,
+                                  @Part("title") RequestBody title,
+                                  @Part("description") RequestBody description,
+                                  @Part MultipartBody.Part image);
 
     @PATCH("/api/users/{id}/videos/{pid}")
     Call<Video> updateVideoPartially(@Path("id") String userId, @Path("pid") String videoId, @Body Video video);
 
     @DELETE("/api/users/{id}/videos/{pid}")
-    Call<Void> deleteVideo(@Path("id") String userId, @Path("pid") String videoId);
+    Call<ApiResponse> deleteVideo(@Path("id") String userId, @Path("pid") String videoId);
 
     // Likes
     @POST("/api/users/{id}/videos/{pid}/likes")

@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
@@ -18,14 +19,18 @@ import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.project_android.MainActivity;
+import com.example.project_android.MyApplication;
 import com.example.project_android.R;
 import com.example.project_android.model.Comment;
+import com.example.project_android.utils.ImageLoader;
 import com.example.project_android.viewModel.CommentsViewModel;
+import com.example.project_android.viewModel.UsersViewModel;
 
 import java.util.List;
 
 public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecyclerViewAdapter.ViewHolder> {
     private CommentsViewModel commentsViewModel;
+    private UsersViewModel usersViewModel;
     private List<Comment> comments;
     private RecyclerView recyclerView;
     private LayoutInflater inflater;
@@ -40,6 +45,7 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
         if (context instanceof ViewModelStoreOwner) {
             ViewModelStoreOwner owner = (ViewModelStoreOwner) context;
             this.commentsViewModel = new ViewModelProvider(owner).get(CommentsViewModel.class);
+            this.usersViewModel = new ViewModelProvider(owner).get(UsersViewModel.class);
         } else {
             throw new IllegalArgumentException("Context must implement ViewModelStoreOwner");
         }
@@ -49,7 +55,7 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = inflater.inflate(R.layout.comment_item, parent, false);
-        return new ViewHolder(view, this, commentsViewModel, comments, recyclerView, context);
+        return new ViewHolder(view, this, commentsViewModel,usersViewModel, comments, recyclerView, context);
     }
 
     @Override
@@ -86,14 +92,16 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
 
         private CommentRecyclerViewAdapter adapter;
         private CommentsViewModel commentsViewModel;
+        private UsersViewModel usersViewModel;
         private List<Comment> comments;
         private RecyclerView recyclerView;
         private Context context;
 
-        public ViewHolder(@NonNull View itemView, CommentRecyclerViewAdapter adapter, CommentsViewModel commentsViewModel, List<Comment> comments, RecyclerView recyclerView, Context context) {
+        public ViewHolder(@NonNull View itemView, CommentRecyclerViewAdapter adapter, CommentsViewModel commentsViewModel,UsersViewModel usersViewModel, List<Comment> comments, RecyclerView recyclerView, Context context) {
             super(itemView);
             this.adapter = adapter;
             this.commentsViewModel = commentsViewModel;
+            this.usersViewModel = usersViewModel;
             this.comments = comments;
             this.recyclerView = recyclerView;
             this.context = context;
@@ -148,13 +156,31 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
                             adapter.notifyItemRemoved(position);
                             adapter.notifyItemRangeChanged(position, comments.size());
                         }
+                        else {
+                            Toast.makeText(context, "error deleting comment", Toast.LENGTH_SHORT).show();
+                        }
                     });
                 }
             });
         }
 
         public void bind(Comment comment) {
-            publisherTextView.setText(comment.getUserId());
+            String publisherID = comment.getUserId();
+            usersViewModel.get(publisherID).observe((LifecycleOwner) context, user ->{
+                if (user != null){
+                    publisherTextView.setText(user.getChannelName());
+                    String baseUrl = MyApplication.getContext().getString(R.string.BaseUrl);
+                    String profilePicPath = user.getImageURI();
+                    if (profilePicPath != null)
+                        profilePicPath = profilePicPath.substring(1);
+                    String profileImageUrl = baseUrl + profilePicPath;
+                    ImageLoader.loadImage(profileImageUrl, profileImageView);
+                }
+                else {
+                    publisherTextView.setText("Unknown");
+                    profileImageView.setImageResource(R.drawable.ic_def_user);
+                }
+            });
             commentContentTextView.setText(comment.getContent());
             if (MainActivity.isDarkMode) {
                 publisherTextView.setTextColor(Color.WHITE);
@@ -165,18 +191,7 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
                 commentContentTextView.setTextColor(Color.BLACK);
                 editCommentEditText.setTextColor(Color.BLACK);
             }
-            profileImageView.setImageResource(R.drawable.ic_def_user);
-
-            String uploaderID = comment.getUserId();
-            Bitmap profilePic = null;
-
-            if (profilePic != null) {
-                profileImageView.setImageBitmap(profilePic);
-            } else {
-                profileImageView.setImageResource(R.drawable.ic_def_user);
-            }
-
-            if (MainActivity.currentUser == null || !MainActivity.currentUser.getId().equals(uploaderID)) {
+            if (MainActivity.currentUser == null || !MainActivity.currentUser.getId().equals(publisherID)) {
                 deleteCommentButton.setVisibility(View.GONE);
                 editCommentButton.setVisibility(View.GONE);
             } else {

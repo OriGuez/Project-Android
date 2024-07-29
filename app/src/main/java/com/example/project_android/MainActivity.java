@@ -37,16 +37,18 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.SearchView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+    private SwipeRefreshLayout swipeRefreshLayout;
+    public static boolean shouldRefresh = false;
     private SharedPreferences sharedPreferences;
     private VideosViewModel viewModel;
     private UsersViewModel usersViewModel;
     public static UserData currentUser;
-    public static List<UserData> userDataList;
     public static List<Video> videoList;
     private RecyclerView recyclerView;
     private SearchView searchView;
@@ -71,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
         usersViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
         sharedPreferences = getApplicationContext().getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE);
         // Initialize views
+        swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
         searchView = findViewById(R.id.searchView);
         searchView.clearFocus();
         youtubeLogo = findViewById(R.id.youtubeLogo);
@@ -82,7 +85,6 @@ public class MainActivity extends AppCompatActivity {
             youtubeLogo.setVisibility(View.VISIBLE);
             return false;
         });
-        userDataList = new ArrayList<>();
         currentUser = null;
         btnToggleDark = findViewById(R.id.btnToggleDark);
         loginButton = findViewById(R.id.LoginMe);
@@ -95,14 +97,7 @@ public class MainActivity extends AppCompatActivity {
         // Observe LiveData from ViewModel
         adapter = new VideoAdapter(this, videoList, "Main");
         // Observe LiveData from ViewModel
-        viewModel.get().observe(this, videos -> {
-            // Update the UI with the new video list
-            if (videos != null) {
-                adapter.updateVideoList(videos);
-            } else {
-                Log.e("MainActivity", "Video list is null");
-            }
-        });
+        loadVideosFromServer();
         recyclerView.setAdapter(adapter);
 
         // Set up profile picture
@@ -167,20 +162,33 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+
+
+
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            // Perform your refresh operation here
+            loadVideosFromServer();
+            swipeRefreshLayout.setRefreshing(false);
+        });
+
+
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         loggedVisibilityLogic();
-        if (searchView !=null) {
+        if (searchView != null) {
             searchView.clearFocus();
             searchView.setQuery("", false);
         }
-//        if (adapter != null) {
-//            adapter.updateVideoList(videoList);
-//        }
-//        searchView.clearFocus();
+        if (shouldRefresh) {
+            loadVideosFromServer();
+            adapter.notifyDataSetChanged();
+            shouldRefresh = false;
+        }
     }
 
     // Method to load video data
@@ -207,17 +215,16 @@ public class MainActivity extends AppCompatActivity {
             if (profilePic != null) {
                 profilePic.setImageResource(R.drawable.ic_def_user);
             }
-        }
-        else {
+        } else {
             profilePic.setEnabled(true);
             loginButton.setVisibility(View.GONE);
             addVideoButton.setVisibility(View.VISIBLE);
             String username = sharedPreferences.getString("username", "none");
-            if (!username.equals("none")){
-                usersViewModel.getUserID(username).observe(this,id ->{
+            if (!username.equals("none")) {
+                usersViewModel.getUserID(username).observe(this, id -> {
                     if (id != null) {
-                        usersViewModel.get(id.getUserID()).observe(this,user ->{
-                            if (user != null){
+                        usersViewModel.get(id.getUserID()).observe(this, user -> {
+                            if (user != null) {
                                 currentUser = user;
                                 String baseUrl = MyApplication.getContext().getString(R.string.BaseUrl);
                                 String profilePicPath = user.getImageURI();
@@ -265,30 +272,6 @@ public class MainActivity extends AppCompatActivity {
         popupMenu.show();
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (userDataList != null) {
-            userDataList.clear();
-        }
-    }
-
-    private void performSearch(String query) {
-        List<Video> filteredList = filter(videoList, query);
-        adapter.updateVideoList(filteredList);
-    }
-
-    private List<Video> filter(List<Video> videos, String query) {
-        query = query.toLowerCase().trim();
-        List<Video> filteredList = new ArrayList<>();
-        for (Video video : videos) {
-            if (video.getTitle().toLowerCase().contains(query)) {
-                filteredList.add(video);
-            }
-        }
-        return filteredList;
-    }
-
     private void applySearchViewColors(SearchView searchView, boolean isDarkMode) {
         int textColor = ContextCompat.getColor(this, isDarkMode ? R.color.search_text_color_dark : R.color.search_text_color_light);
         int iconColor = ContextCompat.getColor(this, isDarkMode ? R.color.white : R.color.black);
@@ -309,5 +292,17 @@ public class MainActivity extends AppCompatActivity {
         EditText searchEditText = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
         searchEditText.setTextColor(textColor);
         searchEditText.setHintTextColor(textColor);
+    }
+
+    private void loadVideosFromServer() {
+        viewModel.get().observe(this, videos -> {
+            // Update the UI with the new video list
+            if (videos != null) {
+                //adapter.clearList();
+                adapter.updateVideoList(videos);
+            } else {
+                Log.e("MainActivity", "Video list is null");
+            }
+        });
     }
 }

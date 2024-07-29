@@ -105,6 +105,9 @@ public class SearchActivity extends AppCompatActivity {
                 return false;
             }
         });
+        youtubeLogo.setOnClickListener(v -> {
+            finish();
+        });
 
         if (isDarkMode) {
             mainLayout.setBackgroundColor(Color.DKGRAY);
