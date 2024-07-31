@@ -164,4 +164,29 @@ public class UserActions {
         });
         return result;
     }
+
+
+    public LiveData<ApiResponse> deleteUser(String userID) {
+        MutableLiveData<ApiResponse> liveData = new MutableLiveData<>();
+        Call<ApiResponse> call = api.deleteUser(userID);
+        call.enqueue(new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                if (response.isSuccessful()) {
+                    liveData.setValue(new ApiResponse(true, response.code()));
+                    Log.d("UserActions", "Response: " + response.body().toString());
+                } else {
+                    liveData.setValue(new ApiResponse(false, response.code()));
+                    Log.e("UserActions", "Error: " + response.errorBody().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse> call, Throwable t) {
+                liveData.setValue(new ApiResponse(false, 500));
+                Log.e("UserActions", "Failure: " + t.getMessage());
+            }
+        });
+        return liveData;
+    }
 }

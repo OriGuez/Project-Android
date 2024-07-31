@@ -73,4 +73,6 @@
     <string name="videoDeleted">הסרטון נמחק בהצלחה</string>
     <string name="videoDeletedFailed">מחיקת הסרטון נכשלה</string>
     <string name="MissingVideoID">זיהוי הסרטון חסר</string>
+    <string name="MyChannel">הערוץ שלי</string>
+    <string name="SignOut">התנתק</string>
 </resources>

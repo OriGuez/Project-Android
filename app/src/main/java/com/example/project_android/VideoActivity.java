@@ -1,11 +1,9 @@
 package com.example.project_android;
 
-import androidx.activity.OnBackPressedCallback;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,12 +11,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.VideoView;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -38,11 +34,7 @@ import com.example.project_android.viewModel.CommentsViewModel;
 import com.example.project_android.viewModel.UsersViewModel;
 import com.example.project_android.viewModel.VideosViewModel;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class VideoActivity extends AppCompatActivity {
@@ -83,6 +75,7 @@ public class VideoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_video);
         vidViewModel = new ViewModelProvider(this).get(VideosViewModel.class);
         commentsViewModel = new ViewModelProvider(this).get(CommentsViewModel.class);
         usersViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
@@ -132,7 +125,6 @@ public class VideoActivity extends AppCompatActivity {
             }
         });
 
-        setContentView(R.layout.activity_video);
         InitializeUiComponents();
         videoPageDarkMode();
         updateVideoDetails();
@@ -255,16 +247,16 @@ public class VideoActivity extends AppCompatActivity {
         if (videoRecyclerView != null) {
             videoRecyclerView.setNestedScrollingEnabled(false);
         }
-
-        profileImageView.setOnClickListener(v -> {
-            if (uploader != null) {
-                Intent intent = new Intent(VideoActivity.this, UserPageActivity.class);
-                intent.putExtra("userID", uploader.getId());
-                startActivity(intent);
-                finish();
-            }
-        });
-
+        if (profileImageView != null) {
+            profileImageView.setOnClickListener(v -> {
+                if (uploader != null) {
+                    Intent intent = new Intent(VideoActivity.this, UserPageActivity.class);
+                    intent.putExtra("userID", uploader.getId());
+                    startActivity(intent);
+                    finish();
+                }
+            });
+        }
 
         if (shareButton != null) {
             shareButton.setOnClickListener(v -> {
@@ -411,18 +403,4 @@ public class VideoActivity extends AppCompatActivity {
                 vidScreenLayout.setBackgroundColor(Color.WHITE);
         }
     }
-
-//    @Override
-//    public void onBackPressed() {
-//        if (mediaController != null) {
-//            videoView.setMediaController(null);
-//            mediaController.hide();
-//            mediaController.setEnabled(false);
-//            mediaController.setActivated(false);
-//            mediaController.setBackgroundColor(Color.TRANSPARENT);
-//            super.onBackPressed();
-//        } else {
-//            super.onBackPressed();
-//        }
-//    }
 }

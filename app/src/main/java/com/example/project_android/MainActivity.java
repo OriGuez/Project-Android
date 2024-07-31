@@ -11,16 +11,12 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
-
 import androidx.appcompat.widget.Toolbar;
-
 import android.graphics.PorterDuff;
-
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.project_android.adapters.VideoAdapter;
 import com.example.project_android.model.UserData;
 import com.example.project_android.model.Video;
@@ -30,15 +26,11 @@ import com.example.project_android.viewModel.VideosViewModel;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.view.View;
 import android.widget.Toast;
-
 import androidx.appcompat.widget.SearchView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -158,12 +150,9 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-//                performSearch(newText);
                 return false;
             }
         });
-
-
 
 
         swipeRefreshLayout.setOnRefreshListener(() -> {
@@ -171,7 +160,6 @@ public class MainActivity extends AppCompatActivity {
             loadVideosFromServer();
             swipeRefreshLayout.setRefreshing(false);
         });
-
 
 
     }
@@ -243,13 +231,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showPopupMenu(View view) {
+        final int MENU_MY_CHANNEL = Menu.FIRST;
+        final int MENU_LOGOUT = Menu.FIRST + 1;
         PopupMenu popupMenu = new PopupMenu(this, view);
-        popupMenu.getMenu().add("My Channel"); // Add "My Channel" menu item
-        popupMenu.getMenu().add(Menu.NONE, R.id.menu_logout, Menu.NONE, "Sign out");
-
+        popupMenu.getMenu().add(Menu.NONE, MENU_MY_CHANNEL, Menu.NONE, getString(R.string.MyChannel)); // Add "My Channel" menu item with ID
+        popupMenu.getMenu().add(Menu.NONE, MENU_LOGOUT, Menu.NONE, getString(R.string.SignOut)); // Add "Sign Out" menu item with ID
         popupMenu.setOnMenuItemClickListener(item -> {
-            switch (item.getTitle().toString()) {
-                case "Sign out":
+            switch (item.getItemId()) {
+                case MENU_LOGOUT:
                     // Handle logout action
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.remove("token");
@@ -258,7 +247,7 @@ public class MainActivity extends AppCompatActivity {
                     currentUser = null; // Logout the user
                     loggedVisibilityLogic(); // Update UI visibility
                     return true;
-                case "My Channel":
+                case MENU_MY_CHANNEL:
                     // Navigate to UserPageActivity
                     Intent intent = new Intent(MainActivity.this, UserPageActivity.class);
                     intent.putExtra("userID", currentUser.getId());

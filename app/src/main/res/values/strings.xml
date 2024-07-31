@@ -73,4 +73,6 @@
     <string name="videoDeleted">Video Deleted Successfully</string>
     <string name="videoDeletedFailed">Failed To Delete Video</string>
     <string name="MissingVideoID">Video ID is Missing</string>
+    <string name="MyChannel">My Channel</string>
+    <string name="SignOut">Sign Out</string>
 </resources>

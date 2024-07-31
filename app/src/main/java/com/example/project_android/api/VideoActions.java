@@ -1,21 +1,12 @@
 package com.example.project_android.api;
 
 import android.util.Log;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-
 import com.example.project_android.model.ApiResponse;
-import com.example.project_android.model.NewVideoModel;
 import com.example.project_android.model.Video;
-
-import java.io.Console;
 import java.io.File;
 import java.util.List;
-
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -130,15 +121,8 @@ public class VideoActions {
             videosData.postValue(null); // Return empty list if query is null or empty
             return videosData;
         }
-        String encodedQuery = null;
-        try {
-            encodedQuery = URLEncoder.encode(query, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            videosData.postValue(null);
-            return videosData;
-        }
-        api.searchVideos(encodedQuery).enqueue(new Callback<List<Video>>() {
+        //the encoding is being done alone
+        api.searchVideos(query).enqueue(new Callback<List<Video>>() {
             @Override
             public void onResponse(Call<List<Video>> call, Response<List<Video>> response) {
                 if (response.isSuccessful() && response.body() != null) {

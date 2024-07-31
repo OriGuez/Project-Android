@@ -2,7 +2,9 @@ package com.example.project_android;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -174,7 +176,7 @@ public class UserPageActivity extends AppCompatActivity {
         if (pageUser != null) {
             channelNameTextView.setText(pageUser.getChannelName());
             usernameTextView.setText(pageUser.getUsername());
-            if (profileImageView != null) {
+            if (profileImageView != null && selectedProfilePicture == null) {
                 String baseUrl = MyApplication.getContext().getString(R.string.BaseUrl);
                 String profilePicPath = pageUser.getImageURI();
                 if (profilePicPath != null)
@@ -254,6 +256,26 @@ public class UserPageActivity extends AppCompatActivity {
                 videoAdapter.updateVideoList(videos);
             }
         });
+    }
+
+    private void deleteUser(String UserId){
+        usersViewModel.delete(UserId).observe(this, response -> {
+            if (response != null && response.isSuccessful()) {
+                // Handle logout action
+                SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.remove("token");
+                editor.remove("username");
+                editor.apply(); // Use commit() if you need synchronous removal
+                MainActivity.currentUser = null; // Logout the user
+                MainActivity.shouldRefresh = true;
+                //exit page
+                finish();
+            } else {
+                Toast.makeText(this, "Failed to Delete profile", Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
 }

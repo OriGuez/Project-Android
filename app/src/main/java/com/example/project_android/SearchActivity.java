@@ -3,44 +3,24 @@ package com.example.project_android;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
-
-import androidx.appcompat.widget.Toolbar;
-
 import android.graphics.PorterDuff;
-
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.project_android.adapters.VideoAdapter;
-import com.example.project_android.model.UserData;
 import com.example.project_android.model.Video;
-import com.example.project_android.utils.ImageLoader;
 import com.example.project_android.viewModel.UsersViewModel;
 import com.example.project_android.viewModel.VideosViewModel;
-import com.google.android.material.imageview.ShapeableImageView;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.appcompat.widget.SearchView;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -101,7 +81,6 @@ public class SearchActivity extends AppCompatActivity {
             }
             @Override
             public boolean onQueryTextChange(String newText) {
-                //performSearch(newText);
                 return false;
             }
         });
@@ -119,7 +98,7 @@ public class SearchActivity extends AppCompatActivity {
     private void performSearch(String query) {
         viewModel.search(query).observe(this, videos -> {
             // Update the UI with the new video list
-            if (videos != null) {
+            if (videos != null && !videos.isEmpty()) {
                 recyclerView.setVisibility(View.VISIBLE);
                 adapter.updateVideoList(videos);
                 noVideosText.setVisibility(View.GONE);
