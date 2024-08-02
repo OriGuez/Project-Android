@@ -36,10 +36,12 @@
                     android:layout_height="36dp"
                     android:contentDescription="@string/youtube_logo"
                     android:src="@drawable/logo" />
+
                 <View
                     android:layout_width="77dp"
                     android:layout_height="48dp"
                     android:layout_weight="1" />
+
                 <androidx.appcompat.widget.SearchView
                     android:id="@+id/searchView"
                     android:layout_width="wrap_content"
@@ -59,10 +61,9 @@
 
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="851dp"
         android:paddingTop="16dp"
         android:paddingBottom="64dp">
 
@@ -82,8 +83,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clipToPadding="false"
-                    android:paddingTop="16dp"
-                    android:paddingBottom="64dp" />
+                    android:paddingTop="42dp"
+                    android:paddingBottom="172dp" />
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
@@ -91,65 +92,71 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/bottomToolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="53dp"
         android:layout_gravity="bottom"
-        android:elevation="4dp"
-        android:background="@color/white">
+        android:background="@color/white"
+        android:elevation="4dp">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingVertical="8dp">
+            android:paddingVertical="8dp"
+            android:paddingTop="16dp">
 
 
             <ImageButton
                 android:id="@+id/btnToggleDark"
-                android:layout_width="51dp"
+                android:layout_width="55dp"
                 android:layout_height="53dp"
                 android:background="@color/material_on_primary_disabled"
                 android:padding="8dp"
+                android:layout_marginTop="1dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/dark_mode" />
 
             <View
                 android:layout_width="7dp"
-                android:layout_height="41dp"
+                android:layout_height="31dp"
                 android:layout_weight="1" />
-
 
 
             <ImageButton
                 android:id="@+id/buttonAddVideo"
-                android:layout_width="51dp"
+                android:layout_width="65dp"
                 android:layout_height="53dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="3dp"
                 android:background="@color/material_on_primary_disabled"
                 android:contentDescription="@string/add_video_button"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/addvid" />
+                android:src="@drawable/add_video" />
 
             <ImageButton
                 android:id="@+id/LoginMe"
-                android:layout_width="51dp"
-                android:layout_height="53dp"
+                android:layout_width="48dp"
+                android:layout_height="46dp"
+                android:layout_marginStart="16dp"
                 android:background="@color/material_on_primary_disabled"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/login" />
+                android:src="@drawable/log_in" />
 
             <View
                 android:layout_width="33dp"
-                android:layout_height="43dp"
+                android:layout_height="33dp"
                 android:layout_weight="1" />
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/publisherProfilePic"
-                android:layout_width="51dp"
-                android:layout_height="53dp"
+                android:layout_width="37dp"
+                android:layout_height="37dp"
+                android:layout_marginEnd="12dp"
                 android:onClick="showPopupMenu"
                 android:scaleType="centerCrop"
-                android:src="@drawable/ic_def_user"
+                android:src="@drawable/user"
                 android:visibility="visible"
                 app:shapeAppearanceOverlay="@style/roundedImageView"
                 tools:visibility="visible" />
@@ -157,7 +164,7 @@
     </androidx.appcompat.widget.Toolbar>
     <View
         android:layout_width="456dp"
-        android:layout_height="8dp"
+        android:layout_height="5dp"
         android:background="@drawable/toolbar_border"
         app:layout_anchor="@+id/bottomToolbar"
         app:layout_anchorGravity="end|top"

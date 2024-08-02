@@ -5,24 +5,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
     <!-- Video Player Section -->
     <LinearLayout
         android:id="@+id/videoContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="@android:color/black"
         android:gravity="center"
         android:orientation="vertical">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="center">
 
             <VideoView
                 android:id="@+id/videoView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_centerInParent="true"
                 android:adjustViewBounds="true" />
         </RelativeLayout>
@@ -31,7 +32,7 @@
     <!-- Scrollable Content Section -->
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -113,7 +114,6 @@
                     android:layout_weight="1"
                     app:srcCompat="?attr/actionModeShareDrawable" />
 
-
                 <ImageButton
                     android:id="@+id/likeButton"
                     android:layout_width="48dp"
@@ -180,7 +180,6 @@
 
                 </RelativeLayout>
 
-
                 <!-- Add Comment EditText -->
                 <EditText
                     android:id="@+id/commentAddText"
@@ -215,8 +214,6 @@
 
             </RelativeLayout>
 
-
         </LinearLayout>
     </ScrollView>
-
 </LinearLayout>

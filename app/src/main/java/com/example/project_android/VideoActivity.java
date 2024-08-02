@@ -1,6 +1,7 @@
 package com.example.project_android;
 
 import androidx.activity.OnBackPressedCallback;
+import java.text.NumberFormat;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -21,6 +22,8 @@ import java.util.Date;
 
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -76,10 +79,11 @@ public class VideoActivity extends AppCompatActivity {
     private RecyclerView videoRecyclerView;
     private Video currentVideo;
     private LinearLayout vidScreenLayout;
+
+    private CardView cardView;
     ImageView profileImageView;
 
     private static final String TAG = "VideoActivity";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -145,7 +149,7 @@ public class VideoActivity extends AppCompatActivity {
 
         if (videoRecyclerView != null) {
             videoRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
-            videoAdapter = new VideoAdapter(this, MainActivity.videoList, "Video");
+            videoAdapter = new VideoAdapter(this, MainActivity.videoList, "Video", false);
             videoRecyclerView.setAdapter(videoAdapter);
         }
     }
@@ -193,7 +197,8 @@ public class VideoActivity extends AppCompatActivity {
             }
         }
         if (viewsTextView != null) {
-            String views = currentVideo.getViews() + " " + MyApplication.getContext().getString(R.string.views);
+            NumberFormat numberFormat = NumberFormat.getInstance();
+            String views = numberFormat.format(currentVideo.getViews()) + " " + MyApplication.getContext().getString(R.string.views) + "   •";
             viewsTextView.setText(views);
         }
         if (publisherTextView != null) {
@@ -222,7 +227,13 @@ public class VideoActivity extends AppCompatActivity {
         String vidPath = baseUrl + path;
 
         videoView.setVideoPath(vidPath);
-        mediaController = new MediaController(this);
+        mediaController = new MediaController(this) {
+            @Override
+            public void show(int timeout) {
+                super.show(1500);
+            }
+        };
+
         mediaController.setAnchorView(videoView);
         videoView.setMediaController(mediaController);
         videoView.start();
@@ -248,6 +259,8 @@ public class VideoActivity extends AppCompatActivity {
         profileImageView = findViewById(R.id.publisherProfilePic);
         CommentSectionTitle = findViewById(R.id.commentsTitleTextView);
         vidScreenLayout = findViewById(R.id.vidLO);
+        cardView = findViewById(R.id.commentsCardView);
+
 
         if (commentsRecycleView != null) {
             commentsRecycleView.setNestedScrollingEnabled(false);
@@ -379,6 +392,7 @@ public class VideoActivity extends AppCompatActivity {
             if (commentAddText != null) {
                 commentAddText.setTextColor(Color.WHITE);
                 commentAddText.setHintTextColor(Color.WHITE);
+                cardView.setCardBackgroundColor(ContextCompat.getColor(this, R.color.backgroundColorDark));
             }
             if (vidScreenLayout != null)
                 vidScreenLayout.setBackgroundColor(Color.DKGRAY);
@@ -407,9 +421,31 @@ public class VideoActivity extends AppCompatActivity {
                 commentAddText.setTextColor(Color.BLACK);
                 commentAddText.setHintTextColor(Color.BLACK);
             }
-            if (vidScreenLayout != null)
+            if (vidScreenLayout != null) {
                 vidScreenLayout.setBackgroundColor(Color.WHITE);
+            }
+
+            cardView.setCardBackgroundColor(ContextCompat.getColor(this, R.color.white));
+
+
         }
+    }
+
+    private String formatNum(int num) {
+        if (num < 1000) {
+            return num + " " ;
+        } else if (num >= 1000 && num < 10000) {
+            return String.format("%.1fk " , num / 1000.0);
+        } else if (num >= 10000 && num < 1000000) {
+            return (num / 1000) + "k ";
+        } else if (num >= 1000000 && num < 10000000) {
+            return String.format("%.1fM ", num / 1000000.0);
+        } else if (num >= 10000000 && num < 1000000000) {
+            return (num / 1000000) + "M ";
+        } else if (num >= 1000000000) {
+            return String.format("%.1fB " , num / 1000000000.0);
+        }
+        return num + " views";
     }
 
 //    @Override

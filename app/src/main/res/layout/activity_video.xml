@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/vidLO"
@@ -9,20 +8,20 @@
     <LinearLayout
         android:id="@+id/videoContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="200dp"
         android:background="@android:color/black"
         android:gravity="center"
         android:orientation="vertical">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="center">
 
             <VideoView
                 android:id="@+id/videoView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_centerInParent="true"
                 android:adjustViewBounds="true" />
         </RelativeLayout>
@@ -82,42 +81,80 @@
                 android:text="@string/save_changes"
                 android:visibility="gone" />
 
-            <!-- Date TextView -->
-            <TextView
-                android:id="@+id/dateTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:text="@string/date"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/viewsTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:text="Views"
-                android:textSize="16sp" />
-
-            <!-- Share and Like Buttons -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="77dp"
+                android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
-                <ImageButton
-                    android:id="@+id/shareButton"
+                <TextView
+                    android:id="@+id/viewsTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    app:srcCompat="?attr/actionModeShareDrawable" />
+                    android:paddingStart="16dp"
+                    android:paddingEnd="8dp"
+                    android:paddingBottom="4dp"
+                    android:text="Views"
+                    android:textSize="16sp" />
 
+                <TextView
+                    android:id="@+id/dateTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="4dp"
+                    android:text="@string/date"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <!-- Publisher and Like/Share Section -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/publisherProfilePic"
+                    android:layout_width="40sp"
+                    android:layout_height="40sp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginEnd="3dp"
+                    android:layout_marginStart="0dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_def_user"
+                    app:shapeAppearanceOverlay="@style/roundedImageView" />
+
+                <TextView
+                    android:id="@+id/publisherTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/publisherProfilePic"
+                    android:layout_centerVertical="true"
+                    android:padding="1dp"
+                    android:text="@string/publisher"
+                    android:textDirection="locale"
+                    android:textSize="16sp" />
+
+                <ImageButton
+                    android:id="@+id/shareButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    app:srcCompat="?attr/actionModeShareDrawable" />
 
                 <ImageButton
                     android:id="@+id/likeButton"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
+                    android:layout_toStartOf="@id/shareButton"
+                    android:layout_centerVertical="true"
                     android:adjustViewBounds="true"
                     android:scaleType="fitCenter"
                     app:srcCompat="@drawable/like" />
@@ -126,79 +163,69 @@
                     android:id="@+id/likeText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_toStartOf="@id/likeButton"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="8dp"
                     android:text="@string/like" />
-            </LinearLayout>
+            </RelativeLayout>
 
-            <LinearLayout
+            <!-- Comments Section with Frame -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/commentsCardView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical">
+                android:layout_margin="16dp"
+                app:cardCornerRadius="8dp"
+                android:background="?android:attr/colorBackground"
+                app:cardElevation="4dp">
 
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/publisherProfilePic"
-                    android:layout_width="40sp"
-                    android:layout_height="40sp"
-                    android:layout_centerInParent="true"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ic_def_user"
-                    app:shapeAppearanceOverlay="@style/roundedImageView" />
-                <!-- Publisher TextView -->
-                <TextView
-                    android:id="@+id/publisherTextView"
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="1dp"
-                    android:text="@string/publisher"
-                    android:textDirection="locale"
-                    android:textSize="16sp" />
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <!-- Comments Title TextView -->
-                <TextView
-                    android:id="@+id/commentsTitleTextView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:text="@string/comments"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/commentsRecyclerView"
+                    <!-- Comments Title TextView -->
+                    <TextView
+                        android:id="@+id/commentsTitleTextView"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="8dp"
+                        android:text="@string/comments"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
 
-                </RelativeLayout>
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
 
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/commentsRecyclerView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+                    </RelativeLayout>
 
-                <!-- Add Comment EditText -->
-                <EditText
-                    android:id="@+id/commentAddText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/add_a_comment"
-                    android:inputType="textMultiLine"
-                    android:padding="16dp" />
-                <!-- Add Comment Button -->
-                <Button
-                    android:id="@+id/addCommentButton"
-                    android:layout_width="347dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_margin="16dp"
-                    android:text="@string/add_comment" />
+                    <!-- Add Comment EditText -->
+                    <EditText
+                        android:id="@+id/commentAddText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/add_a_comment"
+                        android:inputType="textMultiLine"
+                        android:padding="5dp" />
 
-            </LinearLayout>
+                    <!-- Add Comment Button -->
+                    <Button
+                        android:id="@+id/addCommentButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:layout_marginTop="1dp"
+                        android:text="@string/add_comment" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -212,11 +239,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:clipToPadding="false" />
-
             </RelativeLayout>
-
-
         </LinearLayout>
     </ScrollView>
-
 </LinearLayout>

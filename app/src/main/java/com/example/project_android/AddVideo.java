@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 import androidx.annotation.NonNull;
@@ -37,7 +38,7 @@ public class AddVideo extends AppCompatActivity {
     private ProgressBar progressBar;
     private EditText editVideoTitle;
     private EditText editVideoDescription;
-    private ImageButton uploadVidFromGallery;
+    private TextView uploadVidFromGallery;
     private ImageView thumbnailView;
     private Button buttonUploadThumbnail;
     private Button buttonSubmitVideo;
