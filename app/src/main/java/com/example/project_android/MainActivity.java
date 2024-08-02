@@ -200,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
         final int MENU_LOGOUT = Menu.FIRST + 1;
         Context wrapper = new ContextThemeWrapper(this, isDarkMode ? R.style.DarkPopupMenu : R.style.LightPopupMenu);
         PopupMenu popupMenu = new PopupMenu(wrapper, view);
-        PopupMenu popupMenu = new PopupMenu(this, view);
+//        PopupMenu popupMenu = new PopupMenu(this, view);
         popupMenu.getMenu().add(Menu.NONE, MENU_MY_CHANNEL, Menu.NONE, getString(R.string.MyChannel)); // Add "My Channel" menu item with ID
         popupMenu.getMenu().add(Menu.NONE, MENU_LOGOUT, Menu.NONE, getString(R.string.SignOut)); // Add "Sign Out" menu item with ID
         popupMenu.setOnMenuItemClickListener(item -> {
