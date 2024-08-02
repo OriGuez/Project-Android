@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.project_android.model.ApiResponse;
-import com.example.project_android.model.NewVideoModel;
 import com.example.project_android.model.Video;
 import com.example.project_android.repository.VideoRepository;
 
@@ -14,15 +13,13 @@ public class VideosViewModel extends ViewModel {
     private VideoRepository repository;
     private LiveData<List<Video>> videos;
 
-    private LiveData<Video> video;
-
     public VideosViewModel() {
-        repository = new VideoRepository();
-        //videos = repository.getAll();
+        repository = VideoRepository.getInstance();
+        videos = repository.getAll();
     }
 
     public LiveData<List<Video>> get() {
-        return repository.getAll();
+        return videos;
         //return videos;
     }
     public LiveData<Video> get(String videoID) {
@@ -51,14 +48,9 @@ public class VideosViewModel extends ViewModel {
         return repository.update(UserID, videoID,updatedVideo);
     }
 
-    public LiveData<ApiResponse> delete(String UserID, String videoID) {
-        return repository.delete(UserID, videoID);
+    public LiveData<ApiResponse> delete(String userID, String videoID) {
+        return repository.delete(userID, videoID);
     }
-//    public void add(Video video) { repository.add(video); }
-//
-//    public void delete(Video video) { repository.delete(video); }
-//
-    //public void reload() { this.videos = repository.getAll(); }
 
-
+    public void reload() { repository.reload(); }
 }

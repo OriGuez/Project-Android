@@ -34,4 +34,8 @@ public class UserRepository {
         return api.updateUser(user);
     }
 
+    public LiveData<ApiResponse> delete(String userID) {
+        return api.deleteUser(userID);
+    }
+
 }

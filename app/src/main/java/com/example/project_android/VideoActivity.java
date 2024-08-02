@@ -6,21 +6,19 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MotionEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.VideoView;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
@@ -28,27 +26,24 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.widget.MediaController;
-
 import com.example.project_android.adapters.CommentRecyclerViewAdapter;
 import com.example.project_android.adapters.VideoAdapter;
 import com.example.project_android.model.Comment;
 import com.example.project_android.model.UserData;
 import com.example.project_android.model.Video;
 import com.example.project_android.utils.ImageLoader;
+import com.example.project_android.utils.LoadingDialogUtility;
 import com.example.project_android.viewModel.CommentsViewModel;
 import com.example.project_android.viewModel.UsersViewModel;
 import com.example.project_android.viewModel.VideosViewModel;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class VideoActivity extends AppCompatActivity {
+    private LoadingDialogUtility loadingDialogUtility;
+    private ProgressBar progressBar;
+    private TextView loadingText;
     MediaController mediaController = null;
     private boolean isLiked = false;
     private VideosViewModel vidViewModel;
@@ -79,7 +74,6 @@ public class VideoActivity extends AppCompatActivity {
     private RecyclerView videoRecyclerView;
     private Video currentVideo;
     private LinearLayout vidScreenLayout;
-
     private CardView cardView;
     ImageView profileImageView;
 
@@ -87,23 +81,23 @@ public class VideoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_video);
         vidViewModel = new ViewModelProvider(this).get(VideosViewModel.class);
         commentsViewModel = new ViewModelProvider(this).get(CommentsViewModel.class);
         usersViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
+        loadingDialogUtility = new LoadingDialogUtility(this);
         // Retrieve the ID from the intent's extras
         videoID = getIntent().getStringExtra("videoID");
-        if (currentVideo == null)
-            currentVideo = MainActivity.videoList.get(0);
         Log.d(TAG, "Received videoID: " + videoID);
-
         vidViewModel.get(videoID).observe(this, video -> {
             // Update the UI with the new video list
             if (video != null) {
+                loadingDialogUtility.hide();
                 currentVideo = video;
                 List<String> likedList = currentVideo.getWhoLikedList();
                 if (likedList != null && MainActivity.currentUser != null && likedList.contains(MainActivity.currentUser.getId()))
                     isLiked = true;
-
+                updateVideoDetails();
                 usersViewModel.get(currentVideo.getPublisher()).observe(this, user -> {
                     if (user != null) {
                         uploader = user;
@@ -113,20 +107,16 @@ public class VideoActivity extends AppCompatActivity {
                     }
                 });
             } else {
-                currentVideo = MainActivity.videoList.get(0);
-                //currentVideo = null;
-                Log.e("ac", "Video list is null");
+                loadingDialogUtility.hide();
+                Log.e("ac", "Video in page is null");
             }
         });
-
         commentsViewModel.get(videoID).observe(this, comments -> {
             if (comments != null) {
                 recycleAdapter.updateCommentsList(comments);
             }
         });
-
         // Observe LiveData from ViewModel (videos for the recycler below)
-
         vidViewModel.get().observe(this, videos -> {
             if (videos != null) {
                 MainActivity.videoList = videos;
@@ -135,39 +125,20 @@ public class VideoActivity extends AppCompatActivity {
                 Log.e("ac", "Video list is null");
             }
         });
-
-        setContentView(R.layout.activity_video);
         InitializeUiComponents();
         videoPageDarkMode();
         updateVideoDetails();
-
         if (commentsRecycleView != null) {
             recycleAdapter = new CommentRecyclerViewAdapter(this, vidCommentList, commentsRecycleView);
             commentsRecycleView.setLayoutManager(new LinearLayoutManager(this));
             commentsRecycleView.setAdapter(recycleAdapter);
         }
-
         if (videoRecyclerView != null) {
             videoRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
             videoAdapter = new VideoAdapter(this, MainActivity.videoList, "Video", false);
             videoRecyclerView.setAdapter(videoAdapter);
         }
     }
-
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        if (currentVideo==null){
-//            currentVideo= MainActivity.videoList.get(0);
-//        }
-//    }
-
-    private void incrementViewCount(Video video) {
-        video.setViews((video.getViews() + 1));
-        updateVideoDetails();
-//        vidViewModel.update(video);
-    }
-
     private void updateLikeButtonState() {
         if (likeButton == null || likeText == null) return;
         if (isLiked) {
@@ -178,8 +149,14 @@ public class VideoActivity extends AppCompatActivity {
         likeButton.setImageDrawable(getResources().getDrawable(R.drawable.like));
         likeText.setText(R.string.like);
     }
-
     private void updateVideoDetails() {
+        if (currentVideo == null)
+        {
+            // Show loading indicator
+            if (loadingDialogUtility != null)
+                loadingDialogUtility.show();
+            return;
+        }
         if (titleTextView != null) {
             titleTextView.setText(currentVideo.getTitle());
         }
@@ -219,7 +196,6 @@ public class VideoActivity extends AppCompatActivity {
 
         }
         updateLikeButtonState();
-
         String baseUrl = MyApplication.getContext().getString(R.string.BaseUrl);
         String path = currentVideo.getUrl();
         if (path != null)
@@ -233,13 +209,14 @@ public class VideoActivity extends AppCompatActivity {
                 super.show(1500);
             }
         };
-
         mediaController.setAnchorView(videoView);
         videoView.setMediaController(mediaController);
         videoView.start();
     }
 
     private void InitializeUiComponents() {
+        progressBar = findViewById(R.id.progressBar);
+        loadingText = findViewById(R.id.loadingText);
         videoView = findViewById(R.id.videoView);
         titleTextView = findViewById(R.id.titleTextView);
         descriptionTextView = findViewById(R.id.descriptionTextView);
@@ -260,25 +237,22 @@ public class VideoActivity extends AppCompatActivity {
         CommentSectionTitle = findViewById(R.id.commentsTitleTextView);
         vidScreenLayout = findViewById(R.id.vidLO);
         cardView = findViewById(R.id.commentsCardView);
-
-
         if (commentsRecycleView != null) {
             commentsRecycleView.setNestedScrollingEnabled(false);
         }
         if (videoRecyclerView != null) {
             videoRecyclerView.setNestedScrollingEnabled(false);
         }
-
-        profileImageView.setOnClickListener(v -> {
-            if (uploader != null) {
-                Intent intent = new Intent(VideoActivity.this, UserPageActivity.class);
-                intent.putExtra("userID", uploader.getId());
-                startActivity(intent);
-                finish();
-            }
-        });
-
-
+        if (profileImageView != null) {
+            profileImageView.setOnClickListener(v -> {
+                if (uploader != null) {
+                    Intent intent = new Intent(VideoActivity.this, UserPageActivity.class);
+                    intent.putExtra("userID", uploader.getId());
+                    startActivity(intent);
+                    finish();
+                }
+            });
+        }
         if (shareButton != null) {
             shareButton.setOnClickListener(v -> {
                 String textToShare = currentVideo.getUrl();
@@ -292,7 +266,6 @@ public class VideoActivity extends AppCompatActivity {
                 }
             });
         }
-
         // Check if the view exists before interacting with it
         if (editTitleEditText != null) {
             editTitleEditText.setVisibility(View.GONE);
@@ -303,8 +276,6 @@ public class VideoActivity extends AppCompatActivity {
         if (saveButton != null) {
             saveButton.setVisibility(View.GONE);
         }
-
-
         if (MainActivity.currentUser == null) {
             if (addComment != null) {
                 addComment.setVisibility(View.GONE);
@@ -318,11 +289,7 @@ public class VideoActivity extends AppCompatActivity {
             if (likeText != null) {
                 likeText.setVisibility(View.GONE);
             }
-
-        } else {
-//            updateLikeButton(likeButton, likeText);
         }
-
         if (addComment != null) {
             addComment.setOnClickListener(v -> {
                 String commentText = commentAddText.getText().toString().trim();
@@ -338,7 +305,6 @@ public class VideoActivity extends AppCompatActivity {
                 }
             });
         }
-
         if (likeButton != null) {
             likeButton.setOnClickListener(v -> {
                 //if not liked we want to like
@@ -366,7 +332,6 @@ public class VideoActivity extends AppCompatActivity {
             });
         }
     }
-
     private void videoPageDarkMode() {
         if (MainActivity.isDarkMode) {
             if (titleTextView != null)
@@ -424,13 +389,9 @@ public class VideoActivity extends AppCompatActivity {
             if (vidScreenLayout != null) {
                 vidScreenLayout.setBackgroundColor(Color.WHITE);
             }
-
             cardView.setCardBackgroundColor(ContextCompat.getColor(this, R.color.white));
-
-
         }
     }
-
     private String formatNum(int num) {
         if (num < 1000) {
             return num + " " ;
@@ -447,18 +408,3 @@ public class VideoActivity extends AppCompatActivity {
         }
         return num + " views";
     }
-
-//    @Override
-//    public void onBackPressed() {
-//        if (mediaController != null) {
-//            videoView.setMediaController(null);
-//            mediaController.hide();
-//            mediaController.setEnabled(false);
-//            mediaController.setActivated(false);
-//            mediaController.setBackgroundColor(Color.TRANSPARENT);
-//            super.onBackPressed();
-//        } else {
-//            super.onBackPressed();
-//        }
-//    }
-}

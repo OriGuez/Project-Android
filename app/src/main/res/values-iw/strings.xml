@@ -27,7 +27,7 @@
     <string name="video_description">תיאור הסרטון</string>
     <string name="videotitle">כותרת הסרטון</string>
     <string name="add_comment">הוסף תגובה</string>
-    <string name="add_a_comment">הוסף תגובה...</string>
+    <string name="add_a_comment">הוסף תגובה…</string>
     <string name="comments">תגובות</string>
     <string name="publisher">הועלה על ידי</string>
     <string name="date">תאריך</string>
@@ -73,11 +73,14 @@
     <string name="videoDeleted">הסרטון נמחק בהצלחה</string>
     <string name="videoDeletedFailed">מחיקת הסרטון נכשלה</string>
     <string name="MissingVideoID">זיהוי הסרטון חסר</string>
+    <string name="MyChannel">הערוץ שלי</string>
+    <string name="SignOut">התנתק</string>
+    <string name="loading_please_wait">טוען…</string>
+    <string name="na_date">תאריך לא ידוע</string>
     <string name="noVideosFound"> לא נמצאו סרטונים</string>
     <string name="searchResults">תוצאות החיפוש עבור \"%1$s\": </string>
     <string name="delete_user">מחק משתמש</string>
     <string name="sure_delete_user">האם אתה בטוח שברצונך למחוק את המשתמש?</string>
     <string name="userDeleted">המשתמש נמחק בהצלחה</string>
     <string name="userDeletedFailed">מחיקת המשתמש נכשלה</string>
-
 </resources>

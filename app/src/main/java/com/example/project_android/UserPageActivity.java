@@ -2,8 +2,10 @@ package com.example.project_android;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -16,7 +18,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -24,21 +25,21 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.project_android.adapters.VideoAdapter;
 import com.example.project_android.model.UserData;
 import com.example.project_android.model.Video;
 import com.example.project_android.utils.FileUtils;
 import com.example.project_android.utils.ImageLoader;
+import com.example.project_android.utils.LoadingDialogUtility;
 import com.example.project_android.viewModel.UsersViewModel;
 import com.example.project_android.viewModel.VideosViewModel;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class UserPageActivity extends AppCompatActivity {
+    private LoadingDialogUtility loadingDialogUtility;
     public static boolean shouldRefresh = false;
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final int PICK_CAMERA_REQUEST = 2;
@@ -64,7 +65,6 @@ public class UserPageActivity extends AppCompatActivity {
     private boolean isLoggedUsersPage = false;
     private String userID;
     private TextView noVideosFoundText;
-
     private List<Video> userVideos = new ArrayList<>();
 
     @SuppressLint("MissingInflatedId")
@@ -74,16 +74,19 @@ public class UserPageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_user_page);
         usersViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
         videosViewModel = new ViewModelProvider(this).get(VideosViewModel.class);
+        loadingDialogUtility = new LoadingDialogUtility(this);
+        loadingDialogUtility.show();
         initViews();
         // Retrieve the current user data
         userID = getIntent().getStringExtra("userID");
-        if (MainActivity.currentUser != null && userID.equals(MainActivity.currentUser.getId()))
+        if (MainActivity.currentUser != null && userID != null && userID.equals(MainActivity.currentUser.getId()))
             isLoggedUsersPage = true;
         usersViewModel.get(userID).observe(this, user -> {
             if (user != null) {
                 pageUser = user;
                 updatePageUser();
                 getUserVideos(userID);
+                loadingDialogUtility.hide();
             }
         });
 
@@ -97,7 +100,6 @@ public class UserPageActivity extends AppCompatActivity {
             editProfileButton.setVisibility(View.GONE);
             deleteProfileButton.setVisibility(View.GONE);
         }
-
         videoRecyclerView.setAdapter(videoAdapter);
         editProfileButton.setOnClickListener(v -> enterEditMode());
         saveProfileButton.setOnClickListener(v -> saveChanges());
@@ -106,8 +108,6 @@ public class UserPageActivity extends AppCompatActivity {
         takePictureCameraButton.setOnClickListener(v -> openCamera());
         toggleImageButtons.setOnClickListener(v -> toggleButtonsVisibility());
     }
-
-
 
     @Override
     protected void onResume() {
@@ -182,7 +182,7 @@ public class UserPageActivity extends AppCompatActivity {
         if (pageUser != null) {
             channelNameTextView.setText(pageUser.getChannelName());
             usernameTextView.setText(pageUser.getUsername());
-            if (profileImageView != null) {
+            if (profileImageView != null && selectedProfilePicture == null) {
                 String baseUrl = MyApplication.getContext().getString(R.string.BaseUrl);
                 String profilePicPath = pageUser.getImageURI();
                 if (profilePicPath != null && selectedProfilePicture == null)
@@ -192,7 +192,6 @@ public class UserPageActivity extends AppCompatActivity {
             }
         }
     }
-
 
     private void initViews() {
         profileImageView = findViewById(R.id.publisherProfilePic);
@@ -208,7 +207,6 @@ public class UserPageActivity extends AppCompatActivity {
         takePictureCameraButton = findViewById(R.id.takePicture);
         toggleImageButtons = findViewById(R.id.toggleImageButtons);
         noVideosFoundText = findViewById(R.id.noVideosFoundText);
-
     }
 
     private void saveChanges() {
@@ -271,8 +269,6 @@ public class UserPageActivity extends AppCompatActivity {
                 .show();
     }
 
-
-
     private void getUserVideos(String userID) {
         videosViewModel.getUserVideos(userID).observe(this, videos -> {
             if (videos != null && !videos.isEmpty()) {
@@ -287,4 +283,25 @@ public class UserPageActivity extends AppCompatActivity {
         });
     }
 
+    private void deleteUser(String UserId) {
+        usersViewModel.delete(UserId).observe(this, response -> {
+            if (response != null && response.isSuccessful()) {
+                // Handle logout action
+                SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.remove("token");
+                editor.remove("username");
+                editor.apply(); // Use commit() if you need synchronous removal
+                MainActivity.currentUser = null; // Logout the user
+                MainActivity.shouldRefresh = true;
+                //exit to mainActivity
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+                MainActivity.shouldRefresh = true;
+            } else {
+                Toast.makeText(this, "Failed to Delete profile", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 }

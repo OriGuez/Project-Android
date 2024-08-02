@@ -5,9 +5,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.project_android.model.ApiResponse;
 import com.example.project_android.model.Comment;
-import com.example.project_android.model.Video;
 import com.example.project_android.repository.CommentRepository;
-import com.example.project_android.repository.VideoRepository;
 
 import java.util.List;
 

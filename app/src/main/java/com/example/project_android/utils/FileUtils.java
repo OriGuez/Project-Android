@@ -3,6 +3,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 
+import com.example.project_android.MyApplication;
+import com.example.project_android.R;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -47,5 +50,12 @@ public class FileUtils {
         fos.close();
 
         return file;
+    }
+
+    public static String combineAbsPath(String localPath){
+        String baseUrl = MyApplication.getContext().getString(R.string.BaseUrl);
+        if (localPath != null)
+            localPath = localPath.substring(1);
+        return (baseUrl + localPath);
     }
 }

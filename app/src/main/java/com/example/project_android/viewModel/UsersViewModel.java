@@ -9,7 +9,6 @@ import com.example.project_android.model.TokenResponse;
 import com.example.project_android.model.UserData;
 import com.example.project_android.model.UserID;
 import com.example.project_android.repository.UserRepository;
-import com.example.project_android.repository.VideoRepository;
 
 public class UsersViewModel extends ViewModel {
     private UserRepository repository;
@@ -32,5 +31,8 @@ public class UsersViewModel extends ViewModel {
     }
     public LiveData<ApiResponse> update(UserData user) {
         return repository.update(user);
+    }
+    public LiveData<ApiResponse> delete(String userID) {
+        return repository.delete(userID);
     }
 }

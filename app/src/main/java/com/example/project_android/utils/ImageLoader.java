@@ -44,7 +44,10 @@ public class ImageLoader {
             connection.setDoInput(true);
             connection.connect();
             InputStream input = connection.getInputStream();
-            return BitmapFactory.decodeStream(input);
+            Bitmap bmp = BitmapFactory.decodeStream(input);
+            input.close();
+            //connection.disconnect();
+            return bmp;
         }
     }
 }

@@ -13,18 +13,14 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
-
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.Toolbar;
-
 import android.graphics.PorterDuff;
-
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.project_android.adapters.VideoAdapter;
 import com.example.project_android.model.UserData;
 import com.example.project_android.model.Video;
@@ -32,22 +28,17 @@ import com.example.project_android.utils.ImageLoader;
 import com.example.project_android.viewModel.UsersViewModel;
 import com.example.project_android.viewModel.VideosViewModel;
 import com.google.android.material.imageview.ShapeableImageView;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.widget.SearchView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+    private static MainActivity instance;
     private SwipeRefreshLayout swipeRefreshLayout;
     public static boolean shouldRefresh = false;
     private SharedPreferences sharedPreferences;
@@ -64,21 +55,21 @@ public class MainActivity extends AppCompatActivity {
     private ImageView youtubeLogo;
     private Toolbar topMenu;
     private Toolbar bottomToolbar;
-
     private VideoAdapter adapter;
     private androidx.coordinatorlayout.widget.CoordinatorLayout mainLayout;
     public static boolean isDarkMode = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        instance = this;
         super.onCreate(savedInstanceState);
+        videoList = new ArrayList<>();
         sharedPreferences = getApplicationContext().getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE);
         isDarkMode = sharedPreferences.getBoolean("isDarkMode", false); // Retrieve dark mode preference
-        videoList = loadVideoData();
         setContentView(R.layout.activity_main);
         viewModel = new ViewModelProvider(this).get(VideosViewModel.class);
+        viewModel.reload();
         usersViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
-
         // Initialize views
         swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
         searchView = findViewById(R.id.searchView);
@@ -86,7 +77,6 @@ public class MainActivity extends AppCompatActivity {
         youtubeLogo = findViewById(R.id.youtubeLogo);
         applySearchViewColors(searchView, isDarkMode);
 //        updateTextColors(isDarkMode);
-
         // Set SearchView listeners to hide/show the logo
         searchView.setOnSearchClickListener(v -> youtubeLogo.setVisibility(View.GONE));
         searchView.setOnCloseListener(() -> {
@@ -105,16 +95,13 @@ public class MainActivity extends AppCompatActivity {
         // Observe LiveData from ViewModel
         adapter = new VideoAdapter(this, videoList, "Main", false);
         // Observe LiveData from ViewModel
-        loadVideosFromServer();
+        loadVideos();
         recyclerView.setAdapter(adapter);
-
         // Set up profile picture
         profilePic = findViewById(R.id.publisherProfilePic);
-        loggedVisibilityLogic();
-
+        //loggedVisibilityLogic();
         // Apply dark mode settings
         applyDarkModeSettings(isDarkMode);
-
         // Set OnClickListener for login button
         loginButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
@@ -133,10 +120,17 @@ public class MainActivity extends AppCompatActivity {
         // Set OnClickListener for add video button
         addVideoButton.setOnClickListener(v -> {
             if (currentUser != null) {
-                Intent intent = new Intent(MainActivity.this, AddVideo.class);
+                Intent intent = new Intent(this, AddVideo.class);
                 startActivity(intent);
             } else {
-                Toast.makeText(MainActivity.this, "You must be logged in to add a video.", Toast.LENGTH_SHORT).show();
+                loadUser();
+                if (currentUser == null) {
+                    Toast.makeText(this, "Can't Enter Add Video Page", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Intent intent = new Intent(this, AddVideo.class);
+                    startActivity(intent);
+                }
             }
         });
         // Click Listener for publisherProfilePic
@@ -152,17 +146,14 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             }
-
             @Override
             public boolean onQueryTextChange(String newText) {
-//                performSearch(newText);
                 return false;
             }
         });
-
         swipeRefreshLayout.setOnRefreshListener(() -> {
             // Perform your refresh operation here
-            loadVideosFromServer();
+            viewModel.reload();
             swipeRefreshLayout.setRefreshing(false);
         });
     }
@@ -176,23 +167,9 @@ public class MainActivity extends AppCompatActivity {
             searchView.setQuery("", false);
         }
         if (shouldRefresh) {
-            loadVideosFromServer();
-            adapter.notifyDataSetChanged();
+            viewModel.reload();
             shouldRefresh = false;
         }
-    }
-
-    // Method to load video data
-    private List<Video> loadVideoData() {
-        List<Video> videos = new ArrayList<>();
-        String jsonString = JsonUtils.loadJSONFromAsset(this, "vidDB.json");
-        if (jsonString != null) {
-            Gson gson = new Gson();
-            java.lang.reflect.Type videoListType = new TypeToken<List<Video>>() {
-            }.getType();
-            videos = gson.fromJson(jsonString, videoListType);
-        }
-        return videos;
     }
 
     private void loggedVisibilityLogic() {
@@ -214,39 +191,21 @@ public class MainActivity extends AppCompatActivity {
             profilePic.setEnabled(true);
             loginButton.setVisibility(View.GONE);
             addVideoButton.setVisibility(View.VISIBLE);
-            String username = sharedPreferences.getString("username", "none");
-            if (!username.equals("none")) {
-                usersViewModel.getUserID(username).observe(this, id -> {
-                    if (id != null) {
-                        usersViewModel.get(id.getUserID()).observe(this, user -> {
-                            if (user != null) {
-                                currentUser = user;
-                                String baseUrl = MyApplication.getContext().getString(R.string.BaseUrl);
-                                String profilePicPath = user.getImageURI();
-                                if (profilePicPath != null)
-                                    profilePicPath = profilePicPath.substring(1);
-                                String profileImageUrl = baseUrl + profilePicPath;
-                                ImageLoader.loadImage(profileImageUrl, profilePic);
-                            }
-                        });
-                    } else {
-                        Log.e("MainActivity", "id is null");
-                    }
-                });
-            }
+            loadUser();
         }
     }
 
     public void showPopupMenu(View view) {
+        final int MENU_MY_CHANNEL = Menu.FIRST;
+        final int MENU_LOGOUT = Menu.FIRST + 1;
         Context wrapper = new ContextThemeWrapper(this, isDarkMode ? R.style.DarkPopupMenu : R.style.LightPopupMenu);
-
         PopupMenu popupMenu = new PopupMenu(wrapper, view);
-        popupMenu.getMenu().add("My Channel"); // Add "My Channel" menu item
-        popupMenu.getMenu().add(Menu.NONE, R.id.menu_logout, Menu.NONE, "Sign out");
-
+        PopupMenu popupMenu = new PopupMenu(this, view);
+        popupMenu.getMenu().add(Menu.NONE, MENU_MY_CHANNEL, Menu.NONE, getString(R.string.MyChannel)); // Add "My Channel" menu item with ID
+        popupMenu.getMenu().add(Menu.NONE, MENU_LOGOUT, Menu.NONE, getString(R.string.SignOut)); // Add "Sign Out" menu item with ID
         popupMenu.setOnMenuItemClickListener(item -> {
-            switch (item.getTitle().toString()) {
-                case "Sign out":
+            switch (item.getItemId()) {
+                case MENU_LOGOUT:
                     // Handle logout action
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.remove("token");
@@ -260,7 +219,14 @@ public class MainActivity extends AppCompatActivity {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                     recreate();
                     return true;
-                case "My Channel":
+                case MENU_MY_CHANNEL:
+                    if (currentUser == null) {
+                        loadUser();
+                        if (currentUser == null) {
+                            Toast.makeText(this, "Can't Enter User Page", Toast.LENGTH_SHORT).show();
+                            return true;
+                        }
+                    }
                     // Navigate to UserPageActivity
                     Intent intent = new Intent(MainActivity.this, UserPageActivity.class);
                     intent.putExtra("userID", currentUser.getId());
@@ -273,7 +239,6 @@ public class MainActivity extends AppCompatActivity {
         });
         popupMenu.show();
     }
-
     private void applySearchViewColors(SearchView searchView, boolean isDarkMode) {
         int textColor = ContextCompat.getColor(this, isDarkMode ? R.color.search_text_color_dark : R.color.search_text_color_light);
         int iconColor = ContextCompat.getColor(this, isDarkMode ? R.color.white : R.color.black);
@@ -295,17 +260,40 @@ public class MainActivity extends AppCompatActivity {
         searchEditText.setTextColor(textColor);
         searchEditText.setHintTextColor(textColor);
     }
-
-    private void loadVideosFromServer() {
+    private void loadVideos() {
         viewModel.get().observe(this, videos -> {
             // Update the UI with the new video list
-            if (videos != null) {
-                //adapter.clearList();
+            if (videos != null && !videos.isEmpty()) {
                 adapter.updateVideoList(videos);
             } else {
                 Log.e("MainActivity", "Video list is null");
             }
         });
+    }
+    private void loadUser() {
+        String username = sharedPreferences.getString("username", "none");
+        if (!username.equals("none")) {
+            usersViewModel.getUserID(username).observe(this, id -> {
+                if (id != null) {
+                    usersViewModel.get(id.getUserID()).observe(this, user -> {
+                        if (user != null) {
+                            currentUser = user;
+                            String baseUrl = MyApplication.getContext().getString(R.string.BaseUrl);
+                            String profilePicPath = user.getImageURI();
+                            if (profilePicPath != null)
+                                profilePicPath = profilePicPath.substring(1);
+                            String profileImageUrl = baseUrl + profilePicPath;
+                            ImageLoader.loadImage(profileImageUrl, profilePic);
+                        }
+                    });
+                } else {
+                    Log.e("MainActivity", "id is null");
+                }
+            });
+        }
+    }
+    public static MainActivity getInstance() {
+        return instance;
     }
 
     private void updateTextColors(boolean isDarkMode) {
@@ -331,23 +319,17 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-
     private void applyDarkModeSettings(boolean isDarkMode) {
         int backgroundColor = isDarkMode ? Color.DKGRAY : Color.WHITE;
         int textColor = isDarkMode ? Color.WHITE : Color.BLACK;
-
         mainLayout.setBackgroundColor(backgroundColor);
         topMenu.setBackgroundColor(backgroundColor);
         bottomToolbar.setBackgroundColor(backgroundColor);
-
         applySearchViewColors(searchView, isDarkMode);
         updateTextColors(isDarkMode);
-
         btnToggleDark.setBackgroundColor(Color.TRANSPARENT);
         loginButton.setBackgroundColor(Color.TRANSPARENT);
         addVideoButton.setBackgroundColor(Color.TRANSPARENT);
-
         if (isDarkMode) {
             addVideoButton.setImageResource(R.drawable.add_video_dark);
             btnToggleDark.setImageResource(R.drawable.light_mode);
@@ -364,6 +346,4 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-
 }

@@ -22,7 +22,7 @@ import retrofit2.http.Path;
 
 public interface UserApiService {
     @GET("/api/users/{id}")
-    Call<UserData> getUserById( @Path("id") String userId);
+    Call<UserData> getUserById(@Path("id") String userId);
 
     @GET("/api/users/getID/{username}")
     Call<UserID> getIdByUsername(@Path("username") String username);
@@ -36,6 +36,7 @@ public interface UserApiService {
                            @Part("username") RequestBody username,
                            @Part("password") RequestBody password,
                            @Part("displayName") RequestBody displayName);
+
     @Multipart
     @PATCH("/api/users/{id}")
     Call<ApiResponse> updateUser(@Path("id") String userId,
@@ -44,10 +45,6 @@ public interface UserApiService {
                                  @Part("password") RequestBody password,
                                  @Part("displayName") RequestBody displayName);
 
-//    @Multipart
-//    @PATCH("/api/users/{id}")
-//    Call<UserData> updateUser(@Header("Authorization") String token, @retrofit2.http.Path("id") String userId, @Part MultipartBody.Part image, @Body UserData userData);
-
     @DELETE("/api/users/{id}")
-    Call<Void> deleteUser(@Header("Authorization") String token, @retrofit2.http.Path("id") String userId);
+    Call<ApiResponse> deleteUser(@Path("id") String userId);
 }
