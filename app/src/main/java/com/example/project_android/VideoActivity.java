@@ -139,6 +139,7 @@ public class VideoActivity extends AppCompatActivity {
             videoRecyclerView.setAdapter(videoAdapter);
         }
     }
+
     private void updateLikeButtonState() {
         if (likeButton == null || likeText == null) return;
         if (isLiked) {
@@ -149,9 +150,9 @@ public class VideoActivity extends AppCompatActivity {
         likeButton.setImageDrawable(getResources().getDrawable(R.drawable.like));
         likeText.setText(R.string.like);
     }
+
     private void updateVideoDetails() {
-        if (currentVideo == null)
-        {
+        if (currentVideo == null) {
             // Show loading indicator
             if (loadingDialogUtility != null)
                 loadingDialogUtility.show();
@@ -332,6 +333,7 @@ public class VideoActivity extends AppCompatActivity {
             });
         }
     }
+
     private void videoPageDarkMode() {
         if (MainActivity.isDarkMode) {
             if (titleTextView != null)
@@ -392,11 +394,12 @@ public class VideoActivity extends AppCompatActivity {
             cardView.setCardBackgroundColor(ContextCompat.getColor(this, R.color.white));
         }
     }
+
     private String formatNum(int num) {
         if (num < 1000) {
-            return num + " " ;
+            return num + " ";
         } else if (num >= 1000 && num < 10000) {
-            return String.format("%.1fk " , num / 1000.0);
+            return String.format("%.1fk ", num / 1000.0);
         } else if (num >= 10000 && num < 1000000) {
             return (num / 1000) + "k ";
         } else if (num >= 1000000 && num < 10000000) {
@@ -404,7 +407,9 @@ public class VideoActivity extends AppCompatActivity {
         } else if (num >= 10000000 && num < 1000000000) {
             return (num / 1000000) + "M ";
         } else if (num >= 1000000000) {
-            return String.format("%.1fB " , num / 1000000000.0);
+            return String.format("%.1fB ", num / 1000000000.0);
         }
         return num + " views";
     }
+
+}
