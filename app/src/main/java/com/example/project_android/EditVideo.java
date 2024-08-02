@@ -180,7 +180,7 @@ public class EditVideo extends AppCompatActivity {
         if (currentVideo != null) {
             editVideoTitle.setText(currentVideo.getTitle());
             editVideoDescription.setText(currentVideo.getDescription());
-            String thumbnailUrl = currentVideo.getThumbnailUrl();
+            String thumbnailUrl = currentVideo.getThumbnail();
             if (thumbnailUrl != null) {
                 thumbnailUri = Uri.parse(thumbnailUrl);
                 try {

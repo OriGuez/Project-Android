@@ -1,12 +1,22 @@
 package com.example.project_android.api;
 
+import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
+import android.widget.Toast;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+
+import com.example.project_android.MainActivity;
+import com.example.project_android.MyApplication;
+import com.example.project_android.dao.VideosDao;
 import com.example.project_android.model.ApiResponse;
 import com.example.project_android.model.Video;
+
 import java.io.File;
 import java.util.List;
+
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -15,13 +25,13 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class VideoActions {
-    //private MutableLiveData<List<Video>> videosListData;
-    //private VideosDao dao;
+    private MutableLiveData<List<Video>> videosListData;
+    private VideosDao dao;
     VideoApiService api;
 
-    public VideoActions() {
-        //this.videosListData = list;
-        //this.dao=dao;
+    public VideoActions(MutableLiveData<List<Video>> videosListData, VideosDao dao) {
+        this.videosListData = videosListData;
+        this.dao = dao;
         this.api = RetrofitClient.getClient().create(VideoApiService.class);
     }
     //methods:
@@ -57,6 +67,8 @@ public class VideoActions {
 
             @Override
             public void onFailure(Call<List<Video>> call, Throwable t) {
+                showErrorMessage("Server Connection Failed");
+                returnToHomepage();
                 // Handle failure
             }
         });
@@ -73,10 +85,12 @@ public class VideoActions {
             @Override
             public void onResponse(Call<Video> call, Response<Video> response) {
                 if (response.isSuccessful() && response.body() != null) {
+                    //new Thread(() -> dao.insert(response.body())).start();
                     video.postValue(response.body());
                     // Handle single video response
                 } else {
                     video.postValue(null);
+                    returnToHomepage();
                 }
             }
 
@@ -84,6 +98,7 @@ public class VideoActions {
             public void onFailure(Call<Video> call, Throwable t) {
                 // Handle failure
                 video.postValue(null);
+                returnToHomepage();
             }
         });
         return video;
@@ -128,14 +143,14 @@ public class VideoActions {
                 if (response.isSuccessful() && response.body() != null) {
                     videosData.postValue(response.body());
                     // Optionally, save the data to local database using dao
-                }
-                else {
+                } else {
                     videosData.postValue(null);
                 }
             }
 
             @Override
             public void onFailure(Call<List<Video>> call, Throwable t) {
+                showErrorMessage("Server Connection Failed");
                 videosData.postValue(null);
                 // Handle failure
             }
@@ -218,9 +233,13 @@ public class VideoActions {
             public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
                 if (response.isSuccessful()) {
                     resp.setValue(new ApiResponse(true, response.code()));
+                    new Thread(() -> {
+                        int res = dao.deleteById(videoId);
+                        if (res > 0)
+                            videosListData.postValue(dao.index());
+                    }).start();
                     // Handle video deletion response
-                }
-                else {
+                } else {
                     resp.setValue(new ApiResponse(false, response.code()));
                 }
             }
@@ -267,6 +286,7 @@ public class VideoActions {
                     resp.setValue(new ApiResponse(false, response.code()));
                 }
             }
+
             @Override
             public void onFailure(Call<ApiResponse> call, Throwable t) {
                 resp.setValue(new ApiResponse(false, 500));
@@ -276,5 +296,38 @@ public class VideoActions {
         return resp;
     }
 
+    public void get() {
+        Call<List<Video>> call = api.get20Videos();
+        call.enqueue(new Callback<List<Video>>() {
+            @Override
+            public void onResponse(Call<List<Video>> call, Response<List<Video>> response) {
+                if (response.isSuccessful()) {
+                    Log.d("S", "Fetch 20 Videos Was Success");
+                    new Thread(() -> {
+                        dao.clearAll();
+                        dao.insert(response.body());
+                        videosListData.postValue(dao.index());
+                    }).start();
+                }
+            }
 
+            @Override
+            public void onFailure(Call<List<Video>> call, Throwable t) {
+                showErrorMessage("Server Connection Failed");
+            }
+        });
+    }
+
+    private void showErrorMessage(String message) {
+        // Show error message to the user
+        // Example using Toast
+        Toast.makeText(MyApplication.getInstance(), message, Toast.LENGTH_SHORT).show();
+    }
+    private void returnToHomepage(){
+        Context context = MyApplication.getContext();
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+        showErrorMessage("No Server Connection");
+    }
 }

@@ -1,10 +1,15 @@
 package com.example.project_android.api;
 
+import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.project_android.MainActivity;
+import com.example.project_android.MyApplication;
 import com.example.project_android.model.ApiResponse;
 import com.example.project_android.model.UserData;
 import com.example.project_android.model.TokenRequest;
@@ -114,6 +119,7 @@ public class UserActions {
 
             @Override
             public void onFailure(Call<TokenResponse> call, Throwable t) {
+                showErrorMessage("Server Connection Failed");
                 liveData.setValue(null);
             }
         });
@@ -159,6 +165,7 @@ public class UserActions {
 
             @Override
             public void onFailure(Call<ApiResponse> call, Throwable t) {
+                showErrorMessage("Server Connection Failed");
                 result.postValue(new ApiResponse(false, t.getMessage()));
             }
         });
@@ -184,9 +191,22 @@ public class UserActions {
             @Override
             public void onFailure(Call<ApiResponse> call, Throwable t) {
                 liveData.setValue(new ApiResponse(false, 500));
+                showErrorMessage("Server Connection Failed");
                 Log.e("UserActions", "Failure: " + t.getMessage());
             }
         });
         return liveData;
+    }
+    private void showErrorMessage(String message) {
+        // Show error message to the user
+        // Example using Toast
+        Toast.makeText(MyApplication.getInstance(), message, Toast.LENGTH_SHORT).show();
+    }
+    private void returnToHomepage(){
+        Context context = MyApplication.getContext();
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+        showErrorMessage("No Server Connection");
     }
 }

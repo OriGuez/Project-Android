@@ -29,7 +29,7 @@
     <string name="video_description">Video Description</string>
     <string name="videotitle">VideoTitle</string>
     <string name="add_comment">Add Comment</string>
-    <string name="add_a_comment">Add a comment...</string>
+    <string name="add_a_comment">Add a comment…</string>
     <string name="comments">Comments</string>
     <string name="publisher">Publisher</string>
     <string name="date">Date</string>
@@ -75,4 +75,6 @@
     <string name="MissingVideoID">Video ID is Missing</string>
     <string name="MyChannel">My Channel</string>
     <string name="SignOut">Sign Out</string>
+    <string name="loading_please_wait">Loading…</string>
+    <string name="na_date">Unknown Date</string>
 </resources>

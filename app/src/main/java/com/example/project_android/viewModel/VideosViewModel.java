@@ -14,7 +14,7 @@ public class VideosViewModel extends ViewModel {
     private LiveData<List<Video>> videos;
 
     public VideosViewModel() {
-        repository = new VideoRepository();
+        repository = VideoRepository.getInstance();
         videos = repository.getAll();
     }
 
@@ -48,9 +48,9 @@ public class VideosViewModel extends ViewModel {
         return repository.update(UserID, videoID,updatedVideo);
     }
 
-    public LiveData<ApiResponse> delete(String UserID, String videoID) {
-        return repository.delete(UserID, videoID);
+    public LiveData<ApiResponse> delete(String userID, String videoID) {
+        return repository.delete(userID, videoID);
     }
 
-    public void reload() { this.videos = repository.getAll(); }
+    public void reload() { repository.reload(); }
 }

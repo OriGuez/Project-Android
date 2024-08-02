@@ -2,42 +2,62 @@ package com.example.project_android.model;
 
 
 import com.google.gson.annotations.SerializedName;
+
 import android.graphics.Bitmap;
+
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
 import java.io.File;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
+
 @Entity
 public class Video {
+    @Ignore
     private File videoFile;
+    @Ignore
     private File imageFile;
+    @Ignore
     private Bitmap thumbnailPicture;
-
+    @PrimaryKey
+    @NonNull
+    @SerializedName("_id")
+    private String vidID;
     private String title;
     private String description;
 
     @SerializedName("userId")
     private String publisher;
 
-    @SerializedName("_id")
-    private String vidID;
     private String url;
-    private String thumbnailUrl;
+//    private String thumbnailUrl;
 
     private String thumbnail;
 
-    @SerializedName("createdAt")
     private Date createdAt;
 
+    @Ignore
     @SerializedName("likes")
     private List<String> whoLikedList;
-    private List<Comment> comments;
     private int views;
+    @Ignore
+    private Bitmap encodedImage;
+
+    public Video(String title, String description) {
+        this.title = title;
+        this.description = description;
+    }
+
     public Video(String title, String description, File thumbnail) {
         this.title = title;
         this.description = description;
         this.imageFile = thumbnail;
     }
+
     // Add getters and setters
     public String getTitle() {
         return title;
@@ -71,13 +91,13 @@ public class Video {
         this.url = url;
     }
 
-    public String getThumbnailUrl() {
-        return thumbnailUrl;
-    }
-
-    public void setThumbnailUrl(String thumbnailUrl) {
-        this.thumbnailUrl = thumbnailUrl;
-    }
+//    public String getThumbnailUrl() {
+//        return thumbnailUrl;
+//    }
+//
+//    public void setThumbnailUrl(String thumbnailUrl) {
+//        this.thumbnailUrl = thumbnailUrl;
+//    }
 
     public List<String> getWhoLikedList() {
         return whoLikedList;
@@ -85,14 +105,6 @@ public class Video {
 
     public void setWhoLikedList(List<String> whoLikedList) {
         this.whoLikedList = whoLikedList;
-    }
-
-    public List<Comment> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
     }
 
     public String getDescription() {
@@ -152,59 +164,11 @@ public class Video {
         this.imageFile = imageFile;
     }
 
-    // Nested Comment class
-    public static class Comment {
-        private String id;
-        private String publisher;
-        private String text;
-
-        public Comment(String id, String publisher, String text) {
-            this.id = id;
-            this.publisher = publisher;
-            this.text = text;
-        }
-
-        // Add getters and setters
-        public String getId() {
-            return id;
-        }
-
-        public void setId(String id) {
-            this.id = id;
-        }
-
-        public String getPublisher() {
-            return publisher;
-        }
-
-        public void setPublisher(String publisher) {
-            this.publisher = publisher;
-        }
-
-        public String getText() {
-            return text;
-        }
-
-        public void setText(String text) {
-            this.text = text;
-        }
-        @Override
-        public String toString() {
-            return publisher + ": " + text;
-        }
-
-    }
-    public int RemoveComment(String commentID)
-    {
-        if (commentID==null || this.comments == null)
-            return 0;
-        for (Comment comment :this.comments)
-        {
-            if (comment.getId().equals(commentID))
-                this.comments.remove(comment);
-            return 1;
-        }
-        return 0;
+    public Bitmap getEncodedImage() {
+        return encodedImage;
     }
 
+    public void setEncodedImage(Bitmap encodedImage) {
+        this.encodedImage = encodedImage;
+    }
 }

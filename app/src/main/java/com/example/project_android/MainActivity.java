@@ -11,12 +11,16 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+
 import androidx.appcompat.widget.Toolbar;
+
 import android.graphics.PorterDuff;
+
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.project_android.adapters.VideoAdapter;
 import com.example.project_android.model.UserData;
 import com.example.project_android.model.Video;
@@ -24,17 +28,20 @@ import com.example.project_android.utils.ImageLoader;
 import com.example.project_android.viewModel.UsersViewModel;
 import com.example.project_android.viewModel.VideosViewModel;
 import com.google.android.material.imageview.ShapeableImageView;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.view.View;
 import android.widget.Toast;
+
 import androidx.appcompat.widget.SearchView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+    private static MainActivity instance;
     private SwipeRefreshLayout swipeRefreshLayout;
     public static boolean shouldRefresh = false;
     private SharedPreferences sharedPreferences;
@@ -58,10 +65,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        instance = this;
         super.onCreate(savedInstanceState);
-        videoList = loadVideoData();
+        videoList = new ArrayList<>();
         setContentView(R.layout.activity_main);
         viewModel = new ViewModelProvider(this).get(VideosViewModel.class);
+        viewModel.reload();
         usersViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
         sharedPreferences = getApplicationContext().getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE);
         // Initialize views
@@ -70,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
         searchView.clearFocus();
         youtubeLogo = findViewById(R.id.youtubeLogo);
         applySearchViewColors(searchView, isDarkMode);
-
         // Set SearchView listeners to hide/show the logo
         searchView.setOnSearchClickListener(v -> youtubeLogo.setVisibility(View.GONE));
         searchView.setOnCloseListener(() -> {
@@ -89,12 +97,12 @@ public class MainActivity extends AppCompatActivity {
         // Observe LiveData from ViewModel
         adapter = new VideoAdapter(this, videoList, "Main");
         // Observe LiveData from ViewModel
-        loadVideosFromServer();
+        loadVideos();
         recyclerView.setAdapter(adapter);
 
         // Set up profile picture
         profilePic = findViewById(R.id.publisherProfilePic);
-        loggedVisibilityLogic();
+        //loggedVisibilityLogic();
 
         // Set OnClickListener for login button
         loginButton.setOnClickListener(v -> {
@@ -128,10 +136,17 @@ public class MainActivity extends AppCompatActivity {
         // Set OnClickListener for add video button
         addVideoButton.setOnClickListener(v -> {
             if (currentUser != null) {
-                Intent intent = new Intent(MainActivity.this, AddVideo.class);
+                Intent intent = new Intent(this, AddVideo.class);
                 startActivity(intent);
             } else {
-                Toast.makeText(MainActivity.this, "You must be logged in to add a video.", Toast.LENGTH_SHORT).show();
+                loadUser();
+                if (currentUser == null) {
+                    Toast.makeText(this, "Can't Enter Add Video Page", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Intent intent = new Intent(this, AddVideo.class);
+                    startActivity(intent);
+                }
             }
         });
         // Click Listener for publisherProfilePic
@@ -154,10 +169,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         swipeRefreshLayout.setOnRefreshListener(() -> {
             // Perform your refresh operation here
-            loadVideosFromServer();
+            viewModel.reload();
             swipeRefreshLayout.setRefreshing(false);
         });
 
@@ -173,23 +187,11 @@ public class MainActivity extends AppCompatActivity {
             searchView.setQuery("", false);
         }
         if (shouldRefresh) {
-            loadVideosFromServer();
-            adapter.notifyDataSetChanged();
+            viewModel.reload();
+            // loadVideosFromServer();
+            //adapter.notifyDataSetChanged();
             shouldRefresh = false;
         }
-    }
-
-    // Method to load video data
-    private List<Video> loadVideoData() {
-        List<Video> videos = new ArrayList<>();
-        String jsonString = JsonUtils.loadJSONFromAsset(this, "vidDB.json");
-        if (jsonString != null) {
-            Gson gson = new Gson();
-            java.lang.reflect.Type videoListType = new TypeToken<List<Video>>() {
-            }.getType();
-            videos = gson.fromJson(jsonString, videoListType);
-        }
-        return videos;
     }
 
     private void loggedVisibilityLogic() {
@@ -207,26 +209,7 @@ public class MainActivity extends AppCompatActivity {
             profilePic.setEnabled(true);
             loginButton.setVisibility(View.GONE);
             addVideoButton.setVisibility(View.VISIBLE);
-            String username = sharedPreferences.getString("username", "none");
-            if (!username.equals("none")) {
-                usersViewModel.getUserID(username).observe(this, id -> {
-                    if (id != null) {
-                        usersViewModel.get(id.getUserID()).observe(this, user -> {
-                            if (user != null) {
-                                currentUser = user;
-                                String baseUrl = MyApplication.getContext().getString(R.string.BaseUrl);
-                                String profilePicPath = user.getImageURI();
-                                if (profilePicPath != null)
-                                    profilePicPath = profilePicPath.substring(1);
-                                String profileImageUrl = baseUrl + profilePicPath;
-                                ImageLoader.loadImage(profileImageUrl, profilePic);
-                            }
-                        });
-                    } else {
-                        Log.e("MainActivity", "id is null");
-                    }
-                });
-            }
+            loadUser();
         }
     }
 
@@ -248,6 +231,13 @@ public class MainActivity extends AppCompatActivity {
                     loggedVisibilityLogic(); // Update UI visibility
                     return true;
                 case MENU_MY_CHANNEL:
+                    if (currentUser == null) {
+                        loadUser();
+                        if (currentUser == null) {
+                            Toast.makeText(this, "Can't Enter User Page", Toast.LENGTH_SHORT).show();
+                            return true;
+                        }
+                    }
                     // Navigate to UserPageActivity
                     Intent intent = new Intent(MainActivity.this, UserPageActivity.class);
                     intent.putExtra("userID", currentUser.getId());
@@ -283,15 +273,42 @@ public class MainActivity extends AppCompatActivity {
         searchEditText.setHintTextColor(textColor);
     }
 
-    private void loadVideosFromServer() {
+    private void loadVideos() {
         viewModel.get().observe(this, videos -> {
             // Update the UI with the new video list
-            if (videos != null) {
-                //adapter.clearList();
+            if (videos != null && !videos.isEmpty()) {
                 adapter.updateVideoList(videos);
             } else {
                 Log.e("MainActivity", "Video list is null");
             }
         });
+    }
+
+    private void loadUser() {
+        String username = sharedPreferences.getString("username", "none");
+        if (!username.equals("none")) {
+            usersViewModel.getUserID(username).observe(this, id -> {
+                if (id != null) {
+                    usersViewModel.get(id.getUserID()).observe(this, user -> {
+                        if (user != null) {
+                            currentUser = user;
+                            String baseUrl = MyApplication.getContext().getString(R.string.BaseUrl);
+                            String profilePicPath = user.getImageURI();
+                            if (profilePicPath != null)
+                                profilePicPath = profilePicPath.substring(1);
+                            String profileImageUrl = baseUrl + profilePicPath;
+                            ImageLoader.loadImage(profileImageUrl, profilePic);
+                        }
+                    });
+                } else {
+                    Log.e("MainActivity", "id is null");
+                }
+            });
+        }
+
+    }
+
+    public static MainActivity getInstance() {
+        return instance;
     }
 }

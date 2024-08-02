@@ -1,18 +1,30 @@
 # Project-Android
 
-This is Exercise 1 submission by Matan Sabag and Ori Guez  
-Android App.  
-About the work:  
-We parted the work to the register-login activities and later for the home screen and video Page.  
-Created a recycler view for comments and videos and adapters for them.  
-for the input we used intents and we need to access camera permission in order to take a photo as a profile pic.  
-Minimum SDK is 26 And was tested on API 30 and API 34 phones.  
-The video upload was used on mp4 videos.  
-For registration you need to insert more than 8 characters and have a non-digit character.  
+This is Exercise 3 submission by Matan Sabag and Ori Guez.
+Android App.
 
-# Instructions:
+# Exercise 1
+Exercise 1 main branch is called "main" and is here:
+https://github.com/OriGuez/Project-Android/tree/main
 
-clone the repository (or download it and extract the zip),  
-open in Android Studio  
-the gradle and dependencies will be updated...  
-play on a virtual device or on physical phone.
+# Exercise 3
+Exercise 3 main branch is called "main-Exercise3" and is here:
+https://github.com/OriGuez/Project-Android/tree/main-Exercise3
+
+## Server For Exercise 3
+The server for exercise 3 is here (it was made in exercise 2):
+https://github.com/OriGuez/Project-Web/tree/main-Exercise2
+
+The repository includes both the server and React app. Please refer to its README file for detailed instructions on running the server. You can fill the server with data by following instructions there.
+
+## Server connectivity
+- The server's path is located in res/values/strings.xml and called "BaseUrl".
+- currently the setup is to the local machine (10.0.2.2) to 8080 port with http.
+- please make sure the server listen to the same port.
+
+## Starting the app
+- Please clone the project to Android Studio.
+- make sure gradle dependencies update when you open the project.
+
+project was tested on Android Studio on android API's 30 and 34.
+was tested on local machine on the emulator.

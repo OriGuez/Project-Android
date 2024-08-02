@@ -4,18 +4,21 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.VideoView;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -30,6 +33,7 @@ import com.example.project_android.model.Comment;
 import com.example.project_android.model.UserData;
 import com.example.project_android.model.Video;
 import com.example.project_android.utils.ImageLoader;
+import com.example.project_android.utils.LoadingDialogUtility;
 import com.example.project_android.viewModel.CommentsViewModel;
 import com.example.project_android.viewModel.UsersViewModel;
 import com.example.project_android.viewModel.VideosViewModel;
@@ -38,6 +42,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VideoActivity extends AppCompatActivity {
+    private LoadingDialogUtility loadingDialogUtility;
+    private ProgressBar progressBar;
+    private TextView loadingText;
+
     MediaController mediaController = null;
     private boolean isLiked = false;
     private VideosViewModel vidViewModel;
@@ -79,20 +87,24 @@ public class VideoActivity extends AppCompatActivity {
         vidViewModel = new ViewModelProvider(this).get(VideosViewModel.class);
         commentsViewModel = new ViewModelProvider(this).get(CommentsViewModel.class);
         usersViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
+        loadingDialogUtility = new LoadingDialogUtility(this);
         // Retrieve the ID from the intent's extras
         videoID = getIntent().getStringExtra("videoID");
-        if (currentVideo == null)
-            currentVideo = MainActivity.videoList.get(0);
+//        if (currentVideo == null)
+//        {
+//            currentVideo
+//        }
         Log.d(TAG, "Received videoID: " + videoID);
 
         vidViewModel.get(videoID).observe(this, video -> {
             // Update the UI with the new video list
             if (video != null) {
+                loadingDialogUtility.hide();
                 currentVideo = video;
                 List<String> likedList = currentVideo.getWhoLikedList();
                 if (likedList != null && MainActivity.currentUser != null && likedList.contains(MainActivity.currentUser.getId()))
                     isLiked = true;
-
+                updateVideoDetails();
                 usersViewModel.get(currentVideo.getPublisher()).observe(this, user -> {
                     if (user != null) {
                         uploader = user;
@@ -102,9 +114,8 @@ public class VideoActivity extends AppCompatActivity {
                     }
                 });
             } else {
-                currentVideo = MainActivity.videoList.get(0);
-                //currentVideo = null;
-                Log.e("ac", "Video list is null");
+                loadingDialogUtility.hide();
+                Log.e("ac", "Video in page is null");
             }
         });
 
@@ -142,20 +153,6 @@ public class VideoActivity extends AppCompatActivity {
         }
     }
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        if (currentVideo==null){
-//            currentVideo= MainActivity.videoList.get(0);
-//        }
-//    }
-
-    private void incrementViewCount(Video video) {
-        video.setViews((video.getViews() + 1));
-        updateVideoDetails();
-//        vidViewModel.update(video);
-    }
-
     private void updateLikeButtonState() {
         if (likeButton == null || likeText == null) return;
         if (isLiked) {
@@ -168,6 +165,17 @@ public class VideoActivity extends AppCompatActivity {
     }
 
     private void updateVideoDetails() {
+        if (currentVideo == null)
+        {
+            // Show loading indicator
+            if (loadingDialogUtility != null)
+                loadingDialogUtility.show();
+            return;
+//            // Show loading indicator
+//            if (progressBar != null)
+//                showLoadingDialog();
+//            return;
+        }
         if (titleTextView != null) {
             titleTextView.setText(currentVideo.getTitle());
         }
@@ -221,6 +229,8 @@ public class VideoActivity extends AppCompatActivity {
     }
 
     private void InitializeUiComponents() {
+        progressBar = findViewById(R.id.progressBar);
+        loadingText = findViewById(R.id.loadingText);
         videoView = findViewById(R.id.videoView);
         titleTextView = findViewById(R.id.titleTextView);
         descriptionTextView = findViewById(R.id.descriptionTextView);
@@ -282,7 +292,6 @@ public class VideoActivity extends AppCompatActivity {
         if (saveButton != null) {
             saveButton.setVisibility(View.GONE);
         }
-
 
         if (MainActivity.currentUser == null) {
             if (addComment != null) {
@@ -403,4 +412,14 @@ public class VideoActivity extends AppCompatActivity {
                 vidScreenLayout.setBackgroundColor(Color.WHITE);
         }
     }
+//    private void showErrorPlaceholder() {
+//        // Show a placeholder or an error message when the video is null
+//        titleTextView.setText("No video data available");
+//        descriptionTextView.setText("");
+//        dateTextView.setText("");
+//        viewsTextView.setText("");
+//        publisherTextView.setText("");
+//        profileImageView.setImageResource(R.drawable.ic_def_user);
+//        videoView.setVisibility(View.GONE);
+//    }
 }

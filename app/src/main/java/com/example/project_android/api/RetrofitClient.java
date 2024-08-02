@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import com.example.project_android.MyApplication;
 import com.example.project_android.R;
 
+import java.util.concurrent.TimeUnit;
+
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -20,6 +22,9 @@ public class RetrofitClient {
             // Create an OkHttpClient with the Authentication interceptor
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
                     .addInterceptor(new Authentication(sharedPreferences))
+                    .connectTimeout(3, TimeUnit.SECONDS)
+                    .readTimeout(3, TimeUnit.SECONDS)
+                    .writeTimeout(3, TimeUnit.SECONDS)
                     .build();
             retrofit = new Retrofit.Builder()
                     .baseUrl(baseUrl)

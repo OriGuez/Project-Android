@@ -31,6 +31,7 @@ import com.example.project_android.model.UserData;
 import com.example.project_android.model.Video;
 import com.example.project_android.utils.FileUtils;
 import com.example.project_android.utils.ImageLoader;
+import com.example.project_android.utils.LoadingDialogUtility;
 import com.example.project_android.viewModel.UsersViewModel;
 import com.example.project_android.viewModel.VideosViewModel;
 
@@ -40,6 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserPageActivity extends AppCompatActivity {
+    private LoadingDialogUtility loadingDialogUtility;
     public static boolean shouldRefresh = false;
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final int PICK_CAMERA_REQUEST = 2;
@@ -73,16 +75,19 @@ public class UserPageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_user_page);
         usersViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
         videosViewModel = new ViewModelProvider(this).get(VideosViewModel.class);
+        loadingDialogUtility = new LoadingDialogUtility(this);
+        loadingDialogUtility.show();
         initViews();
         // Retrieve the current user data
         userID = getIntent().getStringExtra("userID");
-        if (MainActivity.currentUser != null && userID.equals(MainActivity.currentUser.getId()))
+        if (MainActivity.currentUser != null && userID != null && userID.equals(MainActivity.currentUser.getId()))
             isLoggedUsersPage = true;
         usersViewModel.get(userID).observe(this, user -> {
             if (user != null) {
                 pageUser = user;
                 updatePageUser();
                 getUserVideos(userID);
+                loadingDialogUtility.hide();
             }
         });
 
@@ -258,7 +263,7 @@ public class UserPageActivity extends AppCompatActivity {
         });
     }
 
-    private void deleteUser(String UserId){
+    private void deleteUser(String UserId) {
         usersViewModel.delete(UserId).observe(this, response -> {
             if (response != null && response.isSuccessful()) {
                 // Handle logout action
@@ -269,8 +274,11 @@ public class UserPageActivity extends AppCompatActivity {
                 editor.apply(); // Use commit() if you need synchronous removal
                 MainActivity.currentUser = null; // Logout the user
                 MainActivity.shouldRefresh = true;
-                //exit page
-                finish();
+                //exit to mainActivity
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+                MainActivity.shouldRefresh = true;
             } else {
                 Toast.makeText(this, "Failed to Delete profile", Toast.LENGTH_SHORT).show();
             }

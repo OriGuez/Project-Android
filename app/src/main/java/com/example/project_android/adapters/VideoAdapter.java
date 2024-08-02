@@ -60,8 +60,8 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
     }
 
     public void updateVideoList(List<Video> newVideoList) {
-        this.videoList = newVideoList;
-        notifyDataSetChanged();
+            this.videoList = newVideoList;
+            notifyDataSetChanged();
     }
     public void clearList(){
         this.videoList.clear();
@@ -76,7 +76,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
             String formattedDate = formatter.format(createdAt);
             holder.uploadDateTextView.setText(formattedDate);
         } else {
-            holder.uploadDateTextView.setText("Unknown Date");
+            holder.uploadDateTextView.setText(R.string.na_date);
         }
         String publisherID = video.getPublisher();
         usersViewModel.get(publisherID).observe((LifecycleOwner) context, user ->{
