@@ -77,4 +77,10 @@
     <string name="SignOut">Sign Out</string>
     <string name="loading_please_wait">Loading…</string>
     <string name="na_date">Unknown Date</string>
+    <string name="noVideosFound">\ No videos found</string>
+    <string name="searchResults">Search results for \"%1$s\": </string>
+    <string name="delete_user">Delete User</string>
+    <string name="sure_delete_user">Are you sure you want to delete this user?</string>
+    <string name="userDeleted">User Deleted Successfully</string>
+    <string name="userDeletedFailed">Failed To Delete User</string>
 </resources>

@@ -2,6 +2,8 @@
 <resources>
     <color name="viewtube_red">#FF0000</color>
     <color name="backgroundColor">#212121</color>
+    <color name="backgroundColorDark">#4D4D4D</color>
+    <color name="backgroundColorNight">#60FFFFFF</color>
     <color name="textColor">#000000</color>
     <color name="colorLightGrey">#DDDDDD</color>
     <color name="colorMedGrey">#ff888888</color>
@@ -9,10 +11,10 @@
     <color name="search_text_color_dark">#FFFFFF</color>
     <color name="search_icon_color_light">#000000</color>
     <color name="search_icon_color_dark">#FFFFFF</color>
-
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
     <color name="purple_500">#6200EE</color>
+    <color name="purple_def">#FF596DCD</color>
     <color name="purple_700">#3700B3</color>
     <color name="teal_200">#03DAC5</color>
     <color name="teal_700">#018786</color>

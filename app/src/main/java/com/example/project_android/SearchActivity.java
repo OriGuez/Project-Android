@@ -1,15 +1,21 @@
 package com.example.project_android;
 
 import androidx.appcompat.app.AppCompatActivity;
-
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.util.Log;
+import android.graphics.PorterDuff;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.graphics.PorterDuff;
+import android.widget.TextView;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -18,9 +24,8 @@ import com.example.project_android.adapters.VideoAdapter;
 import com.example.project_android.model.Video;
 import com.example.project_android.viewModel.UsersViewModel;
 import com.example.project_android.viewModel.VideosViewModel;
-import android.view.View;
-import android.widget.TextView;
-import androidx.appcompat.widget.SearchView;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.imageview.ShapeableImageView;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,9 +39,13 @@ public class SearchActivity extends AppCompatActivity {
     private ImageView youtubeLogo;
     private VideoAdapter adapter;
     private TextView noVideosText;
-
+    private TextView searchResultsText;
     private androidx.coordinatorlayout.widget.CoordinatorLayout mainLayout;
+    private AppBarLayout appBarLayout;
+    private Toolbar topMenu;
+
     private boolean isDarkMode = MainActivity.isDarkMode;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d("ActivityLifecycle", "onCreate: SearchActivity");
@@ -51,12 +60,18 @@ public class SearchActivity extends AppCompatActivity {
         usersViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
         sharedPreferences = getApplicationContext().getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE);
         // Initialize views
+        mainLayout = findViewById(R.id.mainSearch);
+        appBarLayout = findViewById(R.id.appBarLayout);
         searchView = findViewById(R.id.searchView);
         searchView.setQuery(initialQuery, false); // Set the initial query text
         noVideosText = findViewById(R.id.noVideosText);
+        searchResultsText = findViewById(R.id.searchResultsText);
         searchView.clearFocus();
+        topMenu = findViewById(R.id.topMenu);
         youtubeLogo = findViewById(R.id.youtubeLogo);
         applySearchViewColors(searchView, isDarkMode);
+        updateTextColors(isDarkMode);
+        updateTopBarColors(isDarkMode);
         performSearch(initialQuery);
         // Set SearchView listeners to hide/show the logo
         searchView.setOnSearchClickListener(v -> youtubeLogo.setVisibility(View.GONE));
@@ -64,16 +79,13 @@ public class SearchActivity extends AppCompatActivity {
             youtubeLogo.setVisibility(View.VISIBLE);
             return false;
         });
-        mainLayout = findViewById(R.id.mainSearch);
         recyclerView = findViewById(R.id.recyclerViewVideos);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 1));
         // Observe LiveData from ViewModel
-        adapter = new VideoAdapter(this, videoList, "Main");
-        // Observe LiveData from ViewModel
+        adapter = new VideoAdapter(this, videoList, "Main", false);
         recyclerView.setAdapter(adapter);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            //if i want to make another search just update the items.no need to reload page.
-            ////////////////////////////////////////////
+            // If a new search is initiated, update the items without reloading the page.
             @Override
             public boolean onQueryTextSubmit(String query) {
                 performSearch(query);
@@ -84,9 +96,7 @@ public class SearchActivity extends AppCompatActivity {
                 return false;
             }
         });
-        youtubeLogo.setOnClickListener(v -> {
-            finish();
-        });
+        youtubeLogo.setOnClickListener(v -> finish());
 
         if (isDarkMode) {
             mainLayout.setBackgroundColor(Color.DKGRAY);
@@ -95,22 +105,27 @@ public class SearchActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("StringFormatInvalid")
     private void performSearch(String query) {
         viewModel.search(query).observe(this, videos -> {
+            String searchResultsMessage;
+            searchResultsMessage = getString(R.string.searchResults, query);
+            searchResultsText.setText(searchResultsMessage);
             // Update the UI with the new video list
             if (videos != null && !videos.isEmpty()) {
                 recyclerView.setVisibility(View.VISIBLE);
-                adapter.updateVideoList(videos);
                 noVideosText.setVisibility(View.GONE);
-                searchView.clearFocus();
+                adapter.updateVideoList(videos);
             } else {
-                //print "no video found/ error" on screen
+                // Show "Search results for "(input)": No videos found"
                 recyclerView.setVisibility(View.GONE);
                 noVideosText.setVisibility(View.VISIBLE);
+                String noResultsMessage;
+                noResultsMessage = getString(R.string.searchResults, query) + getString(R.string.noVideosFound);
+                noVideosText.setText(noResultsMessage);
                 adapter.clearList();
-                searchView.clearFocus();
-                Log.e("search", "Video list is null");
             }
+            searchView.clearFocus();
         });
     }
 
@@ -134,5 +149,36 @@ public class SearchActivity extends AppCompatActivity {
         EditText searchEditText = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
         searchEditText.setTextColor(textColor);
         searchEditText.setHintTextColor(textColor);
+    }
+
+    private void updateTextColors(boolean isDarkMode) {
+        int textColor = ContextCompat.getColor(this, isDarkMode ? android.R.color.white : android.R.color.black);
+        int hintColor = ContextCompat.getColor(this, isDarkMode ? android.R.color.darker_gray : android.R.color.darker_gray);
+
+        // Iterate through all the views and update text color if it's a TextView
+        View root = mainLayout.getRootView();
+        updateTextColorRecursive(root, textColor, hintColor);
+    }
+
+    private void updateTextColorRecursive(View view, int textColor, int hintColor) {
+        if (view instanceof TextView) {
+            ((TextView) view).setTextColor(textColor);
+            if (view instanceof EditText) {
+                ((EditText) view).setHintTextColor(hintColor);
+            }
+        } else if (view instanceof ViewGroup) {
+            ViewGroup viewGroup = (ViewGroup) view;
+            for (int i = 0; i < viewGroup.getChildCount(); i++) {
+                View child = viewGroup.getChildAt(i);
+                updateTextColorRecursive(child, textColor, hintColor);
+            }
+        }
+    }
+
+    private void updateTopBarColors(boolean isDarkMode) {
+        int backgroundColor = isDarkMode ? Color.DKGRAY : Color.WHITE;
+        appBarLayout.setBackgroundColor(backgroundColor);
+        topMenu.setBackgroundColor(backgroundColor);
+
     }
 }

@@ -35,7 +35,7 @@ public class EditVideo extends AppCompatActivity {
     private ImageView thumbnailView;
     private Button buttonUploadThumbnail;
     private Button buttonSaveChanges;
-    private ImageButton deleteVideoButton;
+    private Button deleteVideoButton;
     private Uri thumbnailUri;
     private Bitmap thumbPic;
     private Video currentVideo;

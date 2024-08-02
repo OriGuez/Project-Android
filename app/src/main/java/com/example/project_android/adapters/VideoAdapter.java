@@ -1,5 +1,7 @@
 package com.example.project_android.adapters;
 
+import static android.graphics.Color.BLACK;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -20,6 +22,7 @@ import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.project_android.EditVideo;
+import com.example.project_android.UserPageActivity;
 import com.example.project_android.utils.ImageLoader;
 import com.example.project_android.MainActivity;
 import com.example.project_android.MyApplication;
@@ -41,13 +44,17 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
     private List<Video> videoList;
     private List<Video> videoListFull;
     private Context context;
+    private boolean hideOwnerButtons;
 
 
-    public VideoAdapter(Context context, List<Video> videoList, String source) {
+
+    public VideoAdapter(Context context, List<Video> videoList, String source,boolean hideOwnerButtons) {
         this.context = context;
         this.videoList = videoList;
         this.videoListFull = new ArrayList<>(videoList);
         this.source = source;
+        this.hideOwnerButtons = hideOwnerButtons;
+
         if (context != null)
             usersViewModel = new ViewModelProvider((ViewModelStoreOwner) context).get(UsersViewModel.class);
     }
@@ -63,6 +70,8 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
             this.videoList = newVideoList;
             notifyDataSetChanged();
     }
+
+
     public void clearList(){
         this.videoList.clear();
     }
@@ -71,6 +80,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
     public void onBindViewHolder(@NonNull VideoViewHolder holder, int position) {
         Video video = videoList.get(position);
         Date createdAt = video.getCreatedAt();
+
         if (createdAt != null) {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
             String formattedDate = formatter.format(createdAt);
@@ -91,14 +101,23 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
                 ImageLoader.loadImage(profileImageUrl, holder.profilePic);
             }
         });
+        if (hideOwnerButtons) {
+            holder.publisherTextView.setVisibility(View.GONE);
+            holder.profilePic.setVisibility(View.GONE);
+
+
+        } else {
+            holder.publisherTextView.setVisibility(View.VISIBLE);
+            holder.profilePic.setVisibility(View.VISIBLE);
+        }
 
         holder.titleTextView.setText(video.getTitle());
         //holder.publisherTextView.setText(video.getPublisher());
         int viewsCount = Integer.parseInt(String.valueOf(video.getViews()));
-        String viewsText = formatNum(viewsCount);
+        String viewsText = formatNum(viewsCount) + " •" ;
         holder.viewsTextView.setText(viewsText);
         // Set text color based on dark mode
-        int textColor = MainActivity.isDarkMode ? Color.WHITE : Color.BLACK;
+        int textColor = MainActivity.isDarkMode ? Color.WHITE : BLACK;
         holder.publisherTextView.setTextColor(textColor);
         holder.titleTextView.setTextColor(textColor);
         holder.uploadDateTextView.setTextColor(textColor);
@@ -131,17 +150,39 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
             if (source.equals("Video")) {
                 ((Activity) context).finish();
             }
+
         });
+        // Set click listener to open user page activity from profile picture
+        holder.profilePic.setOnClickListener(v -> {
+            Intent intent = new Intent(context, UserPageActivity.class);
+            intent.putExtra("userID", video.getPublisher());
+            context.startActivity(intent);
+        });
+
         if ("User".equals(source)) {
+            holder.publisherTextView.setVisibility(View.GONE);
+            holder.profilePic.setVisibility(View.GONE);
             holder.editButton.setVisibility(View.VISIBLE);
+            holder.uploadDateTextView.setTextColor(BLACK);
+            holder.titleTextView.setTextColor(BLACK);
+            holder.viewsTextView.setTextColor(BLACK);
             holder.editButton.setOnClickListener(v -> {
                 Intent intent = new Intent(context, EditVideo.class);
                 intent.putExtra("videoID", video.getVidID());
                 context.startActivity(intent);
+
+
             });
         } else {
             holder.editButton.setVisibility(View.GONE);
+            if(hideOwnerButtons)
+            {
+                holder.uploadDateTextView.setTextColor(BLACK);
+                holder.titleTextView.setTextColor(BLACK);
+                holder.viewsTextView.setTextColor(BLACK);
+            }
         }
+
     }
 
     @Override

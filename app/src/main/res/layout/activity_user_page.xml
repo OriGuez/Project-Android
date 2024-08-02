@@ -29,27 +29,48 @@
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:layout_gravity="bottom|end"
-                android:layout_margin="4dp"
+                android:layout_margin="2dp"
                 android:src="@android:drawable/ic_menu_camera"
                 android:background="@android:color/transparent"
                 android:visibility="invisible" />
         </FrameLayout>
 
-        <ImageButton
+
+        <TextView
             android:id="@+id/uploadProfilePicImageButton"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@color/purple_500"
-            android:src="@android:drawable/ic_menu_gallery"
+            android:layout_height="35dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="5dp"
+            android:background="@color/purple_def"
+            android:drawableStart="@android:drawable/ic_menu_gallery"
+            android:drawablePadding="10dp"
+            android:gravity="center"
+            android:paddingStart="88dp"
+            android:paddingEnd="95dp"
+            android:text="Upload From Gallery"
+            android:textColor="@android:color/white"
+            android:textSize="17sp"
             android:visibility="gone" />
 
-        <ImageButton
+        <TextView
             android:id="@+id/takePicture"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@color/purple_500"
-            android:src="@android:drawable/ic_menu_camera"
+            android:layout_height="35dp"
+            android:layout_marginBottom="5dp"
+            android:background="@color/purple_def"
+            android:drawableStart="@android:drawable/ic_menu_camera"
+            android:drawablePadding="10dp"
+            android:gravity="center"
+            android:paddingStart="88dp"
+            android:paddingEnd="95dp"
+            android:text="Take A Picture"
+            android:textColor="@android:color/white"
+            android:textSize="17sp"
             android:visibility="gone" />
+
+
+
 
         <EditText
             android:id="@+id/editChannelNameEditText"
@@ -60,10 +81,10 @@
 
         <EditText
             android:id="@+id/editUsernameEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:hint="Edit Username"
-            android:visibility="gone" />
+            android:visibility="invisible" />
 
 
         <TextView
@@ -85,11 +106,13 @@
             android:text="Username"
             android:textSize="16sp" />
 
+
         <Button
             android:id="@+id/editProfileButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:textSize="14sp"
             android:text="Edit Profile" />
 
         <Button
@@ -100,11 +123,35 @@
             android:text="Save Profile"
             android:visibility="gone" />
 
+        <Button
+            android:id="@+id/deleteProfileButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Delete User"
+            android:backgroundTint="@color/viewtube_red"
+            android:visibility="gone" />
+
+
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:clipToPadding="false" />
+
+        <TextView
+            android:id="@+id/noVideosFoundText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:padding="16dp"
+            android:paddingTop="24dp"
+            android:paddingBottom="64dp"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:visibility="visible" />
     </LinearLayout>
 </ScrollView>
