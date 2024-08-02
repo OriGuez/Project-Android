@@ -45,19 +45,24 @@
 
 
 
-            <ImageButton
+            <TextView
                 android:id="@+id/uploadVidFromGallery"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="@color/purple_500"
-                app:srcCompat="@android:drawable/stat_sys_upload" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:textStyle="bold"
-                    android:gravity="center"
-                    android:text="@string/upload_video"
-                    />
+                android:layout_height="35dp"
+                android:layout_marginBottom="5dp"
+                android:background="@color/purple_def"
+                android:drawableStart="@android:drawable/stat_sys_upload"
+                android:drawablePadding="10dp"
+                android:gravity="center"
+                android:paddingStart="108dp"
+                android:paddingEnd="135dp"
+                android:text="Upload Video"
+                android:textColor="@android:color/white"
+                android:textSize="17sp"
+                />
+
+
+
 
         <Button
             android:id="@+id/buttonUploadThumbnail"

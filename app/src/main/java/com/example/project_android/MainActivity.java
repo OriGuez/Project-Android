@@ -7,11 +7,15 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.Toolbar;
 
 import android.graphics.PorterDuff;
@@ -34,6 +38,7 @@ import com.google.gson.reflect.TypeToken;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.SearchView;
@@ -67,17 +72,20 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sharedPreferences = getApplicationContext().getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE);
+        isDarkMode = sharedPreferences.getBoolean("isDarkMode", false); // Retrieve dark mode preference
         videoList = loadVideoData();
         setContentView(R.layout.activity_main);
         viewModel = new ViewModelProvider(this).get(VideosViewModel.class);
         usersViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
-        sharedPreferences = getApplicationContext().getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE);
+
         // Initialize views
         swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
         searchView = findViewById(R.id.searchView);
         searchView.clearFocus();
         youtubeLogo = findViewById(R.id.youtubeLogo);
         applySearchViewColors(searchView, isDarkMode);
+//        updateTextColors(isDarkMode);
 
         // Set SearchView listeners to hide/show the logo
         searchView.setOnSearchClickListener(v -> youtubeLogo.setVisibility(View.GONE));
@@ -95,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerViewVideos);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 1));
         // Observe LiveData from ViewModel
-        adapter = new VideoAdapter(this, videoList, "Main");
+        adapter = new VideoAdapter(this, videoList, "Main", false);
         // Observe LiveData from ViewModel
         loadVideosFromServer();
         recyclerView.setAdapter(adapter);
@@ -103,6 +111,9 @@ public class MainActivity extends AppCompatActivity {
         // Set up profile picture
         profilePic = findViewById(R.id.publisherProfilePic);
         loggedVisibilityLogic();
+
+        // Apply dark mode settings
+        applyDarkModeSettings(isDarkMode);
 
         // Set OnClickListener for login button
         loginButton.setOnClickListener(v -> {
@@ -112,26 +123,12 @@ public class MainActivity extends AppCompatActivity {
         btnToggleDark.setOnClickListener(v -> {
             // Toggle dark mode state
             isDarkMode = !isDarkMode;
-            // Change background colors
-            if (isDarkMode) {
-                mainLayout.setBackgroundColor(Color.DKGRAY);
-                topMenu.setBackgroundColor(Color.DKGRAY);
-                bottomToolbar.setBackgroundColor(Color.DKGRAY);
-                btnToggleDark.setBackgroundColor(Color.TRANSPARENT);
-                loginButton.setBackgroundColor(Color.TRANSPARENT);
-                addVideoButton.setBackgroundColor(Color.TRANSPARENT);
-                btnToggleDark.setImageResource(R.drawable.light_mode);
-            } else {
-                mainLayout.setBackgroundColor(Color.WHITE);
-                topMenu.setBackgroundColor(Color.WHITE);
-                bottomToolbar.setBackgroundColor(Color.WHITE);
-                btnToggleDark.setImageResource(R.drawable.dark_mode);
-            }
-            // Change SearchView colors based on the current mode
-            applySearchViewColors(searchView, isDarkMode);
-            // Notify adapter
-            //.............................change because its reloading the dataset..............................
-            //adapter.notifyDataSetChanged();
+            // Save the dark mode preference
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean("isDarkMode", isDarkMode);
+            editor.apply();
+            // Apply dark mode settings
+            applyDarkModeSettings(isDarkMode);
         });
         // Set OnClickListener for add video button
         addVideoButton.setOnClickListener(v -> {
@@ -163,17 +160,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
-
         swipeRefreshLayout.setOnRefreshListener(() -> {
             // Perform your refresh operation here
             loadVideosFromServer();
             swipeRefreshLayout.setRefreshing(false);
         });
-
-
-
     }
 
     @Override
@@ -213,7 +204,11 @@ public class MainActivity extends AppCompatActivity {
             loginButton.setVisibility(View.VISIBLE);
             addVideoButton.setVisibility(View.GONE);
             if (profilePic != null) {
-                profilePic.setImageResource(R.drawable.ic_def_user);
+                if (isDarkMode) {
+                    profilePic.setImageResource(R.drawable.user_dark);
+                } else {
+                    profilePic.setImageResource(R.drawable.user);
+                }
             }
         } else {
             profilePic.setEnabled(true);
@@ -243,7 +238,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showPopupMenu(View view) {
-        PopupMenu popupMenu = new PopupMenu(this, view);
+        Context wrapper = new ContextThemeWrapper(this, isDarkMode ? R.style.DarkPopupMenu : R.style.LightPopupMenu);
+
+        PopupMenu popupMenu = new PopupMenu(wrapper, view);
         popupMenu.getMenu().add("My Channel"); // Add "My Channel" menu item
         popupMenu.getMenu().add(Menu.NONE, R.id.menu_logout, Menu.NONE, "Sign out");
 
@@ -254,9 +251,14 @@ public class MainActivity extends AppCompatActivity {
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.remove("token");
                     editor.remove("username");
+                    editor.putBoolean("isDarkMode", false);
+                    applyDarkModeSettings(false);
                     editor.apply(); // Use commit() if you need synchronous removal
                     currentUser = null; // Logout the user
                     loggedVisibilityLogic(); // Update UI visibility
+//                    profilePic.setImageResource(R.drawable.user);
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                    recreate();
                     return true;
                 case "My Channel":
                     // Navigate to UserPageActivity
@@ -305,4 +307,63 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void updateTextColors(boolean isDarkMode) {
+        int textColor = ContextCompat.getColor(this, isDarkMode ? android.R.color.white : android.R.color.black);
+        int hintColor = ContextCompat.getColor(this, isDarkMode ? android.R.color.darker_gray : android.R.color.darker_gray);
+
+        // Iterate through all the views and update text color if it's a TextView
+        View root = mainLayout.getRootView();
+        updateTextColorRecursive(root, textColor, hintColor);
+    }
+
+    private void updateTextColorRecursive(View view, int textColor, int hintColor) {
+        if (view instanceof TextView) {
+            ((TextView) view).setTextColor(textColor);
+            if (view instanceof EditText) {
+                ((EditText) view).setHintTextColor(hintColor);
+            }
+        } else if (view instanceof ViewGroup) {
+            ViewGroup viewGroup = (ViewGroup) view;
+            for (int i = 0; i < viewGroup.getChildCount(); i++) {
+                View child = viewGroup.getChildAt(i);
+                updateTextColorRecursive(child, textColor, hintColor);
+            }
+        }
+    }
+
+
+    private void applyDarkModeSettings(boolean isDarkMode) {
+        int backgroundColor = isDarkMode ? Color.DKGRAY : Color.WHITE;
+        int textColor = isDarkMode ? Color.WHITE : Color.BLACK;
+
+        mainLayout.setBackgroundColor(backgroundColor);
+        topMenu.setBackgroundColor(backgroundColor);
+        bottomToolbar.setBackgroundColor(backgroundColor);
+
+        applySearchViewColors(searchView, isDarkMode);
+        updateTextColors(isDarkMode);
+
+        btnToggleDark.setBackgroundColor(Color.TRANSPARENT);
+        loginButton.setBackgroundColor(Color.TRANSPARENT);
+        addVideoButton.setBackgroundColor(Color.TRANSPARENT);
+
+        if (isDarkMode) {
+            addVideoButton.setImageResource(R.drawable.add_video_dark);
+            btnToggleDark.setImageResource(R.drawable.light_mode);
+            loginButton.setImageResource(R.drawable.log_in_dark);
+            if (profilePic != null && currentUser == null) {
+                profilePic.setImageResource(R.drawable.user_dark);
+            }
+        } else {
+            addVideoButton.setImageResource(R.drawable.add_video);
+            btnToggleDark.setImageResource(R.drawable.dark_mode);
+            loginButton.setImageResource(R.drawable.log_in);
+            if (profilePic != null && currentUser == null) {
+                profilePic.setImageResource(R.drawable.user);
+            }
+        }
+    }
+
+
 }

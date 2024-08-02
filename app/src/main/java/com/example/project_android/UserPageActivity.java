@@ -2,6 +2,7 @@ package com.example.project_android;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -53,14 +54,16 @@ public class UserPageActivity extends AppCompatActivity {
     private EditText editChannelNameEditText;
     private Button editProfileButton;
     private Button saveProfileButton;
-    private ImageButton uploadFromGalleryButton;
-    private ImageButton takePictureCameraButton;
+    private Button deleteProfileButton;
+    private TextView uploadFromGalleryButton;
+    private TextView takePictureCameraButton;
     private ImageButton toggleImageButtons;
     private UserData pageUser;
     private Uri imgURI;
     private Bitmap selectedProfilePicture;
     private boolean isLoggedUsersPage = false;
     private String userID;
+    private TextView noVideosFoundText;
 
     private List<Video> userVideos = new ArrayList<>();
 
@@ -84,23 +87,27 @@ public class UserPageActivity extends AppCompatActivity {
             }
         });
 
-        videoRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        videoRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
         if (isLoggedUsersPage) {
-            videoAdapter = new VideoAdapter(this, userVideos, "User");
+            videoAdapter = new VideoAdapter(this, userVideos, "User", true);
         } else {
-            videoAdapter = new VideoAdapter(this, userVideos, "Video");
+            videoAdapter = new VideoAdapter(this, userVideos, "Video" ,true);
             //remove buttons of owner
-            editProfileButton.setVisibility(View.GONE);
             saveProfileButton.setVisibility(View.GONE);
             editProfileButton.setVisibility(View.GONE);
+            deleteProfileButton.setVisibility(View.GONE);
         }
+
         videoRecyclerView.setAdapter(videoAdapter);
         editProfileButton.setOnClickListener(v -> enterEditMode());
         saveProfileButton.setOnClickListener(v -> saveChanges());
+        deleteProfileButton.setOnClickListener(v -> deleteUserConfirmationDialog());
         uploadFromGalleryButton.setOnClickListener(v -> openImagePicker());
         takePictureCameraButton.setOnClickListener(v -> openCamera());
         toggleImageButtons.setOnClickListener(v -> toggleButtonsVisibility());
     }
+
+
 
     @Override
     protected void onResume() {
@@ -151,12 +158,13 @@ public class UserPageActivity extends AppCompatActivity {
     private void enterEditMode() {
         editUsernameEditText.setVisibility(View.VISIBLE);
         editChannelNameEditText.setVisibility(View.VISIBLE);
+        editProfileButton.setVisibility(View.GONE);
         saveProfileButton.setVisibility(View.VISIBLE);
+        deleteProfileButton.setVisibility(View.VISIBLE);
         editUsernameEditText.setText(usernameTextView.getText());
         editChannelNameEditText.setText(channelNameTextView.getText());
         usernameTextView.setVisibility(View.GONE);
         channelNameTextView.setVisibility(View.GONE);
-        editProfileButton.setVisibility(View.GONE);
         toggleImageButtons.setVisibility(View.VISIBLE);
     }
 
@@ -177,7 +185,7 @@ public class UserPageActivity extends AppCompatActivity {
             if (profileImageView != null) {
                 String baseUrl = MyApplication.getContext().getString(R.string.BaseUrl);
                 String profilePicPath = pageUser.getImageURI();
-                if (profilePicPath != null)
+                if (profilePicPath != null && selectedProfilePicture == null)
                     profilePicPath = profilePicPath.substring(1);
                 String profileImageUrl = baseUrl + profilePicPath;
                 ImageLoader.loadImage(profileImageUrl, profileImageView);
@@ -194,10 +202,13 @@ public class UserPageActivity extends AppCompatActivity {
         editUsernameEditText = findViewById(R.id.editUsernameEditText);
         editProfileButton = findViewById(R.id.editProfileButton);
         saveProfileButton = findViewById(R.id.saveProfileButton);
+        deleteProfileButton = findViewById(R.id.deleteProfileButton);
         videoRecyclerView = findViewById(R.id.recyclerView);
         uploadFromGalleryButton = findViewById(R.id.uploadProfilePicImageButton);
         takePictureCameraButton = findViewById(R.id.takePicture);
         toggleImageButtons = findViewById(R.id.toggleImageButtons);
+        noVideosFoundText = findViewById(R.id.noVideosFoundText);
+
     }
 
     private void saveChanges() {
@@ -241,16 +252,36 @@ public class UserPageActivity extends AppCompatActivity {
         takePictureCameraButton.setVisibility(View.GONE);
         editUsernameEditText.setVisibility(View.GONE);
         editChannelNameEditText.setVisibility(View.GONE);
+        editProfileButton.setVisibility(View.VISIBLE);
         saveProfileButton.setVisibility(View.GONE);
+        deleteProfileButton.setVisibility(View.GONE);
         usernameTextView.setVisibility(View.VISIBLE);
         channelNameTextView.setVisibility(View.VISIBLE);
-        editProfileButton.setVisibility(View.VISIBLE);
         toggleImageButtons.setVisibility(View.GONE);
     }
+    private void deleteUserConfirmationDialog() {
+        new AlertDialog.Builder(this, R.style.MyDialogTheme)
+                .setTitle(getString(R.string.delete_user))
+                .setMessage(getString(R.string.sure_delete_user))
+                .setPositiveButton(R.string.yes, (dialog, which) -> {
+//                    deleteUser();
+                })
+                .setNegativeButton(R.string.no, null)
+                .setIcon(android.R.drawable.ic_menu_delete)
+                .show();
+    }
+
+
 
     private void getUserVideos(String userID) {
         videosViewModel.getUserVideos(userID).observe(this, videos -> {
-            if (videos != null) {
+            if (videos != null && !videos.isEmpty()) {
+                videoAdapter.updateVideoList(videos);
+                noVideosFoundText.setVisibility(View.GONE);
+            } else {
+                noVideosFoundText.setVisibility(View.VISIBLE);
+                String noVideosMessage = getString(R.string.noVideosFound);
+                noVideosFoundText.setText(noVideosMessage);
                 videoAdapter.updateVideoList(videos);
             }
         });
