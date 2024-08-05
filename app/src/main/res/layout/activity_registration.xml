@@ -72,8 +72,17 @@
         <ImageButton
             android:id="@+id/uploadProfilePicImageButton"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@color/purple_500"
+            android:layout_height="48dp"
+            android:layout_marginBottom="5dp"
+            android:background="@color/purple_def"
+            android:drawableStart="@android:drawable/stat_sys_upload"
+            android:drawablePadding="0dp"
+            android:gravity="center"
+            android:paddingStart="80dp"
+            android:paddingEnd="90dp"
+            android:fontFamily="sans-serif-medium"
+            android:textSize="14sp"
+            android:letterSpacing="0.08"
             android:src="@android:drawable/ic_menu_gallery" />
         <TextView
             android:layout_width="match_parent"
@@ -85,8 +94,17 @@
         <ImageButton
             android:id="@+id/takePicture"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@color/purple_500"
+            android:layout_height="48dp"
+            android:layout_marginBottom="5dp"
+            android:background="@color/purple_def"
+            android:drawableStart="@android:drawable/stat_sys_upload"
+            android:drawablePadding="0dp"
+            android:gravity="center"
+            android:paddingStart="80dp"
+            android:paddingEnd="90dp"
+            android:fontFamily="sans-serif-medium"
+            android:textSize="14sp"
+            android:letterSpacing="0.08"
             android:src="@android:drawable/ic_menu_camera" />
         <TextView
             android:layout_width="match_parent"

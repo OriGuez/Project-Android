@@ -1,6 +1,6 @@
 package com.example.project_android.adapters;
-
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.project_android.MainActivity;
 import com.example.project_android.MyApplication;
 import com.example.project_android.R;
+import com.example.project_android.UserPageActivity;
 import com.example.project_android.model.Comment;
 import com.example.project_android.utils.ImageLoader;
 import com.example.project_android.viewModel.CommentsViewModel;
@@ -51,7 +52,7 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = inflater.inflate(R.layout.comment_item, parent, false);
-        return new ViewHolder(view, this, commentsViewModel,usersViewModel, comments, recyclerView, context);
+        return new ViewHolder(view, this, commentsViewModel, usersViewModel, comments, recyclerView, context);
     }
 
     @Override
@@ -93,7 +94,7 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
         private RecyclerView recyclerView;
         private Context context;
 
-        public ViewHolder(@NonNull View itemView, CommentRecyclerViewAdapter adapter, CommentsViewModel commentsViewModel,UsersViewModel usersViewModel, List<Comment> comments, RecyclerView recyclerView, Context context) {
+        public ViewHolder(@NonNull View itemView, CommentRecyclerViewAdapter adapter, CommentsViewModel commentsViewModel, UsersViewModel usersViewModel, List<Comment> comments, RecyclerView recyclerView, Context context) {
             super(itemView);
             this.adapter = adapter;
             this.commentsViewModel = commentsViewModel;
@@ -128,7 +129,7 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
                     Comment comment = comments.get(position);
                     String newCommentText = editCommentEditText.getText().toString().trim();
                     if (!newCommentText.isEmpty()) {
-                        commentsViewModel.update(comment.getId(),new Comment(newCommentText,comment.getUserId(),comment.getVideoId())).observe((LifecycleOwner) context, resp -> {
+                        commentsViewModel.update(comment.getId(), new Comment(newCommentText, comment.getUserId(), comment.getVideoId())).observe((LifecycleOwner) context, resp -> {
                             if (resp.isSuccessful()) {
                                 comment.setContent(newCommentText);
                                 adapter.notifyItemChanged(position);
@@ -138,7 +139,6 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
                                 editCommentButton.setVisibility(View.VISIBLE);
                             }
                         });
-
                     }
                 }
             });
@@ -151,9 +151,8 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
                             comments.remove(position);
                             adapter.notifyItemRemoved(position);
                             adapter.notifyItemRangeChanged(position, comments.size());
-                        }
-                        else {
-                            Toast.makeText(context, "error deleting comment", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(context, "Error deleting comment", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -162,8 +161,8 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
 
         public void bind(Comment comment) {
             String publisherID = comment.getUserId();
-            usersViewModel.get(publisherID).observe((LifecycleOwner) context, user ->{
-                if (user != null){
+            usersViewModel.get(publisherID).observe((LifecycleOwner) context, user -> {
+                if (user != null) {
                     publisherTextView.setText(user.getChannelName());
                     String baseUrl = MyApplication.getContext().getString(R.string.BaseUrl);
                     String profilePicPath = user.getImageURI();
@@ -171,13 +170,20 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
                         profilePicPath = profilePicPath.substring(1);
                     String profileImageUrl = baseUrl + profilePicPath;
                     ImageLoader.loadImage(profileImageUrl, profileImageView);
-                }
-                else {
+                } else {
                     publisherTextView.setText("Unknown");
                     profileImageView.setImageResource(R.drawable.ic_def_user);
                 }
             });
             commentContentTextView.setText(comment.getContent());
+
+            // Set the click listener on the profile image
+            profileImageView.setOnClickListener(v -> {
+                Intent intent = new Intent(context, UserPageActivity.class);
+                intent.putExtra("userID", comment.getUserId());
+                context.startActivity(intent);
+            });
+
             if (MainActivity.isDarkMode) {
                 publisherTextView.setTextColor(Color.WHITE);
                 commentContentTextView.setTextColor(Color.WHITE);
@@ -187,6 +193,7 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
                 commentContentTextView.setTextColor(Color.BLACK);
                 editCommentEditText.setTextColor(Color.BLACK);
             }
+
             if (MainActivity.currentUser == null || !MainActivity.currentUser.getId().equals(publisherID)) {
                 deleteCommentButton.setVisibility(View.GONE);
                 editCommentButton.setVisibility(View.GONE);

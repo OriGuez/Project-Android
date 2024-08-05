@@ -166,9 +166,9 @@ public class EditVideo extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_PERMISSION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Camera permission approved", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.cameraApproved), Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.cameraDenied), Toast.LENGTH_SHORT).show();
             }
         }
     }
