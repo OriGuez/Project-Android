@@ -79,7 +79,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:adjustViewBounds="true"
-                android:text="Delete Video"
+                android:text="@string/delete_video"
                 android:backgroundTint="@color/viewtube_red" />
         </LinearLayout>
 

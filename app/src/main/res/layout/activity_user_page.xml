@@ -39,7 +39,7 @@
         <TextView
             android:id="@+id/uploadProfilePicImageButton"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="36dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="5dp"
             android:background="@color/purple_def"
@@ -47,7 +47,7 @@
             android:gravity="center"
             android:paddingStart="88dp"
             android:paddingEnd="70dp"
-            android:text="UPLOAD FROM GALLERY"
+            android:text="@string/upload_from_gallery"
             android:textColor="@android:color/white"
             android:fontFamily="sans-serif-medium"
             android:textSize="14sp"
@@ -57,14 +57,14 @@
         <TextView
             android:id="@+id/takePicture"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="36dp"
             android:layout_marginBottom="5dp"
             android:background="@color/purple_def"
             android:drawableStart="@android:drawable/ic_menu_camera"
             android:gravity="center"
             android:paddingStart="88dp"
             android:paddingEnd="95dp"
-            android:text="TAKE A PICTURE"
+            android:text="@string/take_pic"
             android:textColor="@android:color/white"
             android:fontFamily="sans-serif-medium"
             android:textSize="14sp"
@@ -95,7 +95,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:gravity="center"
-            android:text="Channel Name"
+            android:text="@string/channel_name"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -105,7 +105,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:gravity="center"
-            android:text="Username"
+            android:text="@string/username"
             android:textSize="16sp" />
 
 
@@ -115,14 +115,14 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:textSize="14sp"
-            android:text="Edit Profile" />
+            android:text="@string/edit_profile" />
 
         <Button
             android:id="@+id/saveProfileButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Save Profile"
+            android:text="@string/save_profile"
             android:visibility="gone" />
 
         <Button
@@ -130,7 +130,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Delete User"
+            android:text="@string/delete_user"
             android:backgroundTint="@color/viewtube_red"
             android:visibility="gone" />
 

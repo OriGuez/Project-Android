@@ -13,6 +13,7 @@
     <string name="confirm_password_hint">אימות סיסמה</string>
     <string name="channel_name_hint">שם הערוץ</string>
     <string name="upload_profile_picture">העלה תמונת פרופיל</string>
+    <string name="upload_from_gallery">העלה מתוך הגלריה</string>
     <string name="profile_picture_description">תמונת פרופיל</string>
     <string name="register_button">הרשמה</string>
     <string name="add_video_button">הוסף סרטון</string>
@@ -50,6 +51,8 @@
     <string name="edit_title">ערוך כותרת</string>
     <string name="edit_description">ערוך תיאור</string>
     <string name="save_changes">שמור</string>
+    <string name="save_profile">שמור פרופיל</string>
+    <string name="edit_profile">ערוך פרופיל</string>
     <string name="cancel_edit">בטל</string>
     <string name="dark_mode">מצב כהה</string>
     <string name="video_title">כותרת הסרטון</string>
@@ -95,7 +98,10 @@
     <string name="serverConnectionFailed">החיבור לשרת נכשל</string>
     <string name="serverError">שגיאת שרת</string>
     <string name="unknownError">שגיאה לא ידועה</string>
+    <string name="upload_date">תאריך העלאה</string>
     <string name="profileUpdated">הפרופיל עודכן בהצלחה</string>
     <string name="profileUpdateFailed">עדכון הפרופיל נכשל</string>
     <string name="fieldsCanntBeEmpty">שדות לא יכולים להישאר ריקים</string>
+    <string name="cameraApproved">הרשאה למצלמה אושרה</string>
+    <string name="cameraDenied">הרשאה למצלמה נדחתה</string>
 </resources>

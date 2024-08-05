@@ -48,7 +48,7 @@
             <TextView
                 android:id="@+id/uploadVidFromGallery"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="36dp"
                 android:layout_marginBottom="5dp"
                 android:background="@color/purple_def"
                 android:drawableStart="@android:drawable/stat_sys_upload"
@@ -59,7 +59,7 @@
                 android:fontFamily="sans-serif-medium"
                 android:textSize="14sp"
                 android:letterSpacing="0.08"
-                android:text="UPLOAD VIDEO"
+                android:text="@string/upload_video"
                 android:textColor="@android:color/white"
                 />
 
@@ -67,7 +67,7 @@
         <Button
             android:id="@+id/buttonUploadThumbnail"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="36dp"
             android:layout_marginBottom="5dp"
             android:background="@color/purple_def"
             android:drawableStart="@android:drawable/stat_sys_upload"
@@ -78,7 +78,7 @@
             android:fontFamily="sans-serif-medium"
             android:textSize="14sp"
             android:letterSpacing="0.08"
-            android:text="UPLOAD THUMBNAIL"
+            android:text="@string/upload_thumbnail"
             android:textColor="@android:color/white" />
 
         <ImageView

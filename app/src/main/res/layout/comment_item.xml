@@ -27,14 +27,14 @@
             android:id="@+id/publisherTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Publisher Name"
+            android:text="@string/publisher_name"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/commentContentTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Comment content" />
+            android:text="@string/comment_content" />
 
         <EditText
             android:id="@+id/editCommentEditText"
