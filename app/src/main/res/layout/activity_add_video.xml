@@ -59,7 +59,7 @@
                 android:fontFamily="sans-serif-medium"
                 android:textSize="14sp"
                 android:letterSpacing="0.08"
-                android:text="@string/upload_video"
+                android:text="UPLOAD VIDEO"
                 android:textColor="@android:color/white"
                 />
 
@@ -67,12 +67,20 @@
         <Button
             android:id="@+id/buttonUploadThumbnail"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:layout_height="48dp"
+            android:layout_marginBottom="5dp"
+            android:background="@color/purple_def"
+            android:drawableStart="@android:drawable/stat_sys_upload"
+            android:drawablePadding="0dp"
+            android:gravity="center"
+            android:paddingStart="102dp"
+            android:paddingEnd="90dp"
+            android:fontFamily="sans-serif-medium"
             android:textSize="14sp"
+            android:letterSpacing="0.08"
+            android:text="UPLOAD THUMBNAIL"
+            android:textColor="@android:color/white" />
 
-
-            android:text="@string/upload_thumbnail" />
         <ImageView
             android:id="@+id/thumbnailPrev"
             android:layout_width="160dp"
