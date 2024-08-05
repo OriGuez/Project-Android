@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-        <!-- YouTube Logo -->
+
         <ImageView
             android:id="@+id/youtubeLogo"
             android:layout_width="51dp"

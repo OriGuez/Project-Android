@@ -178,10 +178,6 @@ public class RegistrationActivity extends AppCompatActivity {
             usernameEditText.setError(getString(R.string.usernameRequired));
             return;
         }
-//        if (!usernameAvaliable(username)){
-//            usernameEditText.setError(getString(R.string.usernameExists));
-//            return;
-//        }
 
         UserData newUser = new UserData(username, password, channelName, selectedProfilePicture);
 

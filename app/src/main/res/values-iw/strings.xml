@@ -83,4 +83,7 @@
     <string name="sure_delete_user">האם אתה בטוח שברצונך למחוק את המשתמש?</string>
     <string name="userDeleted">המשתמש נמחק בהצלחה</string>
     <string name="userDeletedFailed">מחיקת המשתמש נכשלה</string>
+    <string name="profileUpdate">המשתמש עודכן בהצלחה</string>
+    <string name="profileUpdateFail">עדכון המשתמש נכשל</string>
+    <string name="emptyFields">לא ניתן להשאיר שדות ריקים</string>
 </resources>

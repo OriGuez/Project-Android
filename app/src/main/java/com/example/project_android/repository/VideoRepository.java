@@ -43,83 +43,15 @@ public class VideoRepository {
         return instance;
     }
 
-//    public MutableLiveData<Video> getAVideo(String uploaderID,String videoID) {
-//        return api.fetchVideo(uploaderID,videoID);
-//    }
 
-
-    //    static class VideosListData extends MutableLiveData<List<Video>> {
-//        public VideosListData() {
-//            super();
-//            setValue(new LinkedList<Video>());
-//        }
-//
-//        @Override
-//        protected void onActive() {
-//            super.onActive();
-//
-////            new Thread(() ->
-////            {
-////                postListData.postValue(dao.get());
-////            }).start();
-//        }
-//
-//    }
     public LiveData<List<Video>> getAll() {
         return videoListData;
-//        // Check local database first
-//        LiveData<List<Video>> localData = dao.index();
-//        //if no data in localDB try bringing from api.
-//        if (localData.getValue() == null || localData.getValue().isEmpty()) {
-//            List<Video> apiData = api.fetch20Videos();
-//            localData = api.fetch20Videos();
-//            dao.insert();
-//            //return api.fetch20Videos();
-//        }
-//        return localData;
     }
 
     public LiveData<List<Video>> getUserVideos(String userID) {
         return api.fetchUserVideos(userID);
     }
 
-    //    public LiveData<Video> get(String videoId) {
-//        MutableLiveData<Video> videoData = new MutableLiveData<>();
-//        // First, look for the video in the local database
-//        //LiveData<Video> localData = dao.get(videoId);
-//        Video video = dao.get(videoId);
-//        if (video != null)
-//        {
-//            videoData.postValue(video);
-//            return videoData;
-//        }
-//        return api.fetchVideo(videoId);
-//        //MutableLiveData<Video> videoData = new MutableLiveData<>();
-//// First, look for the video in the local database
-////        new Thread(() -> {
-////            Video video = dao.get(videoId);
-////            if (video != null) {
-////                videoData.postValue(video); // If found, post the value to LiveData
-////            } else {
-////                // If not found, fetch it from the server
-////                return api.fetchVideo(videoId);
-//////                api.fetchVideo(videoId).observeForever(videoFromServer -> {
-//////                    if (videoFromServer != null) {
-//////                        videoData.postValue(videoFromServer);
-//////                        // Save the video to the local database
-//////                        new Thread(() -> {
-//////                            dao.insert(videoFromServer);
-//////                        }).start();
-//////                    } else {
-//////                        videoData.postValue(null); // Handle the case where the video is not found on the server
-//////                    }
-//////                });
-////            }
-////        }).start();
-//
-//        //return videoData;
-//        //return api.fetchVideo(videoId);
-//    }
     public LiveData<Video> get(String videoId) {
         return api.fetchVideo(videoId);
     }
@@ -152,9 +84,7 @@ public class VideoRepository {
         api.get();
     }
 
-    //    public LiveData<List<Video>> getAll() {
-//        return videoListData;
-//    }
+
     class VideoListData extends MutableLiveData<List<Video>> {
 
         public VideoListData() {

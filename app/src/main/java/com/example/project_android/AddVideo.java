@@ -74,14 +74,6 @@ public class AddVideo extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_video);
         vidViewModel = new ViewModelProvider(this).get(VideosViewModel.class);
-//        vidViewModel.get().observe(this, videos -> {
-//            // Update the UI with the new video list
-//            if (videos != null && !videos.isEmpty()) {
-//                //adapter.updateVideoList(videos);
-//            } else {
-//                Log.e("MainActivity", "Video list is null");
-//            }
-//        });
         editVideoTitle = findViewById(R.id.editVideoTitle);
         editVideoDescription = findViewById(R.id.editVideoDescription);
         buttonUploadThumbnail = findViewById(R.id.buttonUploadThumbnail);
@@ -137,11 +129,7 @@ public class AddVideo extends AppCompatActivity {
         // Create a new Video object
         Video newVideo = new Video(title,description,null);
         newVideo.setWhoLikedList(new ArrayList<>());
-        //newVideo.setComments(new ArrayList<>());
-        //newVideo.setTitle(title);
-        //newVideo.setVidID(generateUniqueID());
-        //newVideo.setDescription(description);
-        //newVideo.setThumbnailUrl(thumbnailUri.toString());
+
         newVideo.setPublisher(MainActivity.currentUser.getUsername()); // Replace with actual user
         if (videoUri != null) {
             File videoFile = FileUtils.getFileFromUri(this, videoUri, "video.mp4");
@@ -179,9 +167,6 @@ public class AddVideo extends AppCompatActivity {
             }
 
         });
-        // Add new video to video list
-        //MainActivity.videoList.add(newVideo);
-        // Inform user and finish activity
 
     }
 

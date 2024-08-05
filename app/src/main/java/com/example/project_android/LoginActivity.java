@@ -62,24 +62,18 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Logged In successfully!", Toast.LENGTH_SHORT).show();
 
                     String token = sharedPreferences.getString("token", null); // The second parameter is the default value if the key doesn't exist
-                    //Log.d("D", token);
+                    //
                     finish(); // close the LoginActivity
 
                 } else {
                     Toast.makeText(getApplicationContext(), "Failed To Login", Toast.LENGTH_SHORT).show();
-                    //Toast.makeText(this, R.string.invalidLogin, Toast.LENGTH_SHORT).show();
 
                     // Handle the error case
                 }
             });
 
 
-//            if (validateLogin(enteredUsername, enteredPassword)) {
-//                finish(); // close the LoginActivity
-//            } else {
-//                // If login fails, show a toast message
-//                Toast.makeText(this, R.string.invalidLogin, Toast.LENGTH_SHORT).show();
-//            }
+
 
 
         });
@@ -106,15 +100,5 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
-//    private boolean validateLogin(String username, String password) {
-//        if (MainActivity.userDataList != null) {
-//            for (UserData user : MainActivity.userDataList) {
-//                if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
-//                    MainActivity.currentUser = user;
-//                    return true;
-//                }
-//            }
-//        }
-//        return false;
-//    }
+
 }

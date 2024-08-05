@@ -76,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
         searchView.clearFocus();
         youtubeLogo = findViewById(R.id.youtubeLogo);
         applySearchViewColors(searchView, isDarkMode);
-//        updateTextColors(isDarkMode);
         // Set SearchView listeners to hide/show the logo
         searchView.setOnSearchClickListener(v -> youtubeLogo.setVisibility(View.GONE));
         searchView.setOnCloseListener(() -> {
@@ -99,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         // Set up profile picture
         profilePic = findViewById(R.id.publisherProfilePic);
-        //loggedVisibilityLogic();
         // Apply dark mode settings
         applyDarkModeSettings(isDarkMode);
         // Set OnClickListener for login button
@@ -200,7 +198,6 @@ public class MainActivity extends AppCompatActivity {
         final int MENU_LOGOUT = Menu.FIRST + 1;
         Context wrapper = new ContextThemeWrapper(this, isDarkMode ? R.style.DarkPopupMenu : R.style.LightPopupMenu);
         PopupMenu popupMenu = new PopupMenu(wrapper, view);
-//        PopupMenu popupMenu = new PopupMenu(this, view);
         popupMenu.getMenu().add(Menu.NONE, MENU_MY_CHANNEL, Menu.NONE, getString(R.string.MyChannel)); // Add "My Channel" menu item with ID
         popupMenu.getMenu().add(Menu.NONE, MENU_LOGOUT, Menu.NONE, getString(R.string.SignOut)); // Add "Sign Out" menu item with ID
         popupMenu.setOnMenuItemClickListener(item -> {
@@ -215,7 +212,6 @@ public class MainActivity extends AppCompatActivity {
                     editor.apply(); // Use commit() if you need synchronous removal
                     currentUser = null; // Logout the user
                     loggedVisibilityLogic(); // Update UI visibility
-//                    profilePic.setImageResource(R.drawable.user);
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                     recreate();
                     return true;

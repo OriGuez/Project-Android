@@ -21,8 +21,6 @@ public class CommentActions {
     CommentApiService api;
 
     public CommentActions(){
-        //this.videosListData = list;
-        //this.dao=dao;
         this.api = RetrofitClient.getClient().create(CommentApiService.class);
     }
 

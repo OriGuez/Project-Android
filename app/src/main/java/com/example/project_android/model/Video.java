@@ -91,13 +91,6 @@ public class Video {
         this.url = url;
     }
 
-//    public String getThumbnailUrl() {
-//        return thumbnailUrl;
-//    }
-//
-//    public void setThumbnailUrl(String thumbnailUrl) {
-//        this.thumbnailUrl = thumbnailUrl;
-//    }
 
     public List<String> getWhoLikedList() {
         return whoLikedList;

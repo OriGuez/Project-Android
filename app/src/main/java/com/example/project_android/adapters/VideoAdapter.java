@@ -1,7 +1,5 @@
 package com.example.project_android.adapters;
-
 import static android.graphics.Color.BLACK;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -14,13 +12,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ImageButton;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.project_android.EditVideo;
 import com.example.project_android.UserPageActivity;
 import com.example.project_android.utils.ImageLoader;
@@ -31,7 +27,6 @@ import com.example.project_android.VideoActivity;
 import com.example.project_android.model.UserData;
 import com.example.project_android.model.Video;
 import com.example.project_android.viewModel.UsersViewModel;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -112,7 +107,6 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         }
 
         holder.titleTextView.setText(video.getTitle());
-        //holder.publisherTextView.setText(video.getPublisher());
         int viewsCount = Integer.parseInt(String.valueOf(video.getViews()));
         String viewsText = formatNum(viewsCount) + " •" ;
         holder.viewsTextView.setText(viewsText);
