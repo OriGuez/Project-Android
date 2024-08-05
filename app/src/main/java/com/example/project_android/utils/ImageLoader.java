@@ -1,9 +1,9 @@
 package com.example.project_android.utils;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.widget.ImageView;
-
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;

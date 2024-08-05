@@ -2,12 +2,9 @@ package com.example.project_android.api;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-
 import com.example.project_android.MyApplication;
 import com.example.project_android.R;
-
 import java.util.concurrent.TimeUnit;
-
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

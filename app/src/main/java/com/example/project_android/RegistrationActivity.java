@@ -15,31 +15,21 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-
-import com.example.project_android.model.ApiResponse;
 import com.example.project_android.model.UserData;
 import com.example.project_android.utils.FileUtils;
 import com.example.project_android.viewModel.UsersViewModel;
-import com.example.project_android.viewModel.VideosViewModel;
-
-
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class RegistrationActivity extends AppCompatActivity {
 
     private UsersViewModel viewModel;
-
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final int PICK_CAMERA_REQUEST = 2;
     private static final int REQUEST_PERMISSION = 100;
@@ -53,6 +43,7 @@ public class RegistrationActivity extends AppCompatActivity {
     private Button registerButton;
     private Bitmap selectedProfilePicture;
     private Uri imgURI;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,15 +57,17 @@ public class RegistrationActivity extends AppCompatActivity {
         profilePictureImageView = findViewById(R.id.profilePicture);
         registerButton = findViewById(R.id.registerButton);
         uploadFromGalleryButton = findViewById(R.id.uploadProfilePicImageButton);
-        takePictureCameraButton=findViewById(R.id.takePicture);
+        takePictureCameraButton = findViewById(R.id.takePicture);
         // TextWatcher to passwordEditText
         passwordEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
             }
+
             @Override
             public void afterTextChanged(Editable s) {
                 if (!isValidPassword(s.toString())) {
@@ -116,8 +109,7 @@ public class RegistrationActivity extends AppCompatActivity {
         // Check for camera permission
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_PERMISSION);
-        }
-        else {
+        } else {
             Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             startActivityForResult(takePictureIntent, PICK_CAMERA_REQUEST);
         }
@@ -137,8 +129,7 @@ public class RegistrationActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-        else if (requestCode == PICK_CAMERA_REQUEST && resultCode == RESULT_OK && data != null) {
+        } else if (requestCode == PICK_CAMERA_REQUEST && resultCode == RESULT_OK && data != null) {
             selectedProfilePicture = (Bitmap) data.getExtras().get("data");
             profilePictureImageView.setVisibility(View.VISIBLE);
             profilePictureImageView.setImageBitmap(selectedProfilePicture);
@@ -178,45 +169,50 @@ public class RegistrationActivity extends AppCompatActivity {
             usernameEditText.setError(getString(R.string.usernameRequired));
             return;
         }
-//        if (!usernameAvaliable(username)){
-//            usernameEditText.setError(getString(R.string.usernameExists));
-//            return;
-//        }
-
+        registerButton.setEnabled(false);
         UserData newUser = new UserData(username, password, channelName, selectedProfilePicture);
-
         try {
-            File imageFile = FileUtils.bitmapToFile(this,selectedProfilePicture);
+            File imageFile = FileUtils.bitmapToFile(this, selectedProfilePicture);
             newUser.setImageFile(imageFile);
         } catch (IOException e) {
+            registerButton.setEnabled(true);
             throw new RuntimeException(e);
         }
 
-
         viewModel.add(newUser).observe(this, apiResponse -> {
             if (apiResponse.isSuccessful()) {
-                Toast.makeText(RegistrationActivity.this, "User added successfully! Code: " + apiResponse.getCode(), Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(RegistrationActivity.this, LoginActivity.class);
+                registerButton.setEnabled(true);
+                Toast.makeText(this, getString(R.string.userAdded), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(this, LoginActivity.class);
                 startActivity(intent);
                 finish();
             } else {
+                registerButton.setEnabled(true);
                 switch (apiResponse.getCode()) {
-                    case 400:
+                    case 400: {
                         Toast.makeText(RegistrationActivity.this, "Bad Request", Toast.LENGTH_SHORT).show();
                         break;
-                    case 401:
+                    }
+                    case 401: {
                         Toast.makeText(RegistrationActivity.this, "Unauthorized", Toast.LENGTH_SHORT).show();
                         break;
-                    case 500:
-                        Toast.makeText(RegistrationActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+                    }
+                    case 500: {
+                        Toast.makeText(RegistrationActivity.this, getString(R.string.serverError), Toast.LENGTH_SHORT).show();
                         break;
+                    }
+                    case 409: {
+                        Toast.makeText(RegistrationActivity.this, getString(R.string.usernameExists), Toast.LENGTH_SHORT).show();
+                        break;
+                    }
                     default:
-                        Toast.makeText(RegistrationActivity.this, "Unknown Error", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RegistrationActivity.this, R.string.unknownError, Toast.LENGTH_SHORT).show();
                         break;
                 }
             }
         });
     }
+
     private void validatePasswordsMatch() {
         String password = passwordEditText.getText().toString();
         String confirmPassword = confirmPasswordEditText.getText().toString();
@@ -226,6 +222,7 @@ public class RegistrationActivity extends AppCompatActivity {
             confirmPasswordEditText.setError(null);
         }
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);

@@ -1,17 +1,12 @@
 package com.example.project_android.model;
 
-
 import com.google.gson.annotations.SerializedName;
-
 import android.graphics.Bitmap;
-
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
-
 import java.io.File;
-import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
@@ -34,7 +29,6 @@ public class Video {
     private String publisher;
 
     private String url;
-//    private String thumbnailUrl;
 
     private String thumbnail;
 
@@ -90,14 +84,6 @@ public class Video {
     public void setUrl(String url) {
         this.url = url;
     }
-
-//    public String getThumbnailUrl() {
-//        return thumbnailUrl;
-//    }
-//
-//    public void setThumbnailUrl(String thumbnailUrl) {
-//        this.thumbnailUrl = thumbnailUrl;
-//    }
 
     public List<String> getWhoLikedList() {
         return whoLikedList;

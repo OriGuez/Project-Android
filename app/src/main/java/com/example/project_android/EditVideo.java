@@ -11,19 +11,15 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-
 import com.example.project_android.model.Video;
 import com.example.project_android.utils.FileUtils;
 import com.example.project_android.viewModel.VideosViewModel;
@@ -74,7 +70,6 @@ public class EditVideo extends AppCompatActivity {
         });
 
         updateFields();
-
         buttonUploadThumbnail.setOnClickListener(v -> openThumbnailPicker());
         buttonSaveChanges.setOnClickListener(v -> saveChanges());
         deleteVideoButton.setOnClickListener(v -> showDeleteConfirmationDialog());
@@ -84,7 +79,6 @@ public class EditVideo extends AppCompatActivity {
         InputStream inputStream = getContentResolver().openInputStream(uri);
         return BitmapFactory.decodeStream(inputStream);
     }
-
 
     private void showDeleteConfirmationDialog() {
         new AlertDialog.Builder(this, R.style.MyDialogTheme)
@@ -119,10 +113,12 @@ public class EditVideo extends AppCompatActivity {
     }
 
     private void saveChanges() {
+        buttonSaveChanges.setEnabled(false);
         String title = editVideoTitle.getText().toString().trim();
         String description = editVideoDescription.getText().toString().trim();
         if (title.isEmpty() || description.isEmpty()) {
             Toast.makeText(this, getString(R.string.fillAll), Toast.LENGTH_LONG).show();
+            buttonSaveChanges.setEnabled(true);
             return;
         }
 
@@ -131,18 +127,20 @@ public class EditVideo extends AppCompatActivity {
             try {
                 imageFile = FileUtils.bitmapToFile(this, thumbPic);
             } catch (IOException e) {
+                buttonSaveChanges.setEnabled(true);
                 throw new RuntimeException(e);
             }
         }
         Video updatedVidData = new Video(title, description, imageFile);
-
         videosViewModel.update(currentVideo.getPublisher(), currentVideo.getVidID(), updatedVidData).observe(this, resp -> {
             if (resp.isSuccessful()) {
                 Toast.makeText(this, getString(R.string.videoUpdated), Toast.LENGTH_SHORT).show();
                 UserPageActivity.shouldRefresh = true;
                 MainActivity.shouldRefresh = true;
+                buttonSaveChanges.setEnabled(true);
                 finish();
             } else {
+                buttonSaveChanges.setEnabled(true);
                 Toast.makeText(this, getString(R.string.videoUpdateFailed), Toast.LENGTH_SHORT).show();
             }
         });
@@ -162,7 +160,6 @@ public class EditVideo extends AppCompatActivity {
             }
         }
     }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

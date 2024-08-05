@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.util.Log;
-import android.graphics.PorterDuff;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -25,7 +24,6 @@ import com.example.project_android.model.Video;
 import com.example.project_android.viewModel.UsersViewModel;
 import com.example.project_android.viewModel.VideosViewModel;
 import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.imageview.ShapeableImageView;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -121,7 +119,7 @@ public class SearchActivity extends AppCompatActivity {
                 recyclerView.setVisibility(View.GONE);
                 noVideosText.setVisibility(View.VISIBLE);
                 String noResultsMessage;
-                noResultsMessage = getString(R.string.searchResults, query) + getString(R.string.noVideosFound);
+                noResultsMessage = getString(R.string.noVideosFound);
                 noVideosText.setText(noResultsMessage);
                 adapter.clearList();
             }
@@ -154,7 +152,6 @@ public class SearchActivity extends AppCompatActivity {
     private void updateTextColors(boolean isDarkMode) {
         int textColor = ContextCompat.getColor(this, isDarkMode ? android.R.color.white : android.R.color.black);
         int hintColor = ContextCompat.getColor(this, isDarkMode ? android.R.color.darker_gray : android.R.color.darker_gray);
-
         // Iterate through all the views and update text color if it's a TextView
         View root = mainLayout.getRootView();
         updateTextColorRecursive(root, textColor, hintColor);
@@ -179,6 +176,5 @@ public class SearchActivity extends AppCompatActivity {
         int backgroundColor = isDarkMode ? Color.DKGRAY : Color.WHITE;
         appBarLayout.setBackgroundColor(backgroundColor);
         topMenu.setBackgroundColor(backgroundColor);
-
     }
 }

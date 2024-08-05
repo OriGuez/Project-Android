@@ -56,7 +56,7 @@
                 android:gravity="center"
                 android:paddingStart="108dp"
                 android:paddingEnd="135dp"
-                android:text="Upload Video"
+                android:text="@string/upload_video"
                 android:textColor="@android:color/white"
                 android:textSize="17sp"
                 />

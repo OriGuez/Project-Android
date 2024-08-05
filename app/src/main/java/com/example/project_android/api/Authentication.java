@@ -1,6 +1,6 @@
 package com.example.project_android.api;
-import android.content.SharedPreferences;
 
+import android.content.SharedPreferences;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -22,7 +22,6 @@ public class Authentication implements Interceptor {
                     .header("Authorization", "Bearer " + token);
             request = requestBuilder.build();
         }
-
         return chain.proceed(request);
     }
 }

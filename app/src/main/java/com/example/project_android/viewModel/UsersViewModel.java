@@ -2,7 +2,6 @@ package com.example.project_android.viewModel;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
-
 import com.example.project_android.model.ApiResponse;
 import com.example.project_android.model.TokenRequest;
 import com.example.project_android.model.TokenResponse;
@@ -15,7 +14,6 @@ public class UsersViewModel extends ViewModel {
     public UsersViewModel(){
         repository = new UserRepository();
     }
-
 
     public LiveData<ApiResponse> add(UserData user){
         return repository.add(user);
