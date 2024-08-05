@@ -74,7 +74,6 @@ public class MainActivity extends AppCompatActivity {
         searchView.clearFocus();
         youtubeLogo = findViewById(R.id.youtubeLogo);
         applySearchViewColors(searchView, isDarkMode);
-//        updateTextColors(isDarkMode);
         // Set SearchView listeners to hide/show the logo
         searchView.setOnSearchClickListener(v -> youtubeLogo.setVisibility(View.GONE));
         searchView.setOnCloseListener(() -> {

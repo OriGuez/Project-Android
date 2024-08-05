@@ -75,7 +75,6 @@ public class VideoRepository {
     public void reload() {
         api.get();
     }
-
     class VideoListData extends MutableLiveData<List<Video>> {
         private boolean dataLoaded = false;
 

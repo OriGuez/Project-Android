@@ -83,6 +83,9 @@
     <string name="sure_delete_user">Are you sure you want to delete this user?</string>
     <string name="userDeleted">User Deleted Successfully</string>
     <string name="userDeletedFailed">Failed To Delete User</string>
+    <string name="profileUpdate">Profile Updated Successfully</string>
+    <string name="profileUpdateFail">Failed To Update Profile</string>
+    <string name="emptyFields">Fields cannot be empty</string>
     <string name="CameraPermissionDenied">Camera permission denied</string>
     <string name="cantEnterUserPage">Cannot Enter User Page</string>
     <string name="cantEnterAddVidPage">Cannot Enter Video Add Page</string>

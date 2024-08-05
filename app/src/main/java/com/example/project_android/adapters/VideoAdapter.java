@@ -1,7 +1,5 @@
 package com.example.project_android.adapters;
-
 import static android.graphics.Color.BLACK;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -106,7 +104,6 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         }
 
         holder.titleTextView.setText(video.getTitle());
-        //holder.publisherTextView.setText(video.getPublisher());
         int viewsCount = Integer.parseInt(String.valueOf(video.getViews()));
         String viewsText = formatNum(viewsCount) + " •" ;
         holder.viewsTextView.setText(viewsText);

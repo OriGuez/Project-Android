@@ -1,7 +1,6 @@
 package com.example.project_android;
 
 import java.text.NumberFormat;
-
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -18,7 +17,6 @@ import android.widget.VideoView;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
@@ -26,9 +24,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.widget.MediaController;
-
 import com.example.project_android.adapters.CommentRecyclerViewAdapter;
 import com.example.project_android.adapters.VideoAdapter;
 import com.example.project_android.model.Comment;
@@ -39,7 +35,6 @@ import com.example.project_android.utils.LoadingDialogUtility;
 import com.example.project_android.viewModel.CommentsViewModel;
 import com.example.project_android.viewModel.UsersViewModel;
 import com.example.project_android.viewModel.VideosViewModel;
-
 import java.util.ArrayList;
 import java.util.List;
 

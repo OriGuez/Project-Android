@@ -84,7 +84,6 @@ public class Video {
     public void setUrl(String url) {
         this.url = url;
     }
-
     public List<String> getWhoLikedList() {
         return whoLikedList;
     }

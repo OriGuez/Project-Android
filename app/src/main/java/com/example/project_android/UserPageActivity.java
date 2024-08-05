@@ -214,7 +214,7 @@ public class UserPageActivity extends AppCompatActivity {
         String newChannelName = editChannelNameEditText.getText().toString().trim();
         File imageFile = null;
         if (newUsername.isEmpty() || newChannelName.isEmpty()) {
-            Toast.makeText(this, getString(R.string.fieldsCanntBeEmpty), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.emptyFields), Toast.LENGTH_SHORT).show();
             return;
         }
         UserData editedUser = new UserData(newUsername, null, newChannelName, null);
@@ -239,9 +239,9 @@ public class UserPageActivity extends AppCompatActivity {
                     pageUser.setImageFile(finalImageFile);
                 }
                 updatePageUser();
-                Toast.makeText(this, getString(R.string.profileUpdated), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.profileUpdate), Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this, getString(R.string.profileUpdateFailed), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.profileUpdateFail), Toast.LENGTH_SHORT).show();
             }
         });
 
