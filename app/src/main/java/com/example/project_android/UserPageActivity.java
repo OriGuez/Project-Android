@@ -233,7 +233,6 @@ public class UserPageActivity extends AppCompatActivity {
             if (response != null && response.isSuccessful()) {
                 usernameTextView.setText(newUsername);
                 channelNameTextView.setText(newChannelName);
-
                 pageUser.setUsername(newUsername);
                 pageUser.setChannelName(newChannelName);
                 if (finalImageFile != null) {
@@ -299,10 +298,7 @@ public class UserPageActivity extends AppCompatActivity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
                 MainActivity.shouldRefresh = true;
-
                 Toast.makeText(this, getString(R.string.userDeleted), Toast.LENGTH_SHORT).show();
-
-
             } else {
                 Toast.makeText(this, getString(R.string.userDeletedFailed), Toast.LENGTH_SHORT).show();
             }

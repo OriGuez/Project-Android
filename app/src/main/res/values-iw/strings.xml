@@ -86,4 +86,16 @@
     <string name="profileUpdate">המשתמש עודכן בהצלחה</string>
     <string name="profileUpdateFail">עדכון המשתמש נכשל</string>
     <string name="emptyFields">לא ניתן להשאיר שדות ריקים</string>
+    <string name="CameraPermissionDenied">הגישה למצלמה נדחתה</string>
+    <string name="cantEnterUserPage">הגישה לדף המשתמש נכשלה</string>
+    <string name="cantEnterAddVidPage">הגישה לדף הוספת סרטון נכשלה</string>
+    <string name="loggedInSuccessfully">ההתחברות בוצעה בהצלחה</string>
+    <string name="loginFailed">ההתחברות נכשלה.וודא שהפרטים נכונים ושהחיבור תקין</string>
+    <string name="userAdded">המשתמש נוסף בהצלחה</string>
+    <string name="serverConnectionFailed">החיבור לשרת נכשל</string>
+    <string name="serverError">שגיאת שרת</string>
+    <string name="unknownError">שגיאה לא ידועה</string>
+    <string name="profileUpdated">הפרופיל עודכן בהצלחה</string>
+    <string name="profileUpdateFailed">עדכון הפרופיל נכשל</string>
+    <string name="fieldsCanntBeEmpty">שדות לא יכולים להישאר ריקים</string>
 </resources>

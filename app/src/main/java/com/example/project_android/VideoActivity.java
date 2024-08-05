@@ -1,4 +1,5 @@
 package com.example.project_android;
+
 import java.text.NumberFormat;
 import android.content.Intent;
 import android.graphics.Color;
@@ -13,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.VideoView;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import androidx.appcompat.app.AppCompatActivity;
@@ -66,7 +68,6 @@ public class VideoActivity extends AppCompatActivity {
     private EditText editTitleEditText;
     private EditText editDescriptionEditText;
     private Button saveButton;
-    private boolean isEditMode = false;
     private RecyclerView videoRecyclerView;
     private Video currentVideo;
     private LinearLayout vidScreenLayout;
@@ -74,6 +75,7 @@ public class VideoActivity extends AppCompatActivity {
     ImageView profileImageView;
 
     private static final String TAG = "VideoActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,32 +109,33 @@ public class VideoActivity extends AppCompatActivity {
                 Log.e("ac", "Video in page is null");
             }
         });
-        commentsViewModel.get(videoID).observe(this, comments -> {
-            if (comments != null) {
-                recycleAdapter.updateCommentsList(comments);
-            }
-        });
-        // Observe LiveData from ViewModel (videos for the recycler below)
-        vidViewModel.get().observe(this, videos -> {
-            if (videos != null) {
-                MainActivity.videoList = videos;
-                videoAdapter.updateVideoList(videos);
-            } else {
-                Log.e("ac", "Video list is null");
-            }
-        });
         InitializeUiComponents();
         videoPageDarkMode();
         updateVideoDetails();
-        if (commentsRecycleView != null) {
-            recycleAdapter = new CommentRecyclerViewAdapter(this, vidCommentList, commentsRecycleView);
-            commentsRecycleView.setLayoutManager(new LinearLayoutManager(this));
-            commentsRecycleView.setAdapter(recycleAdapter);
-        }
         if (videoRecyclerView != null) {
             videoRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
             videoAdapter = new VideoAdapter(this, MainActivity.videoList, "Video", false);
             videoRecyclerView.setAdapter(videoAdapter);
+            // Observe LiveData from ViewModel (videos for the recycler below)
+            vidViewModel.get().observe(this, videos -> {
+                if (videos != null) {
+                    MainActivity.videoList = videos;
+                    if (videoAdapter != null)
+                        videoAdapter.updateVideoList(videos);
+                } else {
+                    Log.e("ac", "Video list is null");
+                }
+            });
+        }
+        if (commentsRecycleView != null) {
+            recycleAdapter = new CommentRecyclerViewAdapter(this, vidCommentList, commentsRecycleView);
+            commentsRecycleView.setLayoutManager(new LinearLayoutManager(this));
+            commentsRecycleView.setAdapter(recycleAdapter);
+            commentsViewModel.get(videoID).observe(this, comments -> {
+                if (comments != null) {
+                    recycleAdapter.updateCommentsList(comments);
+                }
+            });
         }
     }
 
@@ -352,7 +355,7 @@ public class VideoActivity extends AppCompatActivity {
                 editTitleEditText.setTextColor(Color.WHITE);
             if (editDescriptionEditText != null)
                 editDescriptionEditText.setTextColor(Color.WHITE);
-            if (commentAddText != null) {
+            if (commentAddText != null && cardView != null) {
                 commentAddText.setTextColor(Color.WHITE);
                 commentAddText.setHintTextColor(Color.WHITE);
                 cardView.setCardBackgroundColor(ContextCompat.getColor(this, R.color.backgroundColorDark));
@@ -387,25 +390,8 @@ public class VideoActivity extends AppCompatActivity {
             if (vidScreenLayout != null) {
                 vidScreenLayout.setBackgroundColor(Color.WHITE);
             }
-            cardView.setCardBackgroundColor(ContextCompat.getColor(this, R.color.white));
+            if (cardView != null)
+                cardView.setCardBackgroundColor(ContextCompat.getColor(this, R.color.white));
         }
     }
-
-    private String formatNum(int num) {
-        if (num < 1000) {
-            return num + " ";
-        } else if (num >= 1000 && num < 10000) {
-            return String.format("%.1fk ", num / 1000.0);
-        } else if (num >= 10000 && num < 1000000) {
-            return (num / 1000) + "k ";
-        } else if (num >= 1000000 && num < 10000000) {
-            return String.format("%.1fM ", num / 1000000.0);
-        } else if (num >= 10000000 && num < 1000000000) {
-            return (num / 1000000) + "M ";
-        } else if (num >= 1000000000) {
-            return String.format("%.1fB ", num / 1000000000.0);
-        }
-        return num + " views";
-    }
-
 }

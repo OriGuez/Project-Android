@@ -56,15 +56,12 @@
                 android:gravity="center"
                 android:paddingStart="121dp"
                 android:paddingEnd="120dp"
-                android:text="UPLOAD VIDEO"
                 android:fontFamily="sans-serif-medium"
-
                 android:textSize="14sp"
                 android:letterSpacing="0.08"
+                android:text="@string/upload_video"
                 android:textColor="@android:color/white"
                 />
-
-
 
 
         <Button

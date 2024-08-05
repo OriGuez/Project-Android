@@ -3,7 +3,6 @@ import static android.graphics.Color.BLACK;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.view.LayoutInflater;
@@ -24,12 +23,10 @@ import com.example.project_android.MainActivity;
 import com.example.project_android.MyApplication;
 import com.example.project_android.R;
 import com.example.project_android.VideoActivity;
-import com.example.project_android.model.UserData;
 import com.example.project_android.model.Video;
 import com.example.project_android.viewModel.UsersViewModel;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 import java.util.ArrayList;
 import java.util.List;
 

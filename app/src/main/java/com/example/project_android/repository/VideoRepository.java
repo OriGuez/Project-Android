@@ -1,17 +1,13 @@
 package com.example.project_android.repository;
 
-import android.os.AsyncTask;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-
 import com.example.project_android.LocalAppDB;
 import com.example.project_android.MyApplication;
 import com.example.project_android.api.VideoActions;
 import com.example.project_android.dao.VideosDao;
 import com.example.project_android.model.ApiResponse;
 import com.example.project_android.model.Video;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,9 +16,7 @@ public class VideoRepository {
     private VideoListData videoListData;
     private LocalAppDB localAppDB;
     private VideoActions api;
-//    private LiveData<List<Video>> allVideos;
     private static volatile VideoRepository instance;
-
 
     public VideoRepository() {
         localAppDB = LocalAppDB.getDatabase(MyApplication.getContext());
@@ -31,6 +25,7 @@ public class VideoRepository {
         api = new VideoActions(videoListData, dao);
         //allVideos = dao.getAll();
     }
+
     // Static method to provide the singleton instance
     public static VideoRepository getInstance() {
         if (instance == null) {
@@ -42,8 +37,6 @@ public class VideoRepository {
         }
         return instance;
     }
-
-
     public LiveData<List<Video>> getAll() {
         return videoListData;
     }
@@ -51,7 +44,6 @@ public class VideoRepository {
     public LiveData<List<Video>> getUserVideos(String userID) {
         return api.fetchUserVideos(userID);
     }
-
     public LiveData<Video> get(String videoId) {
         return api.fetchVideo(videoId);
     }
@@ -83,9 +75,8 @@ public class VideoRepository {
     public void reload() {
         api.get();
     }
-
-
     class VideoListData extends MutableLiveData<List<Video>> {
+        private boolean dataLoaded = false;
 
         public VideoListData() {
             super();
@@ -95,9 +86,12 @@ public class VideoRepository {
         @Override
         protected void onActive() {
             super.onActive();
-            new Thread(() -> {
-                videoListData.postValue(dao.index());
-            }).start();
+            if (!dataLoaded) {
+                new Thread(() -> {
+                    videoListData.postValue(dao.index());
+                    dataLoaded = true;
+                }).start();
+            }
         }
     }
 }

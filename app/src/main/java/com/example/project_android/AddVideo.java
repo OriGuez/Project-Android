@@ -8,12 +8,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -27,9 +24,6 @@ import androidx.lifecycle.ViewModelProvider;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
 import android.media.ThumbnailUtils;
 import com.example.project_android.model.Video;
 import com.example.project_android.utils.FileUtils;
@@ -103,7 +97,6 @@ public class AddVideo extends AppCompatActivity {
     }
 
     private void openCameraVideo() {
-
         // Check for camera permission
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_PERMISSION);
@@ -111,10 +104,10 @@ public class AddVideo extends AppCompatActivity {
             Intent takePictureIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
             startActivityForResult(takePictureIntent, PICK_CAMERA_REQUEST);
         }
-
     }
 
     private void submitVideo() {
+        buttonSubmitVideo.setEnabled(false);
         if (videoView.isPlaying()) {
             videoView.pause();
         }
@@ -124,12 +117,12 @@ public class AddVideo extends AppCompatActivity {
         if (title.isEmpty() || description.isEmpty() || videoUri == null || thumbnailUri == null) {
             Toast.makeText(this, getString(R.string.fillAll), Toast.LENGTH_LONG).show();
             progressBar.setVisibility(View.GONE);
+            buttonSubmitVideo.setEnabled(true);
             return;
         }
         // Create a new Video object
-        Video newVideo = new Video(title,description,null);
+        Video newVideo = new Video(title, description, null);
         newVideo.setWhoLikedList(new ArrayList<>());
-
         newVideo.setPublisher(MainActivity.currentUser.getUsername()); // Replace with actual user
         if (videoUri != null) {
             File videoFile = FileUtils.getFileFromUri(this, videoUri, "video.mp4");
@@ -138,6 +131,7 @@ public class AddVideo extends AppCompatActivity {
                 try {
                     newVideo.setImageFile(FileUtils.bitmapToFile(this, thumbPic));
                 } catch (IOException e) {
+                    buttonSubmitVideo.setEnabled(true);
                     throw new RuntimeException(e);
                 }
             }
@@ -146,8 +140,10 @@ public class AddVideo extends AppCompatActivity {
             if (apiResponse.isSuccessful()) {
                 Toast.makeText(this, getString(R.string.videoAdded), Toast.LENGTH_SHORT).show();
                 progressBar.setVisibility(View.GONE);
+                buttonSubmitVideo.setEnabled(true);
                 finish();
             } else {
+                buttonSubmitVideo.setEnabled(true);
                 // add here specific data............................................
                 switch (apiResponse.getCode()) {
                     case 400:
@@ -165,9 +161,7 @@ public class AddVideo extends AppCompatActivity {
                 }
                 progressBar.setVisibility(View.GONE);
             }
-
         });
-
     }
 
     @Override
@@ -194,7 +188,6 @@ public class AddVideo extends AppCompatActivity {
         return ThumbnailUtils.createVideoThumbnail(filePath, MediaStore.Video.Thumbnails.MINI_KIND);
     }
 
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -203,10 +196,8 @@ public class AddVideo extends AppCompatActivity {
                 Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 startActivityForResult(takePictureIntent, PICK_CAMERA_REQUEST);
             } else {
-                Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.CameraPermissionDenied), Toast.LENGTH_SHORT).show();
             }
         }
     }
-
-
 }

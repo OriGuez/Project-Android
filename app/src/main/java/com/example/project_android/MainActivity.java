@@ -13,7 +13,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.Toolbar;
 import android.graphics.PorterDuff;
@@ -29,7 +28,6 @@ import com.example.project_android.viewModel.UsersViewModel;
 import com.example.project_android.viewModel.VideosViewModel;
 import com.google.android.material.imageview.ShapeableImageView;
 import androidx.appcompat.app.AppCompatActivity;
-import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.widget.SearchView;
@@ -123,9 +121,8 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 loadUser();
                 if (currentUser == null) {
-                    Toast.makeText(this, "Can't Enter Add Video Page", Toast.LENGTH_SHORT).show();
-                }
-                else {
+                    Toast.makeText(this, getString(R.string.cantEnterAddVidPage), Toast.LENGTH_SHORT).show();
+                } else {
                     Intent intent = new Intent(this, AddVideo.class);
                     startActivity(intent);
                 }
@@ -144,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             }
+
             @Override
             public boolean onQueryTextChange(String newText) {
                 return false;
@@ -208,18 +206,19 @@ public class MainActivity extends AppCompatActivity {
                     editor.remove("token");
                     editor.remove("username");
                     editor.putBoolean("isDarkMode", false);
-                    applyDarkModeSettings(false);
                     editor.apply(); // Use commit() if you need synchronous removal
                     currentUser = null; // Logout the user
                     loggedVisibilityLogic(); // Update UI visibility
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                    recreate();
+                    if (isDarkMode) {
+                        applyDarkModeSettings(false);
+                        isDarkMode = false;
+                    }
                     return true;
                 case MENU_MY_CHANNEL:
                     if (currentUser == null) {
                         loadUser();
                         if (currentUser == null) {
-                            Toast.makeText(this, "Can't Enter User Page", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, getString(R.string.cantEnterUserPage), Toast.LENGTH_SHORT).show();
                             return true;
                         }
                     }
@@ -235,6 +234,7 @@ public class MainActivity extends AppCompatActivity {
         });
         popupMenu.show();
     }
+
     private void applySearchViewColors(SearchView searchView, boolean isDarkMode) {
         int textColor = ContextCompat.getColor(this, isDarkMode ? R.color.search_text_color_dark : R.color.search_text_color_light);
         int iconColor = ContextCompat.getColor(this, isDarkMode ? R.color.white : R.color.black);
@@ -256,6 +256,7 @@ public class MainActivity extends AppCompatActivity {
         searchEditText.setTextColor(textColor);
         searchEditText.setHintTextColor(textColor);
     }
+
     private void loadVideos() {
         viewModel.get().observe(this, videos -> {
             // Update the UI with the new video list
@@ -266,6 +267,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
     private void loadUser() {
         String username = sharedPreferences.getString("username", "none");
         if (!username.equals("none")) {
@@ -288,6 +290,7 @@ public class MainActivity extends AppCompatActivity {
             });
         }
     }
+
     public static MainActivity getInstance() {
         return instance;
     }
@@ -315,6 +318,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
     private void applyDarkModeSettings(boolean isDarkMode) {
         int backgroundColor = isDarkMode ? Color.DKGRAY : Color.WHITE;
         int textColor = isDarkMode ? Color.WHITE : Color.BLACK;

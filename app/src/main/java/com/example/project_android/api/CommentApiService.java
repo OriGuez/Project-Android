@@ -1,7 +1,6 @@
 package com.example.project_android.api;
 
 import java.util.List;
-
 import com.example.project_android.model.ApiResponse;
 import com.example.project_android.model.Comment;
 import retrofit2.Call;

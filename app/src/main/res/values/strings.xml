@@ -86,4 +86,16 @@
     <string name="profileUpdate">Profile Updated Successfully</string>
     <string name="profileUpdateFail">Failed To Update Profile</string>
     <string name="emptyFields">Fields cannot be empty</string>
+    <string name="CameraPermissionDenied">Camera permission denied</string>
+    <string name="cantEnterUserPage">Cannot Enter User Page</string>
+    <string name="cantEnterAddVidPage">Cannot Enter Video Add Page</string>
+    <string name="loggedInSuccessfully">logged In Successfully</string>
+    <string name="loginFailed">Login Failed.Verify your credentials and Internet connection</string>
+    <string name="userAdded">User Added Successfully</string>
+    <string name="serverConnectionFailed">Server Connection Failed</string>
+    <string name="serverError">Server Error</string>
+    <string name="unknownError">Unknown Error</string>
+    <string name="profileUpdated">Profile Updated Successfully</string>
+    <string name="profileUpdateFailed">Profile Update Failed</string>
+    <string name="fieldsCanntBeEmpty">Fields cannot be empty</string>
 </resources>

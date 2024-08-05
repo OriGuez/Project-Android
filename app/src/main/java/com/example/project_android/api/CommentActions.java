@@ -6,13 +6,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.project_android.model.ApiResponse;
 import com.example.project_android.model.Comment;
-import com.example.project_android.model.Video;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -46,7 +40,6 @@ public class CommentActions {
         });
         return commentsData;
     }
-
 
     public MutableLiveData<ApiResponse> addComment(String videoId, Comment comment) {
         MutableLiveData<ApiResponse> resp = new MutableLiveData<>();

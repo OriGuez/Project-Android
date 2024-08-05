@@ -1,10 +1,7 @@
 package com.example.project_android.model;
 
 import android.graphics.Bitmap;
-import android.net.Uri;
-
 import com.google.gson.annotations.SerializedName;
-
 import java.io.File;
 
 public class UserData {
