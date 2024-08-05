@@ -2,10 +2,8 @@ package com.example.project_android.utils;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
-
 import com.example.project_android.MyApplication;
 import com.example.project_android.R;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -30,8 +28,6 @@ public class FileUtils {
         }
         return file;
     }
-
-
 
     public static File bitmapToFile(Context context, Bitmap bitmap) throws IOException {
         // Create a file in the cache directory

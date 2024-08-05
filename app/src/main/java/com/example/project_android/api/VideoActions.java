@@ -4,19 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
-
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-
 import com.example.project_android.MainActivity;
 import com.example.project_android.MyApplication;
 import com.example.project_android.dao.VideosDao;
 import com.example.project_android.model.ApiResponse;
 import com.example.project_android.model.Video;
-
 import java.io.File;
 import java.util.List;
-
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;

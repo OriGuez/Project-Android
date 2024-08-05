@@ -2,11 +2,9 @@ package com.example.project_android.viewModel;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
-
 import com.example.project_android.model.ApiResponse;
 import com.example.project_android.model.Comment;
 import com.example.project_android.repository.CommentRepository;
-
 import java.util.List;
 
 public class CommentsViewModel extends ViewModel {

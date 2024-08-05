@@ -214,7 +214,7 @@ public class UserPageActivity extends AppCompatActivity {
         String newChannelName = editChannelNameEditText.getText().toString().trim();
         File imageFile = null;
         if (newUsername.isEmpty() || newChannelName.isEmpty()) {
-            Toast.makeText(this, "Fields cannot be empty", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.fieldsCanntBeEmpty), Toast.LENGTH_SHORT).show();
             return;
         }
         UserData editedUser = new UserData(newUsername, null, newChannelName, null);
@@ -233,16 +233,15 @@ public class UserPageActivity extends AppCompatActivity {
             if (response != null && response.isSuccessful()) {
                 usernameTextView.setText(newUsername);
                 channelNameTextView.setText(newChannelName);
-
                 pageUser.setUsername(newUsername);
                 pageUser.setChannelName(newChannelName);
                 if (finalImageFile != null) {
                     pageUser.setImageFile(finalImageFile);
                 }
                 updatePageUser();
-                Toast.makeText(this, "Profile updated", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.profileUpdated), Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this, "Failed to update profile", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.profileUpdateFailed), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -262,7 +261,7 @@ public class UserPageActivity extends AppCompatActivity {
                 .setTitle(getString(R.string.delete_user))
                 .setMessage(getString(R.string.sure_delete_user))
                 .setPositiveButton(R.string.yes, (dialog, which) -> {
-//                    deleteUser();
+                    deleteUser(userID);
                 })
                 .setNegativeButton(R.string.no, null)
                 .setIcon(android.R.drawable.ic_menu_delete)
@@ -299,8 +298,9 @@ public class UserPageActivity extends AppCompatActivity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
                 MainActivity.shouldRefresh = true;
+                Toast.makeText(this, getString(R.string.userDeleted), Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this, "Failed to Delete profile", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.userDeletedFailed), Toast.LENGTH_SHORT).show();
             }
         });
     }
